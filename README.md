@@ -144,6 +144,26 @@ Detalhes e justificativa bibliográfica no relatório técnico.
 
 ---
 
+## Backlog
+
+O backlog mora em [`scripts/backlog.json`](scripts/backlog.json) — versionado, revisável
+em pull request. As issues e o quadro do GitHub Projects são **gerados** a partir dele:
+
+```bash
+gh auth login -s project          # o escopo 'project' é obrigatório para o quadro
+python scripts/seed_backlog.py --dry-run   # confere o que seria criado
+python scripts/seed_backlog.py             # cria de verdade
+```
+
+O seeder é idempotente: acrescente um item no `backlog.json`, rode de novo, e só o
+que falta é criado. Nada é apagado.
+
+Organização: 6 milestones (M0 a M5) seguindo o pipeline, labels por frente de
+trabalho e a label `peso-2` marcando o que a rubrica mais valoriza — detecção e
+discussão crítica.
+
+---
+
 ## Resultados
 
 > Tabela exigida pelo enunciado (item 6.2). Preencher apenas com valores obtidos de

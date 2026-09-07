@@ -1,0 +1,256 @@
+{
+  "_comentario": [
+    "Backlog do projeto. Este arquivo é a FONTE — as issues do GitHub são geradas",
+    "a partir dele por scripts/seed_backlog.py.",
+    "",
+    "Os itens saíram do inventário real de TODOs do repositório (make check,",
+    "docs/*.md, README) cruzado com o pipeline da seção 4 e a rubrica da seção 1",
+    "do CLAUDE.md. Ao acrescentar item novo, acrescente aqui e rode o seeder de",
+    "novo: ele é idempotente e só cria o que ainda não existe."
+  ],
+
+  "projeto": {
+    "titulo": "ECM514 — Detecção de Anomalias em Vibração",
+    "descricao": "Backlog do Projeto Desafio do 2º semestre. Colunas: Todo / In Progress / Done."
+  },
+
+  "labels": [
+    { "nome": "frente:dados",         "cor": "1d76db", "descricao": "Dados e protocolo (parser, janelas, splits)" },
+    { "nome": "frente:features",      "cor": "0e8a16", "descricao": "Features de tempo, frequência e envelope" },
+    { "nome": "frente:deteccao",      "cor": "d93f0b", "descricao": "Detecção one-class" },
+    { "nome": "frente:classificacao", "cor": "fbca04", "descricao": "Classificação supervisionada" },
+    { "nome": "frente:relatorio",     "cor": "5319e7", "descricao": "Relatório, repositório e apresentação" },
+    { "nome": "frente:infra",         "cor": "c5def5", "descricao": "Repositório, CI, ambiente" },
+    { "nome": "peso-2",               "cor": "b60205", "descricao": "Critério de peso 2 na rubrica — onde investir esforço" },
+    { "nome": "bloqueante",           "cor": "000000", "descricao": "Trava outras frentes até ser resolvido" },
+    { "nome": "opcional",             "cor": "ededed", "descricao": "Corta sem dó se o cronograma apertar" }
+  ],
+
+  "milestones": [
+    { "titulo": "M0 — Cadastro do dataset", "prazo": "2026-09-17T23:59:59Z",
+      "descricao": "Prazo inegociável do enunciado (seção 3)." },
+    { "titulo": "M1 — Dados e protocolo",   "prazo": null,
+      "descricao": "Parser, segmentação, splits por carga e auditoria dos arquivos. Trava todo o resto." },
+    { "titulo": "M2 — Features e envelope", "prazo": null,
+      "descricao": "Features de tempo/frequência e a validação física via frequências características." },
+    { "titulo": "M3 — Detecção",            "prazo": null,
+      "descricao": "One-class, treinada só com dados normais. Peso 2 na rubrica." },
+    { "titulo": "M4 — Classificação",       "prazo": null,
+      "descricao": "Diagnóstico do tipo de falha e matriz de confusão completa." },
+    { "titulo": "M5 — Relatório e entrega", "prazo": null,
+      "descricao": "Texto, notebook, vídeo e slides. Discussão crítica vale peso 2." }
+  ],
+
+  "issues": [
+    {
+      "titulo": "Cadastrar o dataset CWRU na disciplina",
+      "milestone": "M0 — Cadastro do dataset",
+      "labels": ["frente:infra", "bloqueante"],
+      "corpo": "Prazo **inegociável: 17/09/2026** (enunciado, seção 3).\n\nConfiguração já fechada pelo grupo: CWRU, sensor drive end, 12 kHz, rolamento SKF 6205-2RS JEM, 4 classes (normal, IR, OR, B), cargas 0–3 HP.\n\n**Critério de aceite:** cadastro confirmado pelo professor.\n\nNão depende de nenhuma outra issue — é só o cadastro, não o download."
+    },
+    {
+      "titulo": "Preencher os metadados do grupo (README e capa do relatório)",
+      "milestone": "M0 — Cadastro do dataset",
+      "labels": ["frente:relatorio"],
+      "corpo": "Hoje são placeholders explícitos.\n\n- `README.md`: tabela do grupo (nome + RA).\n- `docs/relatorio/relatorio.tex`: `\\autor`, `\\instituicao`, `\\orientador`, `\\local`.\n\n**Critério de aceite:** nenhum `TODO(grupo)` restante no preâmbulo de `relatorio.tex`.\n\nO enunciado permite grupo de até 6 alunos (o CLAUDE.md diz 4–5; se forem 6, vale o enunciado — corrigir o CLAUDE.md junto)."
+    },
+    {
+      "titulo": "Baixar o CWRU e versionar os .mat em data/raw/",
+      "milestone": "M1 — Dados e protocolo",
+      "labels": ["frente:dados", "bloqueante"],
+      "corpo": "Baixar do CWRU Bearing Data Center o subconjunto drive end / 12 kHz, todas as cargas (0–3 HP) e os três diâmetros de defeito.\n\n**Critério de aceite:**\n- arquivos em `data/raw/`;\n- se estourar o limite do GitHub, mover para drive público e documentar o link no README (exigência do enunciado, item 6.2);\n- taxa de amostragem e nº de arquivos por classe conferidos contra a documentação oficial, não contra fonte secundária."
+    },
+    {
+      "titulo": "Ler Smith & Randall (2015) e preencher docs/arquivos_excluidos.md",
+      "milestone": "M1 — Dados e protocolo",
+      "labels": ["frente:dados", "bloqueante"],
+      "corpo": "Leitura obrigatória antes de usar o CWRU. O artigo audita gravação por gravação e separa os arquivos em utilizáveis, parcialmente utilizáveis e problemáticos (ruído elétrico dominante, falha não visível nem sob envelope).\n\n**Critério de aceite:** `docs/arquivos_excluidos.md` com critérios numerados, tabela de excluídos com justificativa e referência, tabela de parcialmente utilizáveis, e o resumo quantitativo preenchido.\n\nExclusão não documentada não vale (CLAUDE.md, regra 4)."
+    },
+    {
+      "titulo": "Decidir e declarar a posição do defeito em pista externa (3, 6 ou 12 horas)",
+      "milestone": "M1 — Dados e protocolo",
+      "labels": ["frente:dados"],
+      "corpo": "A amplitude muda bastante entre as posições em relação à zona de carga. Escolher uma posição ou tratar como condição separada — mas **declarar a escolha no relatório**.\n\n**Critério de aceite:** decisão registrada em `docs/relatorio/secoes/02-dataset.tex` (Tabela 1) e refletida no carregamento em `src/data.py`."
+    },
+    {
+      "titulo": "src/data.py: parser dos arquivos .mat",
+      "milestone": "M1 — Dados e protocolo",
+      "labels": ["frente:dados"],
+      "corpo": "Ler os `.mat` do CWRU e devolver o sinal do drive end com os metadados (classe, diâmetro do defeito, carga, rotação).\n\n**Critério de aceite:** carrega todos os arquivos não excluídos pela auditoria; nomes de variável do CWRU (que variam entre arquivos) tratados sem hardcode frágil."
+    },
+    {
+      "titulo": "src/data.py: segmentação em janelas derivada da rotação e da taxa de amostragem",
+      "milestone": "M1 — Dados e protocolo",
+      "labels": ["frente:dados"],
+      "corpo": "O tamanho da janela **não é escolhido por conveniência**: é derivado da rotação do eixo e de fs, de modo a cobrir várias revoluções (CLAUDE.md, regra 6).\n\n**Critério de aceite:** a conta aparece na docstring da função e vai para a seção 4.1 do relatório."
+    },
+    {
+      "titulo": "src/data.py: split por carga e seeds fixas",
+      "milestone": "M1 — Dados e protocolo",
+      "labels": ["frente:dados", "peso-2"],
+      "corpo": "Treino com 0/1/2 HP, teste com 3 HP. **Nunca** dividir em nível de janela: janelas vizinhas da mesma gravação são quase idênticas, e espalhá-las entre treino e teste faz o modelo memorizar a gravação (CLAUDE.md, regras 1 e 2).\n\n**Critério de aceite:**\n- nenhuma gravação aparece em treino e teste ao mesmo tempo;\n- seeds fixas e declaradas;\n- teste automatizado que falha se houver sobreposição de gravação entre os splits."
+    },
+    {
+      "titulo": "Contagem de amostras por classe e por carga",
+      "milestone": "M1 — Dados e protocolo",
+      "labels": ["frente:dados", "frente:relatorio"],
+      "corpo": "Exigido pelo enunciado (item 6.3, descrição do dataset).\n\n**Critério de aceite:** tabela gerada por código, salva em `results/metrics/`, e transcrita para a seção 2.3 do relatório. Nada de contagem estimada."
+    },
+    {
+      "titulo": "src/features.py: features de domínio do tempo",
+      "milestone": "M2 — Features e envelope",
+      "labels": ["frente:features"],
+      "corpo": "RMS, curtose, fator de crista, assimetria e valor de pico por janela.\n\n**Critério de aceite:** matriz de features com uma linha por janela, alinhada aos rótulos e ao split."
+    },
+    {
+      "titulo": "src/features.py: FFT e análise de envelope (Hilbert)",
+      "milestone": "M2 — Features e envelope",
+      "labels": ["frente:features", "peso-2"],
+      "corpo": "A análise de envelope é a técnica central do diagnóstico de rolamento: o defeito modula uma ressonância estrutural, e o espectro bruto costuma não revelar a falha.\n\n**Critério de aceite:** espectro de envelope por janela + figura de exemplo por classe em `results/figures/`.\n\nMínimo de 2 referências bibliográficas para esta técnica (enunciado, item 6.3)."
+    },
+    {
+      "titulo": "Frequências características do rolamento 6205 (BPFO, BPFI, BSF, FTF)",
+      "milestone": "M2 — Features e envelope",
+      "labels": ["frente:features", "peso-2"],
+      "corpo": "Calcular a partir da geometria do SKF 6205-2RS JEM e da rotação do eixo em cada carga.\n\n**Critério de aceite:** função que recebe rotação e devolve as quatro frequências; valores conferidos contra a documentação do CWRU."
+    },
+    {
+      "titulo": "Validação física: pico do envelope × frequência teórica prevista",
+      "milestone": "M2 — Features e envelope",
+      "labels": ["frente:features", "frente:relatorio", "peso-2"],
+      "corpo": "Mostrar que o pico do espectro de envelope cai na frequência prevista pela teoria é **o argumento mais forte disponível para o relatório** (CLAUDE.md, seção 4.2).\n\n**Critério de aceite:** figura por tipo de defeito com a frequência teórica marcada sobre o espectro medido, em `results/figures/`, e a discussão na seção 5.4."
+    },
+    {
+      "titulo": "Tempo-frequência: STFT, wavelet ou kurtograma para escolher a banda de demodulação",
+      "milestone": "M2 — Features e envelope",
+      "labels": ["frente:features", "opcional"],
+      "corpo": "Melhora a escolha da banda de demodulação em vez de fixá-la no olho.\n\nCortável se o cronograma apertar — o projeto está completo sem isto."
+    },
+    {
+      "titulo": "src/detection.py: baseline one-class (Isolation Forest + Mahalanobis)",
+      "milestone": "M3 — Detecção",
+      "labels": ["frente:deteccao", "peso-2"],
+      "corpo": "**Treinado somente com dados normais**, sem ver nenhuma falha. É o cenário real de manutenção preditiva: na fábrica não existem exemplos rotulados de falha antes da falha acontecer (CLAUDE.md, regra 3).\n\n**Critério de aceite:**\n- o conjunto de treino do detector contém apenas a classe normal, verificado em código;\n- baseline rodando **antes** de qualquer modelo mais pesado (regra 5)."
+    },
+    {
+      "titulo": "src/detection.py: One-Class SVM e autoencoder, comparados ao baseline",
+      "milestone": "M3 — Detecção",
+      "labels": ["frente:deteccao", "peso-2"],
+      "corpo": "Cada camada é comparada contra a anterior. Sem baseline não existe comparação, e sem comparação a discussão crítica fica vazia.\n\n**Critério de aceite:** tabela comparativa contra o Isolation Forest / Mahalanobis, com 2 referências por técnica."
+    },
+    {
+      "titulo": "src/evaluation.py: métricas de detecção (ROC, TPR, FPR)",
+      "milestone": "M3 — Detecção",
+      "labels": ["frente:deteccao", "peso-2"],
+      "corpo": "**Critério de aceite:**\n- curvas ROC em `results/figures/` com nome descritivo;\n- TPR e FPR em `results/metrics/`;\n- se alguma métrica vier ≥ 98%, a primeira hipótese é vazamento de dados: investigar o split antes de comemorar (CLAUDE.md, seção 7)."
+    },
+    {
+      "titulo": "Guardar os casos classificados errado desde o primeiro experimento",
+      "milestone": "M3 — Detecção",
+      "labels": ["frente:deteccao", "frente:relatorio", "peso-2"],
+      "corpo": "Erros são artefato de entrega, não subproduto (CLAUDE.md, regra 8). São eles que sustentam os 2 pontos de discussão crítica.\n\n**Critério de aceite:** para cada experimento, persistir em `results/metrics/` quais janelas erraram, com carga, classe verdadeira, classe predita e severidade do defeito."
+    },
+    {
+      "titulo": "src/classification.py: Random Forest / SVM sobre as features",
+      "milestone": "M4 — Classificação",
+      "labels": ["frente:classificacao"],
+      "corpo": "Etapa separada e posterior à detecção.\n\n**Critério de aceite:** treino no split por carga (0/1/2 HP) e avaliação em 3 HP, com acurácia por classe."
+    },
+    {
+      "titulo": "Matriz de confusão completa, com todas as classes",
+      "milestone": "M4 — Classificação",
+      "labels": ["frente:classificacao", "frente:relatorio"],
+      "corpo": "Obrigatória pelo enunciado (item 6.2), como anexo.\n\n**Critério de aceite:** matriz em `results/metrics/` e no Apêndice C do relatório, com **todas** as classes do dataset."
+    },
+    {
+      "titulo": "CNN 1D sobre o sinal bruto como contraponto",
+      "milestone": "M4 — Classificação",
+      "labels": ["frente:classificacao", "opcional"],
+      "corpo": "Contraponto ao classificador clássico sobre features. Só depois de o baseline existir e estar comparado."
+    },
+    {
+      "titulo": "Severidade do defeito (0.007\" / 0.014\" / 0.021\") como eixo secundário",
+      "milestone": "M4 — Classificação",
+      "labels": ["frente:classificacao", "opcional"],
+      "corpo": "Tratar como eixo de severidade, análise secundária. **Não explodir em 10+ classes na primeira volta** (CLAUDE.md, seção 2)."
+    },
+    {
+      "titulo": "Generalização entre datasets: treinar no CWRU, testar no MFPT",
+      "milestone": "M4 — Classificação",
+      "labels": ["opcional"],
+      "corpo": "Extra de discussão crítica. Se o cronograma apertar, cortar sem dó — o projeto está completo sem isto (CLAUDE.md, seção 2)."
+    },
+    {
+      "titulo": "notebooks/projeto.ipynb: pipeline ponta a ponta executável no Colab",
+      "milestone": "M5 — Relatório e entrega",
+      "labels": ["frente:relatorio", "frente:infra"],
+      "corpo": "O enunciado exige código 100% executável e reprodutível no Colab (item 6.1).\n\n**Critério de aceite:**\n- roda do zero, incluindo a obtenção dos dados;\n- lógica pesada importada de `src/`, o notebook só orquestra;\n- badge do Colab no README;\n- o notebook final da entrega vai **com** as saídas."
+    },
+    {
+      "titulo": "Relatório: capítulo 1 (Introdução) e capítulo 7 (Conclusão)",
+      "milestone": "M5 — Relatório e entrega",
+      "labels": ["frente:relatorio"],
+      "corpo": "Arquivos: `secoes/01-introducao.tex`, `secoes/07-conclusao.tex`.\n\nA conclusão responde objetivamente às duas perguntas do objetivo, sem introduzir resultado novo."
+    },
+    {
+      "titulo": "Relatório: capítulo 2 (Descrição do dataset)",
+      "milestone": "M5 — Relatório e entrega",
+      "labels": ["frente:relatorio"],
+      "corpo": "Arquivo: `secoes/02-dataset.tex`. Exigido pelo enunciado (item 6.3): origem, setup físico, taxa de amostragem, tipos de falha rotulados, quantidade de amostras por classe.\n\nConferir cada número contra a documentação oficial do CWRU antes de escrever."
+    },
+    {
+      "titulo": "Relatório: capítulo 3 (Fundamentação) com 2 referências por técnica",
+      "milestone": "M5 — Relatório e entrega",
+      "labels": ["frente:relatorio"],
+      "corpo": "Arquivo: `secoes/03-fundamentacao.tex`. O enunciado exige **no mínimo 2 referências bibliográficas por técnica** (item 6.3). Hoje há três subseções com `Referências: TODO, TODO`.\n\nAs entradas novas vão em `docs/relatorio/referencias.bib`, chave `autor+ano`."
+    },
+    {
+      "titulo": "Relatório: capítulo 4 (Metodologia)",
+      "milestone": "M5 — Relatório e entrega",
+      "labels": ["frente:relatorio"],
+      "corpo": "Arquivo: `secoes/04-metodologia.tex`. Como os dados foram divididos, como as features foram extraídas, como o modelo foi treinado.\n\nExplicar **por que** a divisão aleatória em nível de janela é inválida aqui — é um dos pontos que diferencia o trabalho."
+    },
+    {
+      "titulo": "Relatório: capítulo 5 (Resultados) e a tabela resumo do enunciado",
+      "milestone": "M5 — Relatório e entrega",
+      "labels": ["frente:relatorio", "peso-2"],
+      "corpo": "Arquivo: `secoes/05-resultados.tex`. A tabela do item 6.2 do enunciado (Dataset / Técnica / Tipo de falha / TPR / FPR / Acurácia por classe) precisa aparecer **no relatório e no README**.\n\n**Nenhum número entra sem vir de execução real deste repositório.** Técnicas que só detectam deixam a coluna de tipo de falha como \"não se aplica\"."
+    },
+    {
+      "titulo": "Relatório: capítulo 6 (Discussão crítica)",
+      "milestone": "M5 — Relatório e entrega",
+      "labels": ["frente:relatorio", "peso-2"],
+      "corpo": "Arquivo: `secoes/06-discussao.tex`. **É a seção que mais vale por página** — peso 2, empatada com detecção.\n\nUm resultado de 97% sem análise de erro vale menos que 88% com investigação de onde e por que o modelo falha.\n\nPrecisa cobrir: o que funcionou, o que **não** funcionou (com casos concretos), análise dos erros guardados, limitações (defeitos por eletroerosão e não por fadiga natural, generalização para outra bancada) e o que fariam com mais tempo/dados."
+    },
+    {
+      "titulo": "Relatório: resumo e abstract",
+      "milestone": "M5 — Relatório e entrega",
+      "labels": ["frente:relatorio"],
+      "corpo": "Em `relatorio.tex`. 150–500 palavras, parágrafo único. **Escrever por último**, quando os resultados existirem: problema, dataset, técnicas, principal resultado numérico e principal limitação."
+    },
+    {
+      "titulo": "Manter docs/uso_de_ia.md preenchido a cada contribuição",
+      "milestone": "M5 — Relatório e entrega",
+      "labels": ["frente:relatorio"],
+      "corpo": "Declaração exigida pelo enunciado (item 6.3). **Não é para preencher na véspera**: cada contribuição de IA vira uma linha, no mesmo commit da mudança.\n\nRegra do grupo: nenhuma saída de IA entra no repositório sem revisão humana nomeada — a coluna \"Revisado por\" não pode ficar vazia."
+    },
+    {
+      "titulo": "Ligar o GitHub Pages e preencher os links no README",
+      "milestone": "M5 — Relatório e entrega",
+      "labels": ["frente:infra"],
+      "corpo": "**Settings → Pages → Source: \"GitHub Actions\"** (configuração única). Enquanto não for feito, o job `deploy` do workflow falha — o PDF continua saindo pelo artifact.\n\n**Critério de aceite:** links do Pages preenchidos no README (tabela de entregas e seção \"Onde ler o PDF\")."
+    },
+    {
+      "titulo": "Vídeo de até 5 min no YouTube e slides",
+      "milestone": "M5 — Relatório e entrega",
+      "labels": ["frente:relatorio"],
+      "corpo": "Entregável 4 do enunciado. Peso 1 na rubrica (Apresentação).\n\n**Critério de aceite:** link do YouTube e slides referenciados na tabela de entregas do README."
+    },
+    {
+      "titulo": "Revisão final: make check limpo e sumário de entregas completo",
+      "milestone": "M5 — Relatório e entrega",
+      "labels": ["frente:relatorio", "frente:infra"],
+      "corpo": "**Critério de aceite:**\n- `cd docs/relatorio && make check` passa (nenhum `TODO(grupo)` restante);\n- nenhum `_TODO_` / `_preencher_` no README nem em `docs/*.md`;\n- tabela de entregas do README apontando para cada item (exigência do item 6.5);\n- tag `v1.0` criada, para o PDF ser anexado à release."
+    }
+  ]
+}
