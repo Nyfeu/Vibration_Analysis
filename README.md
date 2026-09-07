@@ -26,7 +26,7 @@ público **CWRU (Case Western Reserve University)**.
 |---|---|
 | Notebook executável no Colab | [`notebooks/projeto.ipynb`](notebooks/projeto.ipynb) — _TODO: badge do Colab_ |
 | Dados empregados | [`data/raw/`](data/raw/) |
-| Relatório técnico (LaTeX/ABNT) | [`docs/relatorio/relatorio.tex`](docs/relatorio/relatorio.tex) → PDF gerado pelo CI |
+| Relatório técnico (LaTeX/ABNT) | fonte em [`docs/relatorio/`](docs/relatorio/) · PDF: _TODO — link do GitHub Pages_ |
 | Apresentação (vídeo, máx. 5 min) | _TODO: link do YouTube_ |
 | Slides | _TODO_ |
 | Declaração de uso de IA | [`docs/uso_de_ia.md`](docs/uso_de_ia.md) |
@@ -104,9 +104,30 @@ Cada capítulo mora em um arquivo separado sob `docs/relatorio/secoes/`, para
 reduzir conflito de merge quando várias pessoas escrevem ao mesmo tempo.
 As figuras são lidas direto de `results/figures/` — não copie figura na mão.
 
-**Geração automática:** o workflow `.github/workflows/relatorio.yml` compila o PDF
-a cada push que toque em `docs/relatorio/` e o disponibiliza como *artifact* da
-execução. Em tags `v*`, o PDF também é anexado à release.
+### Formatação
+
+Padrão ABNT: corpo 12 pt em Times, espaçamento 1,5, títulos diferenciados de forma
+progressiva (NBR 6024) — seção primária em caixa alta e negrito, secundária em
+negrito, terciária sem negrito, quaternária em itálico. Links do sumário e das
+citações em preto, porque o trabalho é para impressão.
+
+Para trocar a família por Arial, se a instituição exigir, é uma linha no
+preâmbulo de `relatorio.tex` (está comentado onde).
+
+### Onde ler o PDF sem compilar nada
+
+| Quero | Onde |
+|---|---|
+| A versão atual de `main`, no navegador | GitHub Pages — _TODO: link_ |
+| Baixar o PDF direto | `<url-do-pages>/relatorio.pdf` |
+| O PDF de um pull request | Aba **Actions** → execução do PR → artifact `relatorio-pdf` |
+| O PDF da entrega | Anexo da release da tag `v*` |
+
+O Pages é atualizado a cada push em `main` que toque em `docs/relatorio/`.
+
+> **Configuração única, antes do primeiro push:** ligar o Pages em
+> **Settings → Pages → Source: "GitHub Actions"**. Sem isso o job `deploy` falha
+> (o PDF continua acessível pelo artifact).
 
 ---
 

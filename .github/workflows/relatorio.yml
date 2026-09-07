@@ -1,9 +1,21 @@
-# Gera o PDF do relatório a cada push. O PDF fica disponível como artifact da
-# execução — ninguém precisa ter LaTeX instalado para ler a versão mais recente.
+# Gera o PDF do relatório e o publica em três lugares, cada um com um uso:
 #
-# Em tags v* o PDF também é anexado a uma release, que é o que vai para a entrega.
+#   1. GitHub Pages  — link fixo, abre no navegador, sempre a versão de main.
+#                      É o jeito prático de ler o rascunho atual, sem baixar zip.
+#   2. Artifact      — usado nos pull requests, onde o Pages ainda não reflete
+#                      a mudança (o Pages só acompanha main).
+#   3. Release       — em tags v*, o PDF vai anexado; é o link da entrega.
+#
+# ATENÇÃO antes do primeiro push: o Pages precisa ser ligado UMA vez em
+# Settings > Pages > Source: "GitHub Actions". Enquanto isso não for feito, o
+# job "deploy" falha e o PDF continua saindo pelo artifact.
 name: Relatório
 
+# O filtro de paths evita rebuild a cada commit em src/ ou nos dados.
+# ATENÇÃO antes de mexer aqui: o GitHub NÃO avalia filtros de path em push de
+# tag ("Path filters are not evaluated for pushes of tags"), então a tag v* da
+# entrega compila sempre, mesmo que o commit taggeado não toque em docs/.
+# Não é um descuido — é o que garante que a release nunca saia sem o PDF.
 on:
   push:
     branches: [main]
@@ -14,10 +26,19 @@ on:
   pull_request:
     paths:
       - 'docs/relatorio/**'
+      - '.github/workflows/relatorio.yml'
   workflow_dispatch:
 
 permissions:
-  contents: write   # necessário apenas para criar a release nas tags
+  contents: write   # anexar o PDF à release nas tags
+  pages: write      # publicar no GitHub Pages
+  id-token: write   # exigido pelo actions/deploy-pages
+
+# Não deixa dois deploys de Pages correrem juntos, mas também não corta pela
+# metade um deploy já em andamento.
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -37,6 +58,7 @@ jobs:
           # para o PDF do CI ser idêntico ao que sai do `make` local.
           args: -pdf -interaction=nonstopmode -file-line-error
 
+      # Sempre disponível, inclusive em PR e em fork, onde o Pages não roda.
       - name: Publicar o PDF como artifact
         uses: actions/upload-artifact@v4
         with:
@@ -44,8 +66,56 @@ jobs:
           path: docs/relatorio/build/relatorio.pdf
           if-no-files-found: error
 
+      # Página mínima para o link raiz do Pages já abrir o PDF embutido, em vez
+      # de devolver 404. O PDF fica também em /relatorio.pdf, para link direto.
+      - name: Montar o site do Pages
+        if: github.ref == 'refs/heads/main'
+        env:
+          SHA: ${{ github.sha }}
+        run: |
+          mkdir -p site
+          cp docs/relatorio/build/relatorio.pdf site/relatorio.pdf
+          VERSAO="$(date -u '+%d/%m/%Y %H:%M UTC') · commit ${SHA:0:7}"
+          cat > site/index.html <<HTML
+          <!doctype html>
+          <html lang="pt-BR">
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>Relatório — ECM514</title>
+          <style>
+            body { margin: 0; font: 14px system-ui, sans-serif; }
+            header { padding: .6rem 1rem; background: #f6f8fa;
+                     border-bottom: 1px solid #d0d7de; }
+            a { color: #0969da; }
+            iframe { width: 100%; height: calc(100vh - 3rem); border: 0; }
+          </style>
+          <header>
+            Relatório técnico — ECM514 · gerado em ${VERSAO} ·
+            <a href="relatorio.pdf" download>baixar o PDF</a>
+          </header>
+          <iframe src="relatorio.pdf" title="Relatório técnico"></iframe>
+          HTML
+
+      - name: Preparar o artifact do Pages
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
       - name: Anexar o PDF à release (somente em tags)
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           files: docs/relatorio/build/relatorio.pdf
+
+  deploy:
+    # Só main: o Pages publica uma única versão, e ela deve ser a oficial.
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
