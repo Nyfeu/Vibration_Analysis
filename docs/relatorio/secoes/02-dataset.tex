@@ -1,0 +1,51 @@
+% Responsável: TODO(grupo) — frente "Dados e protocolo"
+% Enunciado, item 6.3: origem, setup físico, taxa de amostragem, tipos de falha
+% rotulados, quantidade de amostras por classe.
+\chapter{Descrição do dataset}
+\label{cap:dataset}
+
+\section{Origem e setup experimental}
+\label{sec:setup}
+
+TODO(grupo): bancada do \emph{Case Western Reserve University Bearing Data
+Center}; motor, dinamômetro, posição dos acelerômetros, defeitos induzidos por
+eletroerosão.
+
+\section{Configuração adotada}
+\label{sec:config-adotada}
+
+% Todos os números desta tabela devem ser conferidos contra a documentação
+% oficial do CWRU antes da entrega. Não copiar de fonte secundária.
+\begin{table}[htb]
+  \centering
+  \caption{Configuração do subconjunto do CWRU utilizada neste trabalho.}
+  \label{tab:config}
+  \begin{tabular}{ll}
+    \toprule
+    \textbf{Parâmetro} & \textbf{Valor} \\
+    \midrule
+    Sensor                & Drive end (DE) \\
+    Taxa de amostragem    & \SI{12}{\kilo\hertz} \\
+    Rolamento             & SKF 6205-2RS JEM \\
+    Classes               & normal, pista interna, pista externa, esfera \\
+    Diâmetros de defeito  & \SI{0.007}{\inch}, \SI{0.014}{\inch}, \SI{0.021}{\inch} \\
+    Cargas                & \SIrange{0}{3}{\hp} \\
+    Posição do defeito em pista externa & TODO(grupo): declarar 3, 6 ou 12 horas \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir da documentação do CWRU Bearing Data Center.}
+\end{table}
+
+Justificativa das escolhas: TODO(grupo).
+
+\section{Quantidade de amostras por classe}
+\label{sec:amostras-por-classe}
+
+% Preencher SOMENTE com a contagem produzida por src/data.py. Nada de estimativa.
+TODO(grupo): tabela de janelas por classe e por carga, após a segmentação.
+
+\section{Auditoria dos arquivos}
+\label{sec:auditoria}
+
+Nem toda gravação do CWRU é utilizável. TODO(grupo): resumir os critérios de
+exclusão adotados; a lista completa está no Apêndice~\ref{ap:arquivos-excluidos}.

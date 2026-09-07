@@ -1,0 +1,40 @@
+% Responsável: TODO(grupo)
+% Enunciado, item 6.3: como os dados foram divididos, como as features foram
+% extraídas, como o modelo foi treinado/ajustado.
+\chapter{Metodologia}
+\label{cap:metodologia}
+
+\section{Segmentação em janelas}
+\label{sec:janelas}
+
+TODO(grupo): o tamanho da janela é \emph{derivado} da rotação do eixo e da taxa
+de amostragem, de modo a cobrir várias revoluções. Apresentar a conta, não só o
+número escolhido.
+
+\section{Protocolo de divisão treino/teste}
+\label{sec:split}
+
+TODO(grupo): divisão por condição de carga --- treino com \SIlist{0;1;2}{\hp},
+teste com \SI{3}{\hp}. Explicar por que a divisão aleatória em nível de janela é
+inválida aqui: janelas vizinhas da mesma gravação são quase idênticas e o modelo
+passa a memorizar a gravação, não a falha.
+
+\section{Extração de features}
+\label{sec:features}
+
+TODO(grupo): domínio do tempo, domínio da frequência, envelope.
+
+\section{Modelos}
+\label{sec:modelos}
+
+\subsection{Detecção}
+TODO(grupo): treinada \emph{somente} com dados normais.
+
+\subsection{Classificação}
+TODO(grupo).
+
+\section{Reprodutibilidade}
+\label{sec:reprodutibilidade}
+
+TODO(grupo): seeds fixas e declaradas, versões das bibliotecas, ambiente de
+execução (devcontainer e Colab).

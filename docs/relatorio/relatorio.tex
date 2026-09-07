@@ -1,0 +1,167 @@
+% =============================================================================
+% ECM514 — Ciência de Dados / Projeto Desafio do 2º Semestre
+% Detecção e Diagnóstico de Anomalias em Sinais de Vibração
+%
+% Classe abntex2 (padrão ABNT de trabalho acadêmico/monografia).
+% Compilação:  make            (ou: latexmk -pdf relatorio.tex)
+% Bibliografia: biblatex + biber, estilo abnt (biblatex-abnt).
+%
+% NÃO edite as seções aqui. Cada seção mora em secoes/*.tex — isso reduz
+% conflito de merge quando várias pessoas escrevem ao mesmo tempo.
+% =============================================================================
+
+\documentclass[
+  12pt,
+  oneside,          % relatório curto: impressão em face única
+  a4paper,
+  chapter=TITLE,
+  section=TITLE,
+  english,
+  brazil
+]{abntex2}
+
+% ---- Codificação e idioma -----------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{indentfirst}
+\usepackage{nomencl}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{csquotes}
+
+% ---- Conteúdo técnico ---------------------------------------------------
+\usepackage{amsmath,amssymb}
+\usepackage{siunitx}          % \SI{12}{\kilo\hertz}
+\DeclareSIUnit{\inch}{in}    % diâmetro do defeito, unidade original do CWRU
+\DeclareSIUnit{\hp}{HP}      % carga do dinamômetro
+\usepackage{booktabs}         % \toprule \midrule \bottomrule
+\usepackage{multirow}
+\usepackage{longtable}
+\usepackage{float}
+
+% Figuras geradas pelo pipeline: reaproveitadas direto de results/figures/,
+% sem cópia manual. Se o caminho quebrar, o pipeline mudou de lugar.
+\graphicspath{{../../results/figures/}{figuras/}}
+
+% ---- Bibliografia no padrão ABNT ----------------------------------------
+% biblatex + biber (e não bibtex) por causa do UTF-8: nomes acentuados
+% ordenam corretamente sem precisar de escape na .bib.
+\usepackage[backend=biber, style=abnt, justify]{biblatex}
+\addbibresource{referencias.bib}
+
+% ---- Metadados ----------------------------------------------------------
+% TODO(grupo): preencher instituição, autores e data antes da entrega.
+\titulo{Detecção e Diagnóstico de Anomalias em Sinais de Vibração de Máquinas Rotativas}
+\autor{Sobrenome, Nome\\ Sobrenome, Nome\\ Sobrenome, Nome\\ Sobrenome, Nome\\ Sobrenome, Nome}
+\local{Brasil}
+\data{2026}
+\instituicao{Instituição --- TODO(grupo)}
+\tipotrabalho{Relatório técnico}
+\preambulo{%
+  Relatório técnico apresentado à disciplina ECM514 --- Ciência de Dados,
+  referente ao Projeto Desafio do 2º semestre.
+}
+\orientador[Professor]{TODO(grupo)}
+
+% ---- hyperref -----------------------------------------------------------
+\definecolor{blue}{RGB}{41,5,195}
+% Os campos de metadado do PDF são texto puro: nada de \\ nem de macro do
+% abntex2 aqui, senão o hyperref reclama de "Token not allowed in a PDF string".
+\makeatletter
+\hypersetup{
+  pdftitle={\@title},
+  pdfauthor={ECM514 - Projeto Desafio},
+  pdfsubject={Relatorio tecnico - ECM514 Ciencia de Dados},
+  pdfkeywords={vibracao, rolamento, deteccao de anomalia, CWRU, manutencao preditiva},
+  colorlinks=true,
+  linkcolor=blue,
+  citecolor=blue,
+  filecolor=magenta,
+  urlcolor=blue,
+  bookmarksdepth=4,
+  % a numeracao ABNT (tabelas sequenciais, pre-textual sem numero) gera
+  % destinos duplicados no PDF; isto silencia o aviso sem afetar os links.
+  hypertexnames=false
+}
+\makeatother
+
+% ---- Ajustes de layout ABNT ---------------------------------------------
+\setlength{\parindent}{1.3cm}
+\setlength{\parskip}{0.2cm}
+\SingleSpacing   % o corpo passa a espaço 1,5 depois de \textual
+
+% =============================================================================
+\begin{document}
+
+\selectlanguage{brazil}
+\frenchspacing
+
+% ---- Elementos pré-textuais ---------------------------------------------
+\pretextual
+
+\imprimircapa
+\imprimirfolhaderosto
+
+\begin{resumo}
+  TODO(grupo): resumo em português, 150--500 palavras, parágrafo único.
+  Escrever \emph{por último}, quando os resultados existirem. Deve conter:
+  problema, dataset, técnicas aplicadas, principal resultado numérico e a
+  principal limitação encontrada.
+
+  \textbf{Palavras-chave}: manutenção preditiva; detecção de anomalias;
+  rolamentos; análise de envelope; CWRU.
+\end{resumo}
+
+\begin{resumo}[Abstract]
+  \begin{otherlanguage*}{english}
+    TODO(grupo): versão em inglês do resumo.
+
+    \textbf{Keywords}: predictive maintenance; anomaly detection; rolling
+    element bearings; envelope analysis; CWRU.
+  \end{otherlanguage*}
+\end{resumo}
+
+\pdfbookmark[0]{\listfigurename}{lof}
+\listoffigures*
+\cleardoublepage
+
+\pdfbookmark[0]{\listtablename}{lot}
+\listoftables*
+\cleardoublepage
+
+\pdfbookmark[0]{\contentsname}{toc}
+\tableofcontents*
+\cleardoublepage
+
+% ---- Elementos textuais -------------------------------------------------
+\textual
+\OnehalfSpacing
+
+\include{secoes/01-introducao}
+\include{secoes/02-dataset}
+\include{secoes/03-fundamentacao}
+\include{secoes/04-metodologia}
+\include{secoes/05-resultados}
+\include{secoes/06-discussao}
+\include{secoes/07-conclusao}
+
+% ---- Elementos pós-textuais ---------------------------------------------
+\postextual
+
+% Título em caixa alta para casar com os demais títulos de capítulo (chapter=TITLE).
+% Os dois avisos que sobram no log são cosméticos e conhecidos do abntex2/biblatex-abnt:
+%   - hyperref "Token not allowed": remove \uppercase do bookmark do PDF;
+%   - biblatex "brazilian-abnt-abnt.lbx not found": o fallback carrega as strings
+%     em português corretamente (conferido na saída).
+\printbibliography[title=REFERÊNCIAS]
+
+\begin{apendicesenv}
+  \partapendices
+  \include{secoes/apendice-a-uso-de-ia}
+  \include{secoes/apendice-b-arquivos-excluidos}
+  \include{secoes/apendice-c-matrizes-confusao}
+\end{apendicesenv}
+
+\end{document}

@@ -1,0 +1,79 @@
+# ---- Dados ----
+# Os .mat brutos do CWRU são versionados (data/raw/).
+# Tudo que for derivado, não.
+data/processed/*
+!data/processed/.gitkeep
+data/interim/
+data/external/
+*.npy
+*.npz
+*.h5
+*.hdf5
+*.pkl
+*.parquet
+*.feather
+
+# ---- Modelos e resultados pesados ----
+models/
+*.joblib
+*.pt
+*.pth
+*.ckpt
+results/figures/*
+!results/figures/.gitkeep
+# Métricas em .csv/.md são leves e DEVEM ser versionadas (results/metrics/)
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.python-version
+
+# ---- Notebooks ----
+.ipynb_checkpoints/
+# Limpe as saídas antes do commit: jupyter nbconvert --clear-output --inplace notebooks/*.ipynb
+# Exceção: o notebook final da entrega vai COM as saídas, para o professor ver os resultados.
+
+# ---- LaTeX (relatório ABNT) ----
+# Tudo que o latexmk gera vai para docs/relatorio/build/.
+docs/relatorio/build/
+# O PDF final é produzido por `make entrega` e versionado de propósito
+# (docs/relatorio/relatorio.pdf), para o professor abrir sem compilar nada.
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+
+# ---- Ferramentas ----
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_convert/
+
+# ---- Editores e SO ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# ---- Segredos ----
+.env
+*.key
+credentials.json
+
+# ---- Claude Code ----
+.claude/settings.local.json
+CLAUDE.md

@@ -1,0 +1,26 @@
+# ECM514 — Detecção e diagnóstico de anomalias em sinais de vibração
+# Python 3.11+
+#
+# Versões mínimas compatíveis com o ambiente do Google Colab (o enunciado exige
+# notebook 100% executável e reprodutível lá). Instalar com:
+#   pip install -r requirements.txt
+
+# ---- Núcleo numérico ----
+numpy>=1.26
+scipy>=1.11          # scipy.signal: hilbert (envelope), stft, welch
+pandas>=2.1
+
+# ---- Modelagem ----
+scikit-learn>=1.4    # IsolationForest, OneClassSVM, RandomForest, SVM, métricas
+
+# ---- Visualização ----
+matplotlib>=3.8
+
+# ---- Notebook ----
+jupyter>=1.0
+ipykernel>=6.29
+
+# ---- Opcionais (descomentar quando a técnica entrar no pipeline) ----
+# PyWavelets>=1.5    # análise wavelet / kurtograma
+# torch>=2.2         # autoencoder e CNN 1D
+# seaborn>=0.13      # matrizes de confusão

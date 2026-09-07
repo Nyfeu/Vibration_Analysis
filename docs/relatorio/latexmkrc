@@ -1,0 +1,20 @@
+# Configuração do latexmk para o relatório ABNT.
+# Usada tanto localmente (make) quanto no CI (.github/workflows/relatorio.yml).
+
+$pdf_mode = 1;                 # pdflatex
+$bibtex_use = 2;               # roda a bibliografia e limpa os arquivos dela
+$biber = 'biber %O %B';        # biblatex-abnt exige biber, não bibtex
+$out_dir = 'build';            # mantém a pasta do relatório limpa
+
+# -interaction=nonstopmode: no CI ninguém está lá para responder a um prompt.
+# -file-line-error: mensagens no formato arquivo:linha, clicáveis no editor.
+$pdflatex = 'pdflatex -interaction=nonstopmode -file-line-error -synctex=1 %O %S';
+
+# Extensões de lixo específicas do abntex2/biblatex que o latexmk não conhece.
+$clean_ext = 'bbl run.xml synctex.gz nlo nls brf glo ist acn acr alg loa';
+
+# pdflatex não cria subdiretórios dentro de $out_dir, e os \include de secoes/
+# geram secoes/*.aux lá dentro. Sem isto a compilação morre com
+# "I can't write on file `secoes/01-introducao.aux'".
+use File::Path qw(make_path);
+make_path("$out_dir/secoes");

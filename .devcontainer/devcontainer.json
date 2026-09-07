@@ -1,0 +1,52 @@
+{
+  "name": "ECM514 — Vibration Analysis",
+  "build": {
+    "dockerfile": "Dockerfile",
+    // O Dockerfile copia requirements.txt, que está na raiz do repositório.
+    "context": ".."
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-toolsai.jupyter",
+        "charliermarsh.ruff",
+        "James-Yu.latex-workshop",
+        "streetsidesoftware.code-spell-checker",
+        "streetsidesoftware.code-spell-checker-portuguese-brazilian"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "editor.rulers": [88],
+        "files.trimTrailingWhitespace": true,
+        "files.insertFinalNewline": true,
+
+        // O relatório é compilado pelo latexmkrc do próprio repositório
+        // (build/ como saída, biber como backend). Não deixe o LaTeX Workshop
+        // inventar uma receita própria.
+        "latex-workshop.latex.recipes": [
+          { "name": "latexmk (relatorio)", "tools": ["latexmk"] }
+        ],
+        "latex-workshop.latex.tools": [
+          {
+            "name": "latexmk",
+            "command": "latexmk",
+            "args": ["-pdf", "-interaction=nonstopmode", "-synctex=1", "%DOC%"],
+            "env": {}
+          }
+        ],
+        "latex-workshop.latex.outDir": "%DIR%/build",
+        "latex-workshop.latex.autoBuild.run": "onFileChange",
+        "cSpell.language": "en,pt,pt_BR"
+      }
+    }
+  },
+
+  // Sanity check: se o container subiu quebrado, falha aqui e não três horas
+  // depois, no meio da escrita do relatório.
+  "postCreateCommand": "python -c \"import numpy, scipy, sklearn, matplotlib; print('python ok')\" && kpsewhich abntex2.cls && kpsewhich abnt.bbx && biber --version",
+
+  "remoteUser": "vscode"
+}

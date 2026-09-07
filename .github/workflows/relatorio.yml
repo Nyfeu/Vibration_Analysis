@@ -1,0 +1,51 @@
+# Gera o PDF do relatório a cada push. O PDF fica disponível como artifact da
+# execução — ninguém precisa ter LaTeX instalado para ler a versão mais recente.
+#
+# Em tags v* o PDF também é anexado a uma release, que é o que vai para a entrega.
+name: Relatório
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+    paths:
+      - 'docs/relatorio/**'
+      - '.github/workflows/relatorio.yml'
+  pull_request:
+    paths:
+      - 'docs/relatorio/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write   # necessário apenas para criar a release nas tags
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # A imagem da action já traz uma TeX Live completa, então não é preciso
+      # replicar aqui a lista de pacotes do .devcontainer/Dockerfile.
+      - name: Compilar o relatório
+        uses: xu-cheng/latex-action@v3
+        with:
+          working_directory: docs/relatorio
+          root_file: relatorio.tex
+          latexmk_use_lualatex: false
+          # Usa o latexmkrc do repositório (build/ como outdir, biber como backend),
+          # para o PDF do CI ser idêntico ao que sai do `make` local.
+          args: -pdf -interaction=nonstopmode -file-line-error
+
+      - name: Publicar o PDF como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-pdf
+          path: docs/relatorio/build/relatorio.pdf
+          if-no-files-found: error
+
+      - name: Anexar o PDF à release (somente em tags)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: docs/relatorio/build/relatorio.pdf
