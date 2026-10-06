@@ -76,6 +76,9 @@ como régua independente. Nos quatro normais ela aparece em 119,83 a 120,03 Hz
 quando o sinal é lido a 48 kHz. A 12 kHz o pico mais próximo varia de forma
 errática entre 112 e 130 Hz.
 
+Smith e Randall (2015, Tabela A1) confirmam de forma independente: *"48 k normal
+baseline data; fs = 48 kHz"*. Ver [`docs/records/smith2015.md`](../../docs/records/smith2015.md).
+
 **Consequência:** antes de qualquer comparação com as falhas, os normais precisam
 ser **decimados de 48 kHz para 12 kHz (fator 4, com filtro anti-aliasing)**. Se
 forem misturados sem isso, todo o conteúdo espectral do normal fica comprimido 4×,
@@ -103,6 +106,21 @@ Nesses dois casos vale só a rotação nominal da tabela (1772 e 1750 rpm). O
   *"3 o'clock (directly in the load zone), at 6 o'clock (orthogonal to the load
   zone)"*.
 
-Os arquivos e o manifesto usam o rótulo numérico (`@3`, `@6`, `@12`) exatamente
-como na tabela, sem interpretar. Ao declarar a posição escolhida no relatório,
-citar a contradição em vez de adotar uma das versões em silêncio.
+**Resolução:** Smith e Randall (2015, p. 5) afirmam que a única carga radial é a
+gravitacional, atuando em **6 horas**, *"not the 3.00 o'clock position, as stated in
+one section of the CWRU website"*. Vale portanto a tabela: **@6 = centrada na zona de
+carga, @3 = ortogonal, @12 = oposta**. Os arquivos e o manifesto mantêm o rótulo
+numérico da tabela. Ao declarar a posição escolhida no relatório, citar a contradição
+do site e a resolução pelo artigo.
+
+### 5. Saturação em 236 e 237
+
+Smith e Randall (2015, Tabela 3) apontam trechos saturados (*clipped*) em 236DE e
+237DE (OR 0,021" @6, 2 e 3 HP). Conferido aqui: 7 e 5 amostras no teto de ±6,65. O
+237 é de 3 HP, ou seja, está no conjunto de teste. Tratamento a definir na auditoria
+(`docs/arquivos_excluidos.md`).
+
+### Conferência com a literatura
+
+A curtose do canal DE dos 56 arquivos reproduz as Tabelas B1 e B2 de Smith e Randall
+(2015), com desvio máximo de 0,28%. Os arquivos são os mesmos analisados no artigo.

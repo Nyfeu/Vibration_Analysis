@@ -24,6 +24,7 @@
 | # | Data | Ferramenta | O que foi pedido | O que foi aproveitado | O que foi descartado / corrigido | Revisado por | Onde está no repo |
 |---|---|---|---|---|---|---|---|
 | 1 | 2026-10-06 | Claude Code | Baixar o subconjunto DE/12 kHz do CWRU (issue #3) e conferir taxa de amostragem e nº de arquivos por classe contra a documentação oficial | 56 `.mat` em `data/raw/`; `scripts/download_cwru.py` (download + SHA-256 + manifesto); `data/raw/manifesto.csv`; `data/raw/README.md` com as inconsistências encontradas (normais a 48 kHz, `99.mat` com variáveis de `98.mat`, contradição na posição do defeito OR) | _a preencher pelo grupo_ | _pendente_ | `data/raw/`, `scripts/download_cwru.py`, `README.md` |
+| 2 | 2026-10-06 | Claude Code | Propor um template (estrutura) para os fichamentos de artigos | Estrutura do fichamento: cabeçalho com referência ABNT, chave `.bib`, arquivo, autor, revisor e motivo da leitura; convenções (citação direta com página e "tradução nossa", paráfrase, marcador "→ Projeto:" para implicações); seções "Resumo em cinco pontos", "Implicações para o projeto", "Pendências e dúvidas para o grupo" e "Referências do artigo a seguir" | _a preencher pelo grupo_ | _pendente_ | `docs/records/smith2015.md` |
 
 ---
 
