@@ -43,6 +43,16 @@ SKF 6205-2RS JEM.
 - Cargas: 0 a 3 HP.
 - Diâmetros de defeito: 0.007", 0.014", 0.021".
 
+Os 56 arquivos `.mat` originais (179 MB) estão versionados em
+[`data/raw/`](data/raw/), baixados das páginas oficiais do CWRU. O inventário com
+classe, carga, rotação, nº de amostras e SHA-256 está em
+[`data/raw/manifesto.csv`](data/raw/manifesto.csv). Para refazer o download e
+conferir a integridade: `python scripts/download_cwru.py`.
+
+> **Atenção:** os arquivos normais (97–100) foram gravados a **48 kHz**, não a
+> 12 kHz, e `99.mat` traz por engano as variáveis de `98.mat`. Detalhes e evidência
+> em [`data/raw/README.md`](data/raw/README.md).
+
 Descrição completa do setup experimental, quantidade de amostras por classe e
 origem dos dados: ver relatório técnico.
 

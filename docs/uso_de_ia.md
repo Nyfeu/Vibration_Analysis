@@ -15,7 +15,7 @@
 
 | Ferramenta | Versão / modelo | Usada para |
 |---|---|---|
-| _preencher_ | | |
+| Claude Code | Claude Opus 5.5 (`claude-opus-5-5`) | Download e verificação dos dados, scripts, documentação |
 
 ---
 
@@ -23,7 +23,7 @@
 
 | # | Data | Ferramenta | O que foi pedido | O que foi aproveitado | O que foi descartado / corrigido | Revisado por | Onde está no repo |
 |---|---|---|---|---|---|---|---|
-| 1 | _AAAA-MM-DD_ | | | | | | |
+| 1 | 2026-10-06 | Claude Code | Baixar o subconjunto DE/12 kHz do CWRU (issue #3) e conferir taxa de amostragem e nº de arquivos por classe contra a documentação oficial | 56 `.mat` em `data/raw/`; `scripts/download_cwru.py` (download + SHA-256 + manifesto); `data/raw/manifesto.csv`; `data/raw/README.md` com as inconsistências encontradas (normais a 48 kHz, `99.mat` com variáveis de `98.mat`, contradição na posição do defeito OR) | _a preencher pelo grupo_ | _pendente_ | `data/raw/`, `scripts/download_cwru.py`, `README.md` |
 
 ---
 
