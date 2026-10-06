@@ -1,21 +1,36 @@
 % Responsável: TODO(grupo) — frente "Dados e protocolo"
 % Enunciado, item 6.3: origem, setup físico, taxa de amostragem, tipos de falha
 % rotulados, quantidade de amostras por classe.
+%
+% Rascunho redigido com apoio de IA (docs/uso_de_ia.md, entrada 5) a partir de
+% fontes já conferidas: páginas oficiais do CWRU (data/raw/README.md), Smith e
+% Randall (2015) (docs/records/smith2015.md) e data/raw/manifesto.csv.
+% O grupo deve revisar e reescrever com a própria voz antes da entrega.
 \chapter{Descrição do dataset}
 \label{cap:dataset}
 
 \section{Origem e setup experimental}
 \label{sec:setup}
 
-TODO(grupo): bancada do \emph{Case Western Reserve University Bearing Data
-Center}; motor, dinamômetro, posição dos acelerômetros, defeitos induzidos por
-eletroerosão.
+Os dados vêm do \emph{Bearing Data Center} da \emph{Case Western Reserve University} (CWRU)~\cite{cwru}. Esse conjunto tornou-se uma referência padrão para testar algoritmos de diagnóstico de rolamentos: de forma que, só na revista \emph{Mechanical Systems and Signal Processing}, 41 artigos o utilizaram entre 2004 e o início de 2015~\cite{smith2015}.
+
+A bancada é formada por um motor de \SI{2}{\hp}, um transdutor de torque com encoder, um dinamômetro e a eletrônica de controle~\cite{cwru}. Os rolamentos ensaiados apoiam o eixo do motor: um SKF 6205-2RS JEM no lado do acionamento (\emph{drive end}, DE) e um SKF 6203-2RS JEM no lado do rolamento do ventilador do motor (\emph{fan-end bearing}, FE)~\cite{smith2015}. Defeitos pontuais foram introduzidos por eletroerosão (\emph{electro-discharge machining}, EDM) na pista interna, na pista externa e nas esferas, com diâmetros de \SIrange{0.007}{0.040}{\inch}. Cada
+rolamento danificado foi remontado na bancada e ensaiado em regime de rotação constante~\cite{cwru,smith2015}.
+
+A vibração foi medida por acelerômetros fixados com base magnética na posição de 12~horas das carcaças do DE e do FE e, em alguns ensaios, também na base do motor~\cite{cwru}. Os sinais foram gravados por um gravador DAT de 16 canais e disponibilizados em arquivos do Matlab (\texttt{.mat}), a \SI{12}{\kilo\hertz} e, para parte dos defeitos no DE, também a \SI{48}{\kilo\hertz}. A rotação e a potência foram medidas pelo transdutor de
+torque e anotadas manualmente~\cite{cwru}.
+
+O dinamômetro aplica quatro níveis de carga, de \SIrange{0}{3}{\hp}, com rotação nominal de \num{1797}, \num{1772}, \num{1750} e \SI{1730}{rpm},
+respectivamente~\cite{cwru}. Essa ``carga'', porém, é um torque no eixo: como não há mecanismo que o converta em força radial, a única carga radial sobre os rolamentos é, em teoria, o peso do próprio eixo, que atua na posição de 6~horas. O efeito prático da carga é reduzir a rotação em até cerca de 4\%~\cite{smith2015}. Essa ressalva condiciona a interpretação do protocolo de avaliação por carga (\autoref{cap:metodologia}).
 
 \section{Configuração adotada}
 \label{sec:config-adotada}
 
-% Todos os números desta tabela devem ser conferidos contra a documentação
-% oficial do CWRU antes da entrega. Não copiar de fonte secundária.
+A \autoref{tab:config} resume o subconjunto utilizado, e a \autoref{tab:registros} lista os registros do CWRU que o compõem. A lista explícita de registros segue a recomendação de \textcite{smith2015}: como os arquivos do CWRU variam muito entre si, um resultado só é verificável quando se
+sabe exatamente quais gravações foram usadas.
+
+% Todos os números desta tabela foram conferidos contra a documentação oficial
+% do CWRU (ver data/raw/README.md). Não copiar de fonte secundária.
 \begin{table}[htb]
   \centering
   \caption{Configuração do subconjunto do CWRU utilizada neste trabalho.}
@@ -30,22 +45,88 @@ eletroerosão.
     Classes               & normal, pista interna, pista externa, esfera \\
     Diâmetros de defeito  & \SI{0.007}{\inch}, \SI{0.014}{\inch}, \SI{0.021}{\inch} \\
     Cargas                & \SIrange{0}{3}{\hp} \\
-    Posição do defeito em pista externa & 6~h, centrada na zona de carga \\
+    Posição do defeito em pista externa & 6~h (centrada na zona de carga) \\
+    \quad 3~h e 12~h                    & só no teste de generalização \\
     \bottomrule
   \end{tabular}
   \fonte{Elaborado pelos autores a partir da documentação do CWRU Bearing Data Center.}
 \end{table}
 
-Justificativa das escolhas: TODO(grupo).
+\begin{table}[htb]
+  \centering
+  \caption{Registros do CWRU utilizados, por classe, diâmetro do defeito e carga.}
+  \label{tab:registros}
+  \begin{tabular}{llcccc}
+    \toprule
+    \textbf{Classe} & \textbf{Diâmetro} & \SI{0}{\hp} & \SI{1}{\hp} & \SI{2}{\hp} & \SI{3}{\hp} \\
+    \midrule
+    Normal          & ---              & 97  & 98  & 99  & 100 \\
+    Pista interna   & \SI{0.007}{\inch} & 105 & 106 & 107 & 108 \\
+                    & \SI{0.014}{\inch} & 169 & 170 & 171 & 172 \\
+                    & \SI{0.021}{\inch} & 209 & 210 & 211 & 212 \\
+    Esfera          & \SI{0.007}{\inch} & 118 & 119 & 120 & 121 \\
+                    & \SI{0.014}{\inch} & 185 & 186 & 187 & 188 \\
+                    & \SI{0.021}{\inch} & 222 & 223 & 224 & 225 \\
+    Pista externa (6~h) & \SI{0.007}{\inch} & 130 & 131 & 132 & 133 \\
+                    & \SI{0.014}{\inch} & 197 & 198 & 199 & 200 \\
+                    & \SI{0.021}{\inch} & 234 & 235 & 236 & 237 \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de \textcite{cwru}.}
+\end{table}
+
+Cada escolha da \autoref{tab:config} tem um motivo:
+
+\begin{itemize}
+  \item \textbf{Sensor DE.} Os defeitos analisados estão no rolamento do lado do   acionamento, e o acelerômetro DE é o mais próximo deles, portanto o de melhor relação sinal-ruído.
+  \item \textbf{Taxa de \SI{12}{\kilo\hertz}.} Os conjuntos de 12 e de \SI{48}{\kilo\hertz} do DE cobrem as mesmas cargas, diâmetros e posições de defeito, e \textcite{smith2015} não encontraram diferença relevante de diagnosticabilidade entre eles. O de \SI{12}{\kilo\hertz} foi escolhido porque tem menos problemas de aquisição: \textcite{smith2015} apontam trechos saturados em duas de suas gravações, contra onze gravações problemáticas no de \SI{48}{\kilo\hertz} (saturação, ruído elétrico ou canais DE e FE idênticos a
+  menos de um fator de escala). Ele também fica abaixo da faixa de 11 a \SI{14}{\kilo\hertz}, onde os dados de \SI{48}{\kilo\hertz} mostram componentes discretas de origem mecânica e eletromagnética~\cite{smith2015}.
+  \item \textbf{Quatro classes, com o diâmetro como eixo secundário.} A tarefa principal é distinguir o tipo de falha. O diâmetro é tratado como medida de severidade, em análise à parte, para não fragmentar o problema em classes com quatro gravações cada. Os defeitos de \SI{0.028}{\inch} ficaram de fora: usam rolamento NTN em vez de SKF e não têm gravações de pista externa~\cite{cwru,smith2015}.
+  \item \textbf{Pista externa na posição de 6~h.} O defeito em pista externa é estacionário, então sua posição em relação à zona de carga altera a resposta vibratória~\cite{cwru}. A posição de 6~h é a única ensaiada com os três
+  diâmetros e deixa as três classes de falha com 12 gravações cada. Ela coincide com a zona de carga, ao contrário do que afirma uma seção do site do CWRU, que indica 3~h~\cite{smith2015}. As gravações com o defeito a 3~h (ortogonal) e a 12~h (oposto à zona de carga) não entram no treino. Elas formam um conjunto de teste à parte, para verificar se um modelo treinado em 6~h reconhece o defeito em outra posição.
+\end{itemize}
+
+\subsection{Taxa de amostragem das gravações normais}
+\label{sec:fs-normais}
+
+A página oficial das gravações normais não informa a taxa de amostragem. As quatro gravações (97 a 100), porém, foram feitas a \SI{48}{\kilo\hertz}, e não a \SI{12}{\kilo\hertz}, como registra a Tabela~A1 de \textcite{smith2015}. O grupo confirmou isso de forma independente: a componente de \SI{120}{\hertz} (o dobro da frequência da rede elétrica, que não depende da carga) só aparece em \SI{120.0}{\hertz} nas gravações normais quando elas são lidas a \SI{48}{\kilo\hertz}, e nas gravações de falha quando lidas a \SI{12}{\kilo\hertz}. Por isso, as gravações normais são decimadas por um fator 4, com filtro anti-\emph{aliasing}, antes de qualquer processamento. Sem essa correção, todo o conteúdo espectral das gravações normais ficaria comprimido quatro vezes, e um detector poderia separar ``normal'' de ``falha'' pela taxa de
+amostragem, e não pelo defeito.
 
 \section{Quantidade de amostras por classe}
 \label{sec:amostras-por-classe}
 
+A \autoref{tab:gravacoes} mostra a quantidade de gravações e a duração total por classe. Cada gravação de falha tem cerca de \SI{10}{\second} (de
+\num{121265} a \num{122917} amostras a \SI{12}{\kilo\hertz}). As gravações normais têm de \SIrange{5.1}{10.1}{\second}.
+
+\begin{table}[htb]
+  \centering
+  \caption{Gravações e duração total por classe no conjunto principal.}
+  \label{tab:gravacoes}
+  \begin{tabular}{lcc}
+    \toprule
+    \textbf{Classe} & \textbf{Gravações} & \textbf{Duração total (s)} \\
+    \midrule
+    Normal          & 4  & \num{35.4} \\
+    Pista interna   & 12 & \num{121.9} \\
+    Esfera          & 12 & \num{121.9} \\
+    Pista externa   & 12 & \num{122.1} \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de \texttt{data/raw/manifesto.csv}.}
+\end{table}
+
+A classe normal tem menos de um terço da duração de cada classe de falha e só uma gravação por carga. Isso pesa especialmente na detecção: com o teste em \SI{3}{\hp}, o detector é treinado com três gravações normais, e a taxa de falsos positivos é estimada sobre uma única gravação, a de número 100.
+
 % Preencher SOMENTE com a contagem produzida por src/data.py. Nada de estimativa.
-TODO(grupo): tabela de janelas por classe e por carga, após a segmentação.
+TODO(grupo): tabela de janelas por classe e por carga, gerada pelo código após a
+segmentação (\autoref{cap:metodologia}).
 
 \section{Auditoria dos arquivos}
 \label{sec:auditoria}
 
-Nem toda gravação do CWRU é utilizável. TODO(grupo): resumir os critérios de
-exclusão adotados; a lista completa está no Apêndice~\ref{ap:arquivos-excluidos}.
+Nem toda gravação do CWRU exibe a assinatura do defeito declarado. \textcite{smith2015} aplicaram três métodos de análise de envelope a todas as
+gravações do conjunto e as classificaram em seis categorias de diagnóstico, de ``sintomas clássicos'' a ``indistinguível de ruído''. Os autores concluíram que, em muitos casos, a montagem da bancada afeta o sinal mais do que o próprio defeito, com indícios de folga mecânica.
+
+Com base nessa auditoria, nenhuma gravação do conjunto principal foi excluída por qualidade do sinal. As gravações em que nenhum dos três métodos diagnostica o defeito no canal DE foram \emph{mantidas com ressalva}: as de número 118, 119, 120, 224 e 225 (esfera) e a de número 200 (pista externa). Excluí-las inflaria a taxa de detecção, porque removeria justamente as falhas difíceis, e deixaria algumas combinações de classe e diâmetro sem gravação de treino ou de teste. Em vez disso, as métricas são reportadas também por categoria de diagnosticabilidade.
+
+Ao todo, 20 das 40 gravações têm alguma ressalva: as seis citadas acima, seis com diagnóstico apenas parcial, duas só diagnosticáveis com pré-processamento, duas com trechos saturados e as quatro normais, gravadas a \SI{48}{\kilo\hertz}. No conjunto de teste (\SI{3}{\hp}), duas das nove gravações de falha (200 e 225) não apresentam evidência física do defeito. Isso põe um limite realista para qualquer método baseado na física do envelope. A lista completa, com critério e justificativa por gravação, está no Apêndice~\ref{ap:arquivos-excluidos}.
