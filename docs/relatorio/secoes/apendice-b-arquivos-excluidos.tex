@@ -1,8 +1,42 @@
 % Espelha docs/arquivos_excluidos.md. Manter os dois em sincronia.
-\chapter{Arquivos do CWRU excluídos}
+\chapter{Auditoria dos arquivos do CWRU}
 \label{ap:arquivos-excluidos}
 
-Auditoria baseada em \textcite{smith2015}. O registro completo, com critério e
-justificativa por gravação, está em \texttt{docs/arquivos\_excluidos.md}.
+Auditoria baseada em \textcite{smith2015}, que diagnosticou cada registro do CWRU
+com três métodos de análise de envelope (M1: sinal bruto; M2: pré-branqueamento
+cepstral; M3: separação discreto/aleatório seguida de kurtograma). O registro
+completo, com critério e justificativa por gravação, está em
+\texttt{docs/arquivos\_excluidos.md}.
 
-TODO(grupo): consolidar a tabela final aqui.
+Nenhum registro da configuração adotada foi excluído por qualidade do sinal. Os
+registros em que o defeito declarado não é diagnosticável no canal DE foram
+mantidos com ressalva, e as métricas são reportadas também estratificadas por
+diagnosticabilidade. A \autoref{tab:ap-ressalvas} lista as ressalvas. Os
+registros de pista externa nas posições de 3~h e 12~h (144--147, 156, 158--160,
+246--249, 258--261) formam um conjunto separado de generalização.
+
+\begin{table}[htb]
+  \centering
+  \small
+  \caption{Registros mantidos com ressalva (canal DE).}
+  \label{tab:ap-ressalvas}
+  \begin{tabular}{llll}
+    \toprule
+    \textbf{Critério} & \textbf{Registros} & \textbf{Classe} & \textbf{Ressalva} \\
+    \midrule
+    C1 & 118, 119, 120, 224, 225 & B   & não diagnosticável por M1--M3 \\
+    C1 & 200                     & OR  & não diagnosticável por M1--M3 \\
+    C2 & 185, 186, 187, 188      & B   & diagnóstico apenas parcial \\
+    C2 & 198, 199                & OR  & diagnóstico apenas parcial \\
+    C3 & 121                     & B   & diagnosticável só com M3 \\
+    C3 & 197                     & OR  & diagnosticável só com M3 \\
+    C4 & 236, 237                & OR  & trechos saturados \\
+    C6 & 97, 98, 99, 100         & normal & gravados a \SI{48}{\kilo\hertz}; decimados \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de \textcite{smith2015} (Tabelas 3, A1 e B2).}
+\end{table}
+
+Dos nove registros de falha do conjunto de teste (\SI{3}{\hp}), dois (200 e 225)
+não apresentam evidência física do defeito, e um terceiro (121) só a apresenta com
+pré-processamento.
