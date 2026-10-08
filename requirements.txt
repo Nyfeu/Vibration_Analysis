@@ -20,6 +20,9 @@ matplotlib>=3.8
 jupyter>=1.0
 ipykernel>=6.29
 
+# ---- Testes ----
+pytest>=8.0
+
 # ---- Opcionais (descomentar quando a técnica entrar no pipeline) ----
 # PyWavelets>=1.5    # análise wavelet / kurtograma
 # torch>=2.2         # autoencoder e CNN 1D
