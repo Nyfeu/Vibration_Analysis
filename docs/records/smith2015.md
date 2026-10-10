@@ -4,7 +4,7 @@
 |---|---|
 | **Referência (ABNT)** | SMITH, W. A.; RANDALL, R. B. Rolling element bearing diagnostics using the Case Western Reserve University data: a benchmark study. *Mechanical Systems and Signal Processing*, v. 64–65, p. 100–131, 2015. DOI: [10.1016/j.ymssp.2015.04.021](https://doi.org/10.1016/j.ymssp.2015.04.021). |
 | **Chave no `.bib`** | `smith2015` |
-| **Arquivo** | [`docs/articles/smith2015.pdf`](../articles/smith2015.pdf) |
+| **Arquivo** | `docs/articles/smith2015.pdf` (local, fora do versionamento; obter pelo DOI) |
 | **Fichado por** | André Solano Ferreira Rodrigues Maiolini |
 | **Revisado por** | _preencher_ |
 | **Última atualização** | 2026-10-06 |

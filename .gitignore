@@ -76,3 +76,7 @@ credentials.json
 
 # ---- Claude Code ----
 .claude/settings.local.json
+
+# ---- Artigos (PDFs com direitos autorais): só locais, nunca versionados ----
+# Os fichamentos em docs/records/ citam a fonte; cada membro baixa o PDF pelo DOI.
+docs/articles/
