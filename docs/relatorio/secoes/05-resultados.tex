@@ -15,7 +15,7 @@ estimativas pontuais: as 581 janelas não são independentes, a FPR vem de uma
 classificadores, TPR e FPR tratam ``falha'' como qualquer classe diferente de
 normal. A acurácia por classe está na ordem normal / pista interna / esfera /
 pista externa. A tabela mostra só as configurações principais; as demais estão
-nas \autoref{tab:deteccao} e~\ref{tab:classificacao}. A regra física
+nas Tabelas~\ref{tab:deteccao} e~\ref{tab:classificacao}. A regra física
 (\autoref{sec:met-regra-fisica}) aparece em duas linhas: no teste em \SI{3}{\hp}
 e no teste com uma montagem nova, que é o principal achado do trabalho
 (\autoref{sec:res-montagem}); o Random Forest selecionado aparece no mesmo teste,
@@ -527,13 +527,21 @@ envelope}, por três razões. Tem a menor FPR entre os candidatos (\num{0.034},
 contra \num{0.121}), que é o que decide a utilidade numa planta, onde quase todo
 o tempo a máquina está normal: com \SI{1}{\percent} de janelas de falha, sua
 precisão projetada é quase o dobro da do Mahalanobis (\num{0.138} contra
-\num{0.077}). Seus alarmes seguem a física --- disparam em \SI{67}{\percent} das
-janelas das gravações com defeito diagnosticável e em \SI{42}{\percent} das sem
-evidência física ---, enquanto o Mahalanobis alarma igualmente em todas. E, por
-depender só das frequências de defeito, não reage a mudanças de amplitude
-causadas por montagem, sensor ou carga. A combinação em dois estágios não
-acrescenta nada: como o detector de amplitude alarma em todas as falhas e nos
-mesmos falsos positivos, o resultado coincide com o do autoencoder sozinho.
+\num{0.077}). Seus alarmes disparam mais nas gravações com defeito diagnosticável
+(\SI{67}{\percent} das janelas) que nas sem evidência física (\SI{42}{\percent}),
+ao contrário do Mahalanobis, que alarma igualmente em todas; a única gravação de
+diagnóstico parcial do teste (188) quase não dispara alarme (\SI{2}{\percent}). E,
+por usar só os \emph{scores} de envelope, não reage a mudanças de amplitude ---
+embora o envelope também dependa das ressonâncias de cada montagem. A combinação
+em dois estágios não acrescenta nada: o detector de amplitude alarma em todas as
+falhas, e os 2 falsos positivos do autoencoder estão entre os 7 dele, de modo que
+o resultado coincide com o do autoencoder sozinho.
+
+Essa recomendação foi feita olhando o teste: FPR, taxa de alarme por categoria e
+precisão projetada vêm das mesmas 581 janelas usadas para avaliar. É, portanto,
+uma escolha \emph{a posteriori}, e a FPR de \num{0.034} é uma estimativa otimista
+do desempenho do detector recomendado; confirmá-la exigiria gravações normais
+independentes, que o CWRU não tem.
 
 O custo da recomendação é explícito: um TPR de \num{0.54}, com intervalo largo,
 deixa passar quase metade das janelas de falha. Em monitoramento contínuo, isso é

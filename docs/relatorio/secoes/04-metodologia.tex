@@ -161,13 +161,14 @@ Tudo o que é \emph{ajustado} usa apenas o treino: a padronização das features
 hiperparâmetros (validação cruzada e busca em grade nas cargas de 0 a
 \SI{2}{\hp}), os limiares dos detectores (janelas normais de treino) e os pesos
 por classe. O teste em \SI{3}{\hp} é usado uma única vez, para a avaliação final.
-Três decisões de projeto, porém, foram tomadas olhando o conjunto inteiro, sem
-usar os rótulos de classe, e são declaradas aqui: o tamanho da janela usa a menor
+Quatro decisões de projeto, porém, foram tomadas olhando o conjunto inteiro, e
+são declaradas aqui. Três delas não usam os rótulos de classe: o tamanho da janela usa a menor
 rotação do manifesto, que é metadado da aquisição; a banda comum foi decidida a
 partir do espectro de potência de normais e falhas (\autoref{sec:banda-comum}); e
 a forma do \emph{score} de envelope (harmônicos e fundo) foi ajustada uma vez depois
 de inspecionar os \emph{scores} de todas as gravações
-(\autoref{sec:met-regra-fisica}).
+(\autoref{sec:met-regra-fisica}). A quarta usa: o detector recomendado foi
+escolhido a partir das métricas do teste (\autoref{sec:met-deteccao}).
 
 O split por carga tem um limite, discutido no \autoref{cap:discussao}: a carga do
 CWRU é um torque que altera pouco a rotação (\autoref{sec:setup}), e cada
@@ -358,7 +359,10 @@ se o detector reage mais às gravações em que o defeito é fisicamente visíve
 O detector recomendado é escolhido por três critérios, e não pela AUC: a FPR, a
 coerência dos alarmes com essas categorias e a precisão projetada pela regra de
 Bayes para \SI{1}{\percent} e \SI{5}{\percent} de janelas de falha, mais
-próximas de uma planta que os \SI{90}{\percent} do teste.
+próximas de uma planta que os \SI{90}{\percent} do teste. Essa escolha usa
+métricas do teste em \SI{3}{\hp} e, por isso, é uma recomendação
+\emph{a posteriori}, e não uma seleção validada: a FPR de \num{0.034} do detector
+escolhido é otimista como estimativa do seu desempenho.
 
 \subsection{Classificação}
 \label{sec:met-classificacao}

@@ -232,8 +232,9 @@ Acurácia: regra física 0,657 (6/9 montagens, p = 0,042); Random Forest 0,457
 
 **Detector recomendado:** o autoencoder sobre os *scores* de envelope — menor
 FPR (0,034), quase o dobro da precisão projetada do Mahalanobis numa planta com
-1% de falhas (0,14 contra 0,08) e alarmes que seguem a física —, ao custo de um
-TPR de 0,54.
+1% de falhas (0,14 contra 0,08) e alarmes mais frequentes nas gravações com
+defeito visível —, ao custo de um TPR de 0,54. A escolha foi feita olhando o
+teste, então a FPR de 0,034 é uma estimativa otimista.
 
 **Leitura crítica (detalhes no relatório, cap. 5 e 6):** os valores próximos de
 100% não vêm de vazamento (verificado em código), mas de um atalho de amplitude:
