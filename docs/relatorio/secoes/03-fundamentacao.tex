@@ -7,8 +7,30 @@
 \section{Assinatura vibratória de defeitos em rolamentos}
 \label{sec:assinatura}
 
-TODO(grupo): impacto periódico, modulação da ressonância estrutural e por que o
-espectro bruto costuma não revelar a falha.
+Um defeito localizado em uma pista ou em um elemento rolante --- uma trinca, um
+lascamento ou, no caso do CWRU, um furo feito por eletroerosão --- é atingido
+pelos demais componentes a cada passagem. Cada contato produz um impacto curto,
+que excita as ressonâncias da estrutura entre o rolamento e o sensor. O sinal
+medido é então uma série de respostas impulsivas de banda larga, que se repetem
+na taxa de passagem pelo defeito~\cites{mcfadden1984}[p.~101]{smith2015}.
+
+\textcite{mcfadden1984} modelaram esse sinal como a resposta da estrutura a uma
+sequência de impulsos, modulada em amplitude por dois efeitos: a distribuição
+de carga no rolamento, que faz o impacto ser mais forte na zona de carga, e a
+variação do caminho de transmissão até o sensor, quando o defeito gira. Dessa
+modulação vêm as bandas laterais da \autoref{tab:assinaturas}.
+
+Esse mecanismo explica por que o espectro do sinal bruto costuma não revelar a
+falha. A energia dos impactos aparece espalhada em torno das frequências de
+ressonância, na faixa de alguns quilohertz, e não na frequência do defeito, que
+fica abaixo de algumas centenas de hertz. Nessa região de baixa frequência, o
+espectro é dominado por componentes do eixo, da rede elétrica e de outras fontes
+determinísticas, muito mais energéticas. Além disso, o escorregamento das esferas
+introduz pequenas variações aleatórias no intervalo entre impactos, o que borra
+os harmônicos de alta ordem~\cite{randall2011tutorial}. A informação do defeito
+está na \emph{repetição} dos impactos, isto é, no envelope do sinal em torno da
+ressonância, e é isso que a análise de envelope extrai
+(\autoref{sec:tec-envelope}).
 
 \section{Frequências características do rolamento}
 \label{sec:frequencias-caracteristicas}
@@ -134,10 +156,78 @@ zero~\cite{gustafsson1996}. Isso só é possível porque o sinal está todo grav
 não se trata de processamento em tempo real.
 
 \subsection{Análise de envelope (demodulação por Hilbert)}
-TODO(grupo). Referências: TODO, TODO.
+\label{sec:tec-envelope}
+
+A análise de envelope é a técnica de referência no diagnóstico de
+rolamentos~\cite{randall2011tutorial}. Ela tem três passos: filtrar o sinal em
+uma banda em torno de uma ressonância excitada pelos impactos; obter o envelope
+dessa banda; e calcular o espectro do envelope. O envelope é o módulo do sinal
+analítico $x_a(t) = x(t) + j\,\mathcal{H}\{x(t)\}$, em que $\mathcal{H}$ é a
+transformada de Hilbert. Na prática usa-se o envelope ao quadrado,
+$|x_a(t)|^2$, cujo espectro (\emph{squared envelope spectrum}, SES) mostra a taxa
+de repetição dos impactos e as modulações descritas na
+\autoref{tab:assinaturas}~\cites{randall2011tutorial}[p.~104]{smith2015}.
+
+A escolha da banda de demodulação é o ponto crítico. Sem filtro algum, o envelope
+é calculado sobre toda a banda, e componentes fortes não relacionados ao defeito
+podem mascará-lo. Esse é o ``método 1'' de \textcite[p.~104]{smith2015}, que
+mesmo assim diagnosticou boa parte do CWRU. A curtose espectral e o kurtograma
+escolhem automaticamente a banda mais impulsiva, que tende a ser a que carrega os
+impactos~\cite{antoni2007}; com uma etapa de separação de componentes
+determinísticos, compõem o ``método de referência'' do mesmo
+estudo~\cite[p.~104--105]{smith2015}.
+
+Neste trabalho, o espectro de envelope tem dois usos: como fonte de features para
+os modelos e como validação física, verificando se o pico observado cai na
+frequência característica prevista para cada classe (\autoref{sec:res-fisica}).
+A análise fica restrita à banda comum de \SIrange{0}{4.8}{\kilo\hertz}
+(\autoref{sec:banda-comum}).
 
 \subsection{Detecção one-class}
-TODO(grupo). Referências: TODO, TODO.
+\label{sec:tec-one-class}
+
+Na detecção de anomalia, o modelo aprende só como é o comportamento normal e
+sinaliza o que se afasta dele. É a formulação adequada à manutenção preditiva:
+antes da primeira falha, não existem exemplos rotulados de falha para
+treinar~\cite{chandola2009}. Os detectores deste trabalho são treinados
+\emph{somente} com janelas normais e produzem um escore de anomalia; um limiar
+sobre esse escore define o que é alarme. A avaliação usa a curva ROC, que mostra
+o compromisso entre a taxa de verdadeiros positivos (TPR) e a de falsos positivos
+(FPR) para todos os limiares possíveis.
+
+Quatro detectores são comparados, do mais simples ao mais flexível:
+\begin{itemize}
+  \item \textbf{Distância de Mahalanobis}~\cite{mahalanobis1936}: distância de
+  cada janela à média dos normais, ponderada pela covariância das features.
+  Supõe que os dados normais formam uma nuvem aproximadamente elíptica; é o
+  baseline estatístico.
+  \item \textbf{Isolation Forest}~\cite{liu2008}: constrói árvores que isolam
+  pontos por cortes aleatórios. Pontos anômalos são isolados com menos cortes,
+  e o comprimento médio do caminho até o isolamento vira o escore. Não supõe
+  forma para a distribuição.
+  \item \textbf{One-Class SVM}~\cite{scholkopf2001}: estima, num espaço de
+  \emph{kernel}, a fronteira de uma região que contém a maior parte dos dados
+  normais; o que fica fora é anômalo.
+  \item \textbf{Autoencoder}~\cite{hinton2006}: rede neural treinada para
+  reconstruir as próprias entradas a partir de uma representação comprimida.
+  Treinada só com normais, reconstrói mal o que é diferente, e o erro de
+  reconstrução vira o escore.
+\end{itemize}
 
 \subsection{Classificação supervisionada}
-TODO(grupo). Referências: TODO, TODO.
+\label{sec:tec-classificacao}
+
+Depois da detecção, o diagnóstico identifica o tipo de defeito: normal, pista
+interna, pista externa ou esfera. Aqui há exemplos rotulados de todas as classes,
+e o problema é de classificação supervisionada.
+
+O classificador principal é o \textbf{Random Forest}~\cite{breiman2001}, um
+conjunto de árvores de decisão treinadas em amostras \emph{bootstrap} dos dados
+e em subconjuntos aleatórios das features, cuja previsão é o voto da maioria.
+Ele lida bem com features de escalas diferentes, tem poucos hiperparâmetros
+sensíveis e informa a importância de cada feature, o que ajuda a verificar se a
+decisão se apoia em grandezas com sentido físico. Como contraponto, usa-se a
+\textbf{máquina de vetores de suporte} (SVM)~\cite{cortes1995}, que procura a
+fronteira de margem máxima entre as classes, com \emph{kernel} para fronteiras
+não lineares. As implementações são as do
+\texttt{scikit-learn}~\cite{pedregosa2011}.

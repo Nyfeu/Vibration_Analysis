@@ -6,10 +6,47 @@
 % distinção entre DETECTAR que algo mudou e DIAGNOSTICAR o que mudou.
 % Fechar com a estrutura do relatório.
 
-TODO(grupo).
+Rolamentos estão entre os componentes que mais falham em máquinas rotativas, e
+uma falha não detectada costuma terminar em parada não programada. O
+monitoramento por vibração permite acompanhar a condição da máquina em operação:
+um defeito localizado gera impactos periódicos, cuja taxa depende da geometria do
+rolamento e da rotação, e que deixam no sinal uma assinatura reconhecível
+~\cite{randall2011livro,randall2011tutorial}.
+
+Duas perguntas diferentes podem ser feitas a esse sinal. A primeira é de
+\emph{detecção}: o comportamento da máquina mudou em relação ao normal? A
+segunda é de \emph{diagnóstico}: se mudou, qual é o defeito? As duas exigem
+dados diferentes. Para detectar, basta conhecer o comportamento normal, que é o
+único disponível numa planta antes da primeira falha. Para diagnosticar, é
+preciso ter exemplos de cada tipo de defeito.
+
+Este trabalho trata as duas perguntas com os dados de rolamentos da
+\emph{Case Western Reserve University} (CWRU)~\cite{cwru}, a referência mais usada
+na área, mas que exige cuidado: as gravações variam muito de qualidade, e parte
+delas não mostra a assinatura do defeito declarado~\cite{smith2015}. Por isso a
+ênfase está no protocolo de avaliação --- divisão por condição de carga, nenhum
+vazamento entre treino e teste, detector treinado só com dados normais --- e na
+verificação física dos resultados, comparando o que os modelos indicam com as
+frequências de defeito previstas pela teoria.
+
+O \autoref{cap:dataset} descreve o conjunto de dados e a auditoria das gravações.
+O \autoref{cap:fundamentacao} apresenta a física dos defeitos e as técnicas
+utilizadas, e o \autoref{cap:metodologia}, o pré-processamento, o protocolo e as
+features. Os resultados estão no \autoref{cap:resultados}, discutidos
+criticamente no \autoref{cap:discussao}, e o \autoref{cap:conclusao} conclui.
 
 \section{Objetivo}
 \label{sec:objetivo}
 
-TODO(grupo): declarar as duas tarefas separadamente --- (i) detecção de anomalia
-sem exemplos rotulados de falha e (ii) diagnóstico do tipo de falha.
+O objetivo é avaliar, em dados reais de vibração do CWRU, duas tarefas tratadas
+separadamente:
+\begin{enumerate}
+  \item \textbf{Detecção de anomalia} sem exemplos de falha: treinar detectores
+  \emph{somente} com sinais de rolamento normal e medir a taxa de verdadeiros e de
+  falsos positivos ao aplicá-los a uma condição de carga não vista;
+  \item \textbf{Diagnóstico do tipo de falha}: classificar as janelas de sinal em
+  normal, defeito na pista interna, na pista externa ou na esfera, também numa
+  carga não vista no treino.
+\end{enumerate}
+Em ambas, o interesse está tanto no desempenho quanto em onde e por que os
+modelos erram, e em se as decisões se apoiam na física do defeito.

@@ -25,8 +25,40 @@ severidade de defeito, e a hipótese para cada padrão de erro.
 \section{Limitações}
 \label{sec:limitacoes}
 
-TODO(grupo): defeitos do CWRU são induzidos por eletroerosão, não por fadiga
-natural; generalização para outra bancada; efeito da carga.
+Algumas limitações decorrem do próprio conjunto de dados e valem para qualquer
+resultado deste trabalho:
+\begin{itemize}
+  \item \textbf{Defeitos artificiais.} Os defeitos do CWRU são furos feitos por
+  eletroerosão, com bordas nítidas e tamanho controlado~\cite{cwru}. Defeitos
+  reais por fadiga começam menores, crescem aos poucos e têm geometria irregular.
+  Um modelo que separa bem os defeitos do CWRU não necessariamente detecta um
+  defeito incipiente real.
+  \item \textbf{A carga quase não muda o sinal.} A ``carga'' do CWRU é um torque
+  que reduz a rotação em até cerca de \SI{4}{\percent}, sem carga radial
+  adicional sobre o rolamento~\cite{smith2015}. Generalizar de
+  \SIlist{0;1;2}{\hp} para \SI{3}{\hp} é, portanto, um teste brando. Além disso,
+  cada combinação de defeito foi ensaiada numa mesma montagem nas quatro cargas, e
+  \textcite{smith2015} mostram que a montagem pode afetar o sinal mais que o
+  próprio defeito. O split por carga não separa montagens: um modelo pode acertar
+  no teste por reconhecer a montagem.
+  \item \textbf{Poucos dados normais.} Há quatro gravações normais, uma por carga.
+  O detector é treinado com três gravações (144 janelas), e a taxa de falsos
+  positivos é estimada sobre uma única gravação (58 janelas sobrepostas). Essa
+  estimativa tem alta incerteza e reflete uma montagem, um dia e uma condição.
+  \item \textbf{Janelas correlacionadas.} Com \SI{50}{\percent} de sobreposição,
+  as janelas de uma gravação não são observações independentes. O número
+  efetivo de amostras do teste está mais próximo das 10 gravações de
+  \SI{3}{\hp} do que das 581 janelas.
+  \item \textbf{Gravações sem assinatura física.} No teste, duas das nove
+  gravações de falha (200 e 225) não mostram o defeito declarado nem sob análise
+  de envelope~\cite{smith2015}. Acertá-las indicaria um atalho, não diagnóstico.
+  \item \textbf{Banda limitada.} Para igualar a cadeia de filtragem de normais e
+  falhas, a análise usa só a banda de \SIrange{0}{4.8}{\kilo\hertz}
+  (\autoref{sec:banda-comum}), renunciando a ressonâncias acima dela.
+  \item \textbf{Uma única bancada.} Todos os dados vêm do mesmo motor e do mesmo
+  tipo de rolamento. A generalização para outra máquina não é avaliada no
+  conjunto principal.
+\end{itemize}
 
 \section{O que faríamos com mais tempo ou mais dados}
 \label{sec:trabalhos-futuros}
