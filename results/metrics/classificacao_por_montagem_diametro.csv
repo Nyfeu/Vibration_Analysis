@@ -1,0 +1,46 @@
+features,modelo,diametro_fora,acuracia
+tempo,Random Forest,0.007,0.3329
+tempo,Random Forest,0.014,0.3333
+tempo,Random Forest,0.021,0.5934
+tempo,SVM (RBF),0.007,0.3343
+tempo,SVM (RBF),0.014,0.2773
+tempo,SVM (RBF),0.021,0.4569
+tempo,KNN (k=9),0.007,0.3859
+tempo,KNN (k=9),0.014,0.2701
+tempo,KNN (k=9),0.021,0.6250
+envelope,Random Forest,0.007,0.6255
+envelope,Random Forest,0.014,0.3319
+envelope,Random Forest,0.021,0.4095
+envelope,SVM (RBF),0.007,0.3529
+envelope,SVM (RBF),0.014,0.3319
+envelope,SVM (RBF),0.021,0.3750
+envelope,KNN (k=9),0.007,0.7231
+envelope,KNN (k=9),0.014,0.3348
+envelope,KNN (k=9),0.021,0.3793
+tempo+envelope,Random Forest,0.007,0.7202
+tempo+envelope,Random Forest,0.014,0.3333
+tempo+envelope,Random Forest,0.021,0.3161
+tempo+envelope,SVM (RBF),0.007,0.4878
+tempo+envelope,SVM (RBF),0.014,0.3032
+tempo+envelope,SVM (RBF),0.021,0.4425
+tempo+envelope,KNN (k=9),0.007,0.6399
+tempo+envelope,KNN (k=9),0.014,0.3075
+tempo+envelope,KNN (k=9),0.021,0.6667
+forma,Random Forest,0.007,0.0918
+forma,Random Forest,0.014,0.3046
+forma,Random Forest,0.021,0.3779
+forma,SVM (RBF),0.007,0.4175
+forma,SVM (RBF),0.014,0.2759
+forma,SVM (RBF),0.021,0.3779
+forma,KNN (k=9),0.007,0.6284
+forma,KNN (k=9),0.014,0.2716
+forma,KNN (k=9),0.021,0.3750
+envelope,Regra física (sem treino),0.007,0.6829
+envelope,Regra física (sem treino),0.014,0.5948
+envelope,Regra física (sem treino),0.021,0.6940
+sinal bruto,CNN 1D,0.007,0.9412
+sinal bruto,CNN 1D,0.014,0.3333
+sinal bruto,CNN 1D,0.021,0.3649
+sinal normalizado,CNN 1D,0.007,0.6887
+sinal normalizado,CNN 1D,0.014,0.3089
+sinal normalizado,CNN 1D,0.021,0.4971

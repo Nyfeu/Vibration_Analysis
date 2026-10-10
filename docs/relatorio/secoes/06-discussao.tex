@@ -27,12 +27,19 @@ detector reage ao nível de vibração''. Trocar de detector quase não muda o
 quadro (os quatro têm AUC próximo de 1 com features de tempo); trocar de
 features o muda completamente.
 
+\paragraph{A regra física, sem treino.} Quando a montagem muda, a regra que só
+compara o pico do envelope com a frequência teórica acerta \SI{65.7}{\percent} do
+tipo de falha, contra no máximo \SI{54.7}{\percent} dos modelos treinados, e
+\SI{99.8}{\percent} do conjunto de generalização (\autoref{sec:res-montagem}).
+O conhecimento físico, embutido na geometria do rolamento, generaliza onde o
+aprendizado a partir dos dados não generaliza.
+
 \paragraph{O pré-branqueamento.} Sem escolher banda alguma, o pré-branqueamento
 cepstral recuperou o BSF nas duas gravações de esfera que o artigo de referência
 diagnostica pelo mesmo método (222 e 223), elevando de zero para duas as
 gravações de esfera com assinatura clara (\autoref{tab:preprocessamentos}).
 
-\paragraph{O pré-processamento.} A verificação espectral da decimação encontrou
+\paragraph{A banda comum.} A verificação espectral da decimação encontrou
 um resíduo de \emph{aliasing} que, sem a banda comum, deixaria normais e falhas
 com cadeias de filtragem diferentes (\autoref{sec:banda-comum}). Foi um atalho
 evitado antes de existir.
@@ -71,6 +78,15 @@ chega a \SI{99.7}{\percent} no teste e acerta todas as janelas das gravações s
 assinatura (200 e 225), mas reconhece só \SI{64.1}{\percent} do conjunto de
 generalização. Uma rede que aprende do sinal bruto aprende também a ``impressão
 digital'' de cada montagem.
+
+\paragraph{Nenhum modelo treinado generaliza para uma montagem nova.} Com um
+diâmetro inteiro fora do treino, todos os classificadores --- inclusive a CNN e os
+modelos só de envelope --- ficam entre \SI{26}{\percent} e \SI{55}{\percent}, perto
+do acaso de \SI{33}{\percent} (\autoref{tab:montagem}). O desempenho de 93 a
+\SI{99.7}{\percent} do teste por carga mede, portanto, o reconhecimento de
+montagens já vistas. Com 12 montagens de falha, uma por combinação de defeito e
+diâmetro, não há variedade suficiente para um modelo aprender o que o defeito tem
+em comum entre montagens.
 
 \paragraph{O limiar não se transfere.} A FPR no limiar variou de 0 a
 \SI{81}{\percent} entre detectores com AUC semelhante, porque o limiar foi
@@ -164,6 +180,10 @@ resultado deste trabalho:
   \item \textbf{Banda limitada.} Para igualar a cadeia de filtragem de normais e
   falhas, a análise usa só a banda de \SIrange{0}{4.8}{\kilo\hertz}
   (\autoref{sec:banda-comum}), renunciando a ressonâncias acima dela.
+  \item \textbf{Limiar de confirmação com quatro normais.} Na validação física, o
+  limiar de cada família é o maior escore de quatro gravações normais. Com tão
+  poucas, o limiar é incerto, e confirmações por margem de menos de
+  \SI{1}{\decibel} (185 a 187, 197) não devem ser tomadas como diagnóstico.
   \item \textbf{Uma única bancada.} Todos os dados vêm do mesmo motor e do mesmo
   tipo de rolamento. A generalização para outra máquina não é avaliada no
   conjunto principal.
@@ -173,9 +193,11 @@ resultado deste trabalho:
 \label{sec:trabalhos-futuros}
 
 \begin{itemize}
-  \item \textbf{Split por montagem, não por carga.} Treinar com dois diâmetros e
-  testar no terceiro obrigaria o modelo a lidar com uma montagem nova, que é o
-  que o conjunto de generalização sugere ser o teste realmente difícil.
+  \item \textbf{Modelos guiados pela física.} A regra sem treino foi a única
+  abordagem a generalizar entre montagens. Combinar o aprendizado com essa
+  estrutura --- por exemplo, usar como features só razões entre famílias de
+  envelope, ou treinar o classificador apenas para decidir entre as famílias
+  candidatas --- poderia unir a robustez da regra à flexibilidade do modelo.
   \item \textbf{Normalizar a amplitude por gravação.} Dividir cada janela pelo
   RMS da gravação --- ou usar só features adimensionais --- e verificar se algum
   desempenho sobra sem o atalho.

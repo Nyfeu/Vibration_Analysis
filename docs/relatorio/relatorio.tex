@@ -139,6 +139,10 @@
 \SingleSpacing   % o corpo passa a espaço 1,5 depois de \textual
 
 % =============================================================================
+% \paragraph sem número e fora do sumário: só até a subsubseção.
+\setsecnumdepth{subsubsection}
+\settocdepth{subsubsection}
+
 \begin{document}
 
 \selectlanguage{brazil}
@@ -161,7 +165,8 @@
   amostras extraíram-se features do domínio do tempo e escores do espectro de
   envelope nas frequências características do rolamento. Uma validação física,
   sem modelo treinado, confirmou o defeito declarado em todas as 12 gravações de
-  pista interna, em 8 de 12 de pista externa e em nenhuma de esfera, concordando
+  pista interna, em 8 de 12 de pista externa e em nenhuma de esfera pelo envelope
+  do sinal bruto, concordando
   com a auditoria de Smith e Randall (2015) em 50 de 52 gravações de falha. Quatro
   detectores treinados só com dados normais (Mahalanobis, Isolation Forest,
   One-Class SVM e autoencoder) atingiram AUC de até 1,00, e o Random Forest, escolhido por
@@ -174,7 +179,10 @@
   cai para 67,6\%, mas a generalização para o defeito em outra posição sobe de
   40,0\% para 76,0\%. A principal limitação é do próprio conjunto de dados: com
   quatro gravações normais e cada defeito ensaiado numa única montagem, alta
-  acurácia no CWRU é fácil e diz pouco sobre o diagnóstico do defeito.
+  acurácia no CWRU é fácil e diz pouco sobre o diagnóstico do defeito. Quando um
+  diâmetro inteiro (uma montagem) fica fora do treino, todos os modelos caem para
+  perto do acaso, enquanto uma regra física sem treino, baseada na frequência de
+  defeito dominante no envelope, acerta 65,7\% do tipo de falha.
 
   \textbf{Palavras-chave}: manutenção preditiva; detecção de anomalias;
   rolamentos; análise de envelope; CWRU.
@@ -192,7 +200,7 @@
     at the bearing characteristic frequencies were extracted from each
     4096-sample window. A physical validation, with no trained model, confirmed
     the declared fault in all 12 inner race records, in 8 of 12 outer race
-    records and in none of the ball records, agreeing with the audit by Smith
+    records and in none of the ball records from the raw-signal envelope, agreeing with the audit by Smith
     and Randall (2015) in 50 of 52 fault records. Four detectors trained on
     normal data only (Mahalanobis, Isolation Forest, One-Class SVM and
     autoencoder) reached an AUC of up to 1.00, and a Random Forest, selected by
@@ -206,7 +214,10 @@
     different position rises from 40.0\% to 76.0\%. The main limitation lies
     in the data set itself: with four normal records and each fault tested on a
     single assembly, high accuracy on CWRU is easy and says little about fault
-    diagnosis.
+    diagnosis. When a whole fault diameter (an assembly) is left out of
+    training, all models fall close to chance, whereas a training-free physical
+    rule based on the dominant fault frequency in the envelope gets 65.7\% of
+    the fault types right.
 
     \textbf{Keywords}: predictive maintenance; anomaly detection; rolling
     element bearings; envelope analysis; CWRU.

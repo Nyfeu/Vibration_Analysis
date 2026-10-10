@@ -19,7 +19,7 @@ nas \autoref{tab:deteccao} e~\ref{tab:classificacao}.
   \caption{Resumo dos resultados por técnica (teste em \SI{3}{\hp}).}
   \label{tab:resumo}
   \footnotesize
-  \begin{tabular}{p{0.07\textwidth}p{0.3\textwidth}p{0.13\textwidth}ccp{0.2\textwidth}}
+  \begin{tabular}{p{0.06\textwidth}p{0.34\textwidth}p{0.12\textwidth}ccp{0.21\textwidth}}
     \toprule
     \textbf{Dataset} & \textbf{Técnica (features)} & \textbf{Falha identificada} &
     \textbf{TPR} & \textbf{FPR} & \textbf{Acurácia/classe} \\
@@ -43,6 +43,166 @@ nas \autoref{tab:deteccao} e~\ref{tab:classificacao}.
 Os números altos da \autoref{tab:resumo} precisam ser lidos junto com a
 \autoref{sec:investigacao-amplitude}: eles medem, em grande parte, o nível de
 vibração das gravações, e não a assinatura do defeito.
+
+\section{Validação física}
+\label{sec:res-fisica}
+
+Esta seção verifica, gravação por gravação, se o espectro de envelope mostra o
+defeito declarado na frequência prevista pela teoria. É a verificação que não
+depende de nenhum modelo treinado e que dá sentido físico aos demais resultados.
+
+A \autoref{fig:envelope-classes} mostra o SES de uma gravação de cada classe, a
+\SI{1}{\hp}, com as frequências teóricas calculadas pela rotação medida. Na pista
+externa (131), os picos dominantes caem exatamente em BPFO e $2 \times$BPFO, sem
+bandas laterais, como prevê a \autoref{tab:assinaturas}. Na pista interna (210),
+o maior pico está em BPFI e há outro forte em $2 \times$BPFI, cercados por
+componentes espaçadas da rotação. A gravação normal (98) não tem pico em nenhuma
+frequência característica; seus picos mais altos, em torno de \SI{60}{\hertz} e
+\SI{118}{\hertz}, não pertencem a nenhuma família. A esfera (223) é o caso
+difícil: há uma componente larga e ``borrada'' em torno de $2 \times$BSF, mas o
+pico discreto mais alto está em BPFI.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Espectro do envelope ao quadrado (normalizado pela mediana) de uma
+  gravação por classe, a \SI{1}{\hp}, com as frequências características
+  teóricas marcadas.}
+  \label{fig:envelope-classes}
+  \includegraphics[width=\textwidth]{envelope_por_classe_1hp.png}
+  \fonte{Elaborado pelos autores.}
+\end{figure}
+
+Para transformar a inspeção visual num critério reproduzível, uma gravação de
+falha é considerada \emph{confirmada} quando (i) a família de maior escore é a
+esperada para a classe declarada e (ii) esse escore supera o maior valor que a
+mesma família atinge nas quatro gravações normais. As gravações normais, que não
+têm defeito, definem assim o nível de escore que o método produz por acaso:
+\SI{10.8}{\decibel} para BPFO, \SI{8.6}{\decibel} para BPFI e
+\SI{9.9}{\decibel} para BSF. O resultado é comparado, na
+\autoref{tab:validacao-fisica}, com o diagnóstico de \textcite[Tab.~B2,
+p.~128]{smith2015} pelo mesmo método (M1, envelope do sinal bruto) e pelo melhor
+dos três métodos que eles aplicaram.
+
+\begin{table}[htb]
+  \centering
+  \caption{Gravações de falha confirmadas pela validação física, comparadas ao
+  diagnóstico de Smith e Randall (2015).}
+  \label{tab:validacao-fisica}
+  \begin{tabular}{lccccc}
+    \toprule
+    & & & \multicolumn{2}{c}{\textbf{Smith e Randall (Y)}} & \\
+    \cmidrule(lr){4-5}
+    \textbf{Classe} & \textbf{Gravações} & \textbf{Confirmadas} &
+    \textbf{M1} & \textbf{Melhor} & \textbf{Concordância com M1} \\
+    \midrule
+    Pista interna        & 12 & 12 & 11 & 12 & 11 \\
+    Esfera               & 12 & 0  & 1  & 3  & 11 \\
+    Pista externa (6~h)  & 12 & 8  & 8  & 9  & 12 \\
+    Pista externa (3~h)  & 8  & 8  & 8  & 8  & 8 \\
+    Pista externa (12~h) & 8  & 8  & 8  & 8  & 8 \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/validacao\_fisica\_resumo.csv} e de
+  \textcite[Tab.~B2]{smith2015}.}
+\end{table}
+
+O critério concorda com o diagnóstico de \textcite{smith2015} pelo envelope
+simples em 50 das 52 gravações de falha. Por classe:
+\begin{itemize}
+  \item \textbf{Pista interna:} as 12 gravações são confirmadas, com escore de
+  BPFI entre \num{17.5} e \SI{23.5}{\decibel}, mais que o dobro do limiar.
+  A única divergência é a 171, que confirmamos e que o artigo classifica como
+  apenas provável (P1) pelo método 1.
+  \item \textbf{Pista externa a 6~h:} as oito gravações de \SI{0.007}{\inch} e
+  \SI{0.021}{\inch} são confirmadas, e as quatro de \SI{0.014}{\inch} (197 a 200)
+  não: nelas o escore de BPFO fica entre \num{4.1} e \SI{10.5}{\decibel}, no
+  nível dos normais. São exatamente as gravações que o artigo não diagnostica com
+  o método 1, e cuja montagem ele associa a folga mecânica~\cite[p.~110]{smith2015}.
+  \item \textbf{Pista externa a 3~h e a 12~h:} as 16 gravações do conjunto de
+  generalização são confirmadas. O defeito fora da zona de carga continua
+  visível no envelope, o que justifica testar nelas um modelo treinado a 6~h.
+  \item \textbf{Esfera:} nenhuma gravação é confirmada. O escore de BSF fica
+  entre \num{4.3} e \SI{8.1}{\decibel}, sempre abaixo do maior escore normal.
+  Nas gravações de \SI{0.014}{\inch} (185 a 188) a família dominante é a BSF, mas
+  com margem inferior a \SI{1}{\decibel} sobre as outras e no nível do ruído; nas
+  demais, dominam BPFI ou BPFO. Isso concorda com o artigo, que só diagnostica uma
+  gravação de esfera (223) pelo método 1, e com a observação de que várias
+  gravações de esfera exibem componentes discretas de BPFO e BPFI, atribuídas a
+  danos não intencionais nas pistas~\cite[p.~109--110]{smith2015}. A gravação
+  223 é a outra divergência: a \autoref{fig:envelope-classes} mostra que sua
+  energia em $2 \times$BSF existe, mas é larga, e o critério, que mede o pico,
+  não a capta.
+\end{itemize}
+
+\paragraph{Pré-branqueamento e kurtograma.} A
+\autoref{tab:preprocessamentos} repete a validação com os dois pré-processamentos
+da \autoref{sec:features-envelope}, cada um com o limiar das normais tratadas da
+mesma forma, ao lado do que \textcite[Tab.~B2]{smith2015} diagnosticam por cada
+método.
+
+\begin{table}[htb]
+  \centering
+  \caption{Gravações de falha confirmadas com cada pré-processamento do envelope,
+  e as diagnosticadas (Y) por Smith e Randall (2015) com os métodos 1 (sinal
+  bruto), 2 (pré-branqueamento) e 3 (DRS e kurtograma).}
+  \label{tab:preprocessamentos}
+  \footnotesize
+  \begin{tabular}{lccccccc}
+    \toprule
+    & & \multicolumn{3}{c}{\textbf{Este trabalho}} & \multicolumn{3}{c}{\textbf{Smith e Randall}} \\
+    \cmidrule(lr){3-5}\cmidrule(lr){6-8}
+    \textbf{Classe} & \textbf{Grav.} & \textbf{Bruto} & \textbf{Pré-branq.} &
+    \textbf{Kurtograma} & \textbf{M1} & \textbf{M2} & \textbf{M3} \\
+    \midrule
+    Pista interna        & 12 & 12 & 12 & 12 & 11 & 12 & 12 \\
+    Esfera               & 12 & 0  & 5  & 0  & 1  & 2  & 2  \\
+    Pista externa (6~h)  & 12 & 8  & 8  & 10 & 8  & 8  & 9  \\
+    Pista externa (3~h)  & 8  & 8  & 8  & 8  & 8  & 8  & 8  \\
+    Pista externa (12~h) & 8  & 8  & 8  & 8  & 8  & 8  & 8  \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/validacao\_fisica\_preprocessamentos.csv} e de
+  \textcite[Tab.~B2]{smith2015}. M2 e M3 vazios no artigo contam como o
+  diagnóstico de M1.}
+\end{table}
+
+O pré-branqueamento é o que mais muda o quadro da esfera: confirma as gravações
+222 e 223, exatamente as que o artigo diagnostica pelo método 2, com o escore de
+BSF em \num{7.7} e \SI{7.3}{\decibel} contra um limiar de \SI{4.4}{\decibel}.
+Confirma também as gravações 185 a 187, mas com margem de só \num{0.1} a
+\SI{0.7}{\decibel}; o artigo as classifica como apenas potencialmente
+diagnosticáveis (P2), e essas três confirmações devem ser lidas como frágeis.
+O kurtograma confirma duas gravações de pista externa de \SI{0.014}{\inch} (197 e
+198), mas também com margem pequena (\SI{0.5}{\decibel} na 197). A
+\autoref{fig:kurtograma} mostra por quê: na gravação 197, a curtose espectral
+fica perto de zero em todas as bandas admissíveis --- o valor máximo é de
+cerca de \num{0.1} ---, ou seja, não há banda claramente impulsiva, e a banda
+escolhida (de 750 a \SI{2250}{\hertz}) é pouco melhor que qualquer outra. Isso
+é coerente com o artigo, em que essa gravação só é diagnosticada quando a
+separação de componentes discretos (DRS) é aplicada \emph{antes} do kurtograma.
+Nenhum pré-processamento recupera as gravações 121, 188, 200, 224 e 225.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Registro 197 (pista externa, \SI{0.014}{\inch}, \SI{0}{\hp}):
+  curtose espectral por largura de banda, com a banda escolhida sombreada, e
+  espectro de envelope antes e depois do filtro nessa banda.}
+  \label{fig:kurtograma}
+  \includegraphics[width=0.9\textwidth]{kurtograma_registro_197.png}
+  \fonte{Elaborado pelos autores.}
+\end{figure}
+
+Duas consequências seguem para os modelos. Primeiro, um acerto do classificador
+na classe esfera não pode ser atribuído à assinatura física do defeito, porque
+ela não aparece no envelope do sinal bruto --- o mesmo usado nas features --- de
+nenhuma gravação, e só aparece com pré-branqueamento em duas gravações de forma
+clara; qualquer acerto nessa classe deve ser investigado como possível atalho
+(\autoref{sec:erros}). Segundo, as
+gravações de pista externa de \SI{0.014}{\inch} formam um subgrupo que se
+comporta, no envelope, mais como ruído do que como falha; a gravação 200, que
+está no teste, é a mais extrema.
 
 \section{Detecção}
 \label{sec:res-deteccao}
@@ -314,162 +474,72 @@ principalmente como esfera. É a mesma gravação que a validação física e o 
 de referência apontam como sem assinatura. Nas demais combinações de classe e
 diâmetro, o Random Forest com tempo+envelope acerta \SI{93}{\percent} ou mais.
 
-\section{Validação física}
-\label{sec:res-fisica}
+\section{Generalização entre montagens}
+\label{sec:res-montagem}
 
-Esta seção verifica, gravação por gravação, se o espectro de envelope mostra o
-defeito declarado na frequência prevista pela teoria. É a verificação que não
-depende de nenhum modelo treinado e que dá sentido físico aos demais resultados.
-
-A \autoref{fig:envelope-classes} mostra o SES de uma gravação de cada classe, a
-\SI{1}{\hp}, com as frequências teóricas calculadas pela rotação medida. Na pista
-externa (131), os picos dominantes caem exatamente em BPFO e $2 \times$BPFO, sem
-bandas laterais, como prevê a \autoref{tab:assinaturas}. Na pista interna (210),
-o maior pico está em BPFI e há outro forte em $2 \times$BPFI, cercados por
-componentes espaçadas da rotação. A gravação normal (98) não tem pico em nenhuma
-frequência característica; seus picos mais altos, em torno de \SI{60}{\hertz} e
-\SI{118}{\hertz}, não pertencem a nenhuma família. A esfera (223) é o caso
-difícil: há uma componente larga e ``borrada'' em torno de $2 \times$BSF, mas o
-pico discreto mais alto está em BPFI.
-
-\begin{figure}[htb]
-  \centering
-  \caption{Espectro do envelope ao quadrado (normalizado pela mediana) de uma
-  gravação por classe, a \SI{1}{\hp}, com as frequências características
-  teóricas marcadas.}
-  \label{fig:envelope-classes}
-  \includegraphics[width=\textwidth]{envelope_por_classe_1hp.png}
-  \fonte{Elaborado pelos autores.}
-\end{figure}
-
-Para transformar a inspeção visual num critério reproduzível, uma gravação de
-falha é considerada \emph{confirmada} quando (i) a família de maior escore é a
-esperada para a classe declarada e (ii) esse escore supera o maior valor que a
-mesma família atinge nas quatro gravações normais. As gravações normais, que não
-têm defeito, definem assim o nível de escore que o método produz por acaso:
-\SI{10.8}{\decibel} para BPFO, \SI{8.6}{\decibel} para BPFI e
-\SI{9.9}{\decibel} para BSF. O resultado é comparado, na
-\autoref{tab:validacao-fisica}, com o diagnóstico de \textcite[Tab.~B2,
-p.~128]{smith2015} pelo mesmo método (M1, envelope do sinal bruto) e pelo melhor
-dos três métodos que eles aplicaram.
+As seções anteriores levantaram a mesma hipótese por três caminhos --- a
+importância das features, o conjunto de generalização e a CNN: os modelos
+reconheceriam a \emph{montagem} de cada gravação, e não o defeito. Como cada
+combinação de defeito e diâmetro foi ensaiada numa única montagem, presente nas
+quatro cargas, o split por carga não testa essa hipótese. Para testá-la, o tipo de
+falha (pista interna, esfera ou pista externa) foi classificado com validação
+cruzada \texttt{LeaveOneGroupOut} por \emph{diâmetro}: cada rodada treina com as
+gravações de dois diâmetros, em todas as cargas, e testa nas do terceiro, que
+vêm de montagens nunca vistas. A classe normal fica de fora, porque não tem
+diâmetro, e o acaso corresponde a \SI{33}{\percent}. Como referência, entra uma
+regra física sem treino nenhum: cada janela é atribuída à classe da família de
+envelope de maior escore (BPFO para pista externa, BPFI para pista interna, BSF
+para esfera).
 
 \begin{table}[htb]
   \centering
-  \caption{Gravações de falha confirmadas pela validação física, comparadas ao
-  diagnóstico de Smith e Randall (2015).}
-  \label{tab:validacao-fisica}
-  \begin{tabular}{lccccc}
-    \toprule
-    & & & \multicolumn{2}{c}{\textbf{Smith e Randall (Y)}} & \\
-    \cmidrule(lr){4-5}
-    \textbf{Classe} & \textbf{Gravações} & \textbf{Confirmadas} &
-    \textbf{M1} & \textbf{Melhor} & \textbf{Concordância com M1} \\
-    \midrule
-    Pista interna        & 12 & 12 & 11 & 12 & 11 \\
-    Esfera               & 12 & 0  & 1  & 3  & 11 \\
-    Pista externa (6~h)  & 12 & 8  & 8  & 9  & 12 \\
-    Pista externa (3~h)  & 8  & 8  & 8  & 8  & 8 \\
-    Pista externa (12~h) & 8  & 8  & 8  & 8  & 8 \\
-    \bottomrule
-  \end{tabular}
-  \fonte{Elaborado pelos autores a partir de
-  \texttt{results/metrics/validacao\_fisica\_resumo.csv} e de
-  \textcite[Tab.~B2]{smith2015}.}
-\end{table}
-
-O critério concorda com o diagnóstico de \textcite{smith2015} pelo envelope
-simples em 50 das 52 gravações de falha. Por classe:
-\begin{itemize}
-  \item \textbf{Pista interna:} as 12 gravações são confirmadas, com escore de
-  BPFI entre \num{17.5} e \SI{23.5}{\decibel}, mais que o dobro do limiar.
-  A única divergência é a 171, que confirmamos e que o artigo classifica como
-  apenas provável (P1) pelo método 1.
-  \item \textbf{Pista externa a 6~h:} as oito gravações de \SI{0.007}{\inch} e
-  \SI{0.021}{\inch} são confirmadas, e as quatro de \SI{0.014}{\inch} (197 a 200)
-  não: nelas o escore de BPFO fica entre \num{4.1} e \SI{10.5}{\decibel}, no
-  nível dos normais. São exatamente as gravações que o artigo não diagnostica com
-  o método 1, e cuja montagem ele associa a folga mecânica~\cite[p.~110]{smith2015}.
-  \item \textbf{Pista externa a 3~h e a 12~h:} as 16 gravações do conjunto de
-  generalização são confirmadas. O defeito fora da zona de carga continua
-  visível no envelope, o que justifica testar nelas um modelo treinado a 6~h.
-  \item \textbf{Esfera:} nenhuma gravação é confirmada. O escore de BSF fica
-  entre \num{4.3} e \SI{8.1}{\decibel}, sempre abaixo do maior escore normal.
-  Nas gravações de \SI{0.014}{\inch} (185 a 188) a família dominante é a BSF, mas
-  com margem inferior a \SI{1}{\decibel} sobre as outras e no nível do ruído; nas
-  demais, dominam BPFI ou BPFO. Isso concorda com o artigo, que só diagnostica uma
-  gravação de esfera (223) pelo método 1, e com a observação de que várias
-  gravações de esfera exibem componentes discretas de BPFO e BPFI, atribuídas a
-  danos não intencionais nas pistas~\cite[p.~109--110]{smith2015}. A gravação
-  223 é a outra divergência: a \autoref{fig:envelope-classes} mostra que sua
-  energia em $2 \times$BSF existe, mas é larga, e o critério, que mede o pico,
-  não a capta.
-\end{itemize}
-
-\paragraph{Pré-branqueamento e kurtograma.} A
-\autoref{tab:preprocessamentos} repete a validação com os dois pré-processamentos
-da \autoref{sec:features-envelope}, cada um com o limiar das normais tratadas da
-mesma forma, ao lado do que \textcite[Tab.~B2]{smith2015} diagnosticam por cada
-método.
-
-\begin{table}[htb]
-  \centering
-  \caption{Gravações de falha confirmadas com cada pré-processamento do envelope,
-  e as diagnosticadas (Y) por Smith e Randall (2015) com os métodos 1 (sinal
-  bruto), 2 (pré-branqueamento) e 3 (DRS e kurtograma).}
-  \label{tab:preprocessamentos}
+  \caption{Classificação do tipo de falha com um diâmetro (montagem) inteiro fora
+  do treino: acurácia global e por classe, em todas as janelas de falha.}
+  \label{tab:montagem}
   \footnotesize
-  \begin{tabular}{lccccccc}
+  \begin{tabular}{llcccc}
     \toprule
-    & & \multicolumn{3}{c}{\textbf{Este trabalho}} & \multicolumn{3}{c}{\textbf{Smith e Randall}} \\
-    \cmidrule(lr){3-5}\cmidrule(lr){6-8}
-    \textbf{Classe} & \textbf{Grav.} & \textbf{Bruto} & \textbf{Pré-branq.} &
-    \textbf{Kurtograma} & \textbf{M1} & \textbf{M2} & \textbf{M3} \\
+    \textbf{Entrada} & \textbf{Modelo} & \textbf{Global} & \textbf{P. interna} &
+    \textbf{Esfera} & \textbf{P. externa} \\
     \midrule
-    Pista interna        & 12 & 12 & 12 & 12 & 11 & 12 & 12 \\
-    Esfera               & 12 & 0  & 5  & 0  & 1  & 2  & 2  \\
-    Pista externa (6~h)  & 12 & 8  & 8  & 10 & 8  & 8  & 9  \\
-    Pista externa (3~h)  & 8  & 8  & 8  & 8  & 8  & 8  & 8  \\
-    Pista externa (12~h) & 8  & 8  & 8  & 8  & 8  & 8  & 8  \\
+    tempo           & Random Forest & 0,420 & 0,004 & 0,922 & 0,333 \\
+                    & KNN ($k=9$)   & 0,427 & 0,258 & 0,706 & 0,318 \\
+    envelope        & Random Forest & 0,456 & 0,651 & 0,435 & 0,280 \\
+                    & KNN ($k=9$)   & 0,479 & 0,659 & 0,431 & 0,348 \\
+    tempo+envelope  & Random Forest & 0,457 & 0,248 & 0,872 & 0,250 \\
+                    & SVM           & 0,411 & 0,471 & 0,369 & 0,394 \\
+                    & KNN ($k=9$)   & 0,538 & 0,631 & 0,359 & 0,624 \\
+    forma           & Random Forest & 0,258 & 0,422 & 0,349 & 0,003 \\
+    sinal bruto     & CNN 1D        & 0,547 & 0,366 & 1,000 & 0,274 \\
+    sinal normaliz. & CNN 1D        & 0,498 & 0,515 & 0,957 & 0,023 \\
+    \midrule
+    envelope        & \textbf{Regra física (sem treino)} & \textbf{0,657} & \textbf{1,000} & 0,240 & \textbf{0,731} \\
     \bottomrule
   \end{tabular}
   \fonte{Elaborado pelos autores a partir de
-  \texttt{results/metrics/validacao\_fisica\_preprocessamentos.csv} e de
-  \textcite[Tab.~B2]{smith2015}. M2 e M3 vazios no artigo contam como o
-  diagnóstico de M1.}
+  \texttt{results/metrics/classificacao\_por\_montagem.csv}.}
 \end{table}
 
-O pré-branqueamento é o que mais muda o quadro da esfera: confirma as gravações
-222 e 223, exatamente as que o artigo diagnostica pelo método 2, com o escore de
-BSF em \num{7.7} e \SI{7.3}{\decibel} contra um limiar de \SI{4.4}{\decibel}.
-Confirma também as gravações 185 a 187, mas com margem de só \num{0.1} a
-\SI{0.7}{\decibel}; o artigo as classifica como apenas potencialmente
-diagnosticáveis (P2), e essas três confirmações devem ser lidas como frágeis.
-O kurtograma confirma duas gravações de pista externa de \SI{0.014}{\inch} (197 e
-198), mas também com margem pequena (\SI{0.5}{\decibel} na 197). A
-\autoref{fig:kurtograma} mostra por quê: na gravação 197, a curtose espectral
-fica perto de zero em todas as bandas admissíveis --- o valor máximo é de
-cerca de \num{0.1} ---, ou seja, não há banda claramente impulsiva, e a banda
-escolhida (de 750 a \SI{2250}{\hertz}) é pouco melhor que qualquer outra. Isso
-é coerente com o artigo, em que essa gravação só é diagnosticada quando a
-separação de componentes discretos (DRS) é aplicada \emph{antes} do kurtograma.
-Nenhum pré-processamento recupera as gravações 121, 188, 200, 224 e 225.
+A \autoref{tab:montagem} confirma a hipótese. Quando a montagem muda, todos os
+modelos treinados caem para perto do acaso: de \num{0.258} a \num{0.547}, contra
+\numrange{0.928}{0.997} dos modelos com features de tempo ou com a CNN no teste por
+carga. O Random Forest com tempo+envelope,
+selecionado na \autoref{sec:res-classificacao}, passa de \SI{95.7}{\percent} para
+\SI{45.7}{\percent}, e a CNN com janelas normalizadas, de \SI{99.7}{\percent} para
+\SI{49.8}{\percent}. Os padrões por classe também denunciam o atalho: vários
+modelos acertam quase toda a esfera e quase nada das pistas, isto é, jogam as
+montagens desconhecidas na classe ``esfera''.
 
-\begin{figure}[htb]
-  \centering
-  \caption{Registro 197 (pista externa, \SI{0.014}{\inch}, \SI{0}{\hp}):
-  curtose espectral por largura de banda, com a banda escolhida sombreada, e
-  espectro de envelope antes e depois do filtro nessa banda.}
-  \label{fig:kurtograma}
-  \includegraphics[width=0.9\textwidth]{kurtograma_registro_197.png}
-  \fonte{Elaborado pelos autores.}
-\end{figure}
+A regra física, que não aprende nada dos dados, é a melhor de todas:
+\SI{65.7}{\percent} no geral, \SI{100}{\percent} na pista interna e
+\SI{73.1}{\percent} na pista externa. Ela falha na esfera (\SI{24.0}{\percent}),
+exatamente onde a validação física não encontrou a assinatura do defeito
+(\autoref{sec:res-fisica}). Aplicada ao conjunto de generalização (pista externa a
+3~h e 12~h), acerta \SI{99.8}{\percent} das janelas, contra \SI{40.0}{\percent} do
+Random Forest selecionado. Nas falhas do teste em \SI{3}{\hp}, acerta
+\SI{64.2}{\percent}.
 
-Duas consequências seguem para os modelos. Primeiro, um acerto do classificador
-na classe esfera não pode ser atribuído à assinatura física do defeito, porque
-ela não aparece no envelope do sinal bruto --- o mesmo usado nas features --- de
-nenhuma gravação, e só aparece com pré-branqueamento em duas gravações de forma
-clara; qualquer acerto nessa classe deve ser investigado como possível atalho
-(\autoref{sec:erros}). Segundo, as
-gravações de pista externa de \SI{0.014}{\inch} formam um subgrupo que se
-comporta, no envelope, mais como ruído do que como falha; a gravação 200, que
-está no teste, é a mais extrema.
+O resultado inverte a leitura da \autoref{tab:resumo}: os modelos de maior
+acurácia no teste por carga são os que mais dependem da montagem, e o
+procedimento menos sofisticado --- comparar o pico do envelope com a frequência
+calculada pela geometria --- é o único que se mantém quando a montagem muda.

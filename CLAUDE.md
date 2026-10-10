@@ -352,8 +352,14 @@ Próximos passos:
       200/225 e generaliza 64% → aprende a montagem
 - [x] MFPT (#23): **não feito** — site oficial saiu do ar (redireciona à ASNT);
       só há cópias não oficiais
-- [ ] Extras possíveis: split por diâmetro (montagem), normalização de amplitude
-      por gravação, DRS antes do kurtograma
+- [x] Split por montagem (LeaveOneGroupOut por diâmetro, só falhas): todos os
+      modelos treinados 26–55% (acaso 33%); **regra física sem treino 65,7%**,
+      99,8% na generalização. Seção `sec:res-montagem`
+- [x] Revisão do relatório: \paragraph sem número, validação física como 5.2,
+      2+ referências por técnica (pré-branqueamento, detectores, KNN/LogReg,
+      features de tempo), Apêndice A consolidado
+- [ ] Extras possíveis: features só de razões entre famílias de envelope,
+      normalização de amplitude por gravação, DRS antes do kurtograma
 - [x] Features de tempo (issue #10) e frequências características do
       rolamento (issue #12) em `src/features.py`, com testes em `tests/`;
       BSF na convenção de Smith & Randall

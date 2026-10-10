@@ -52,3 +52,14 @@ def test_cnn_treina_e_preve_todas_as_classes():
     clf = ClassificadorCNN("normalizado", epocas=1).fit(X[idx], meta.loc[idx, "classe"])
     p = clf.predict(X[idx])
     assert len(p) == len(idx) and set(p) <= set(ORDEM_CLASSES)
+
+
+def test_regra_fisica_e_validacao_por_montagem():
+    from src.experimentos import classificacao_por_montagem, dados_deteccao, prever_regra_fisica
+
+    F, meta, Fg, _ = dados_deteccao()
+    assert (prever_regra_fisica(Fg) == "OR").mean() > 0.95
+    m, por_d = classificacao_por_montagem(F, meta, conjuntos=["envelope"], modelos=["KNN (k=9)"])
+    assert set(por_d["diametro_fora"]) == {"0.007", "0.014", "0.021"}
+    regra = m[m["modelo"] == "Regra física (sem treino)"]["acuracia"].item()
+    assert regra == pytest.approx(0.657, abs=0.01)

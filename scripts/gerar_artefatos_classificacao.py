@@ -7,7 +7,9 @@
   severidade, generalização, erros, importâncias, matrizes de confusão e
   classification_report de cada configuração;
 - results/metrics/matrizes_confusao.tex: matrizes em LaTeX para o Apêndice C;
-- CNN 1D (se o PyTorch estiver instalado): linhas extras nas métricas e matrizes.
+- CNN 1D (se o PyTorch estiver instalado): linhas extras nas métricas e matrizes;
+- results/metrics/classificacao_por_montagem*.csv: tipo de falha com um
+  diâmetro (montagem) inteiro fora, e a regra física sem treino.
 
 Uso (da raiz do repositório):  python -m scripts.gerar_artefatos_classificacao
 """
@@ -17,7 +19,12 @@ from __future__ import annotations
 import pandas as pd
 
 from src.data import RAIZ
-from src.experimentos import dados_deteccao, rodar_classificacao
+from src.experimentos import (
+    classificacao_por_montagem,
+    dados_deteccao,
+    prever_regra_fisica,
+    rodar_classificacao,
+)
 
 DIR_METRICS = RAIZ / "results" / "metrics"
 
@@ -77,6 +84,21 @@ def main() -> None:
         reg_cnn.to_csv(DIR_METRICS / "classificacao_cnn_por_registro.csv", index=False, float_format="%.4f")
     except ImportError:
         print("PyTorch não instalado: CNN 1D ignorada.")
+
+    # Regra física (sem treino) no teste e na generalização, como referência.
+    falhas_te = (meta["carga_hp"] == 3) & (meta["classe"] != "normal")
+    p_te = prever_regra_fisica(F[falhas_te])
+    regra = {
+        "features": "envelope",
+        "classificador": "Regra física (sem treino)",
+        "acuracia_falhas": (p_te == meta.loc[falhas_te, "classe"]).mean(),
+        "generalizacao_OR": (prever_regra_fisica(Fg) == "OR").mean(),
+    }
+    pd.DataFrame([regra]).to_csv(DIR_METRICS / "classificacao_regra_fisica.csv", index=False, float_format="%.4f")
+
+    m_mont, d_mont = classificacao_por_montagem(F, meta)
+    m_mont.to_csv(DIR_METRICS / "classificacao_por_montagem.csv", index=False, float_format="%.4f")
+    d_mont.to_csv(DIR_METRICS / "classificacao_por_montagem_diametro.csv", index=False, float_format="%.4f")
 
     metricas.to_csv(DIR_METRICS / "classificacao_metricas.csv", index=False, float_format="%.4f")
     r["selecao"].to_csv(DIR_METRICS / "classificacao_selecao_modelos.csv", index=False, float_format="%.4f")

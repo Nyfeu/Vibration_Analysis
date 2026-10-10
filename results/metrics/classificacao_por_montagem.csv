@@ -1,0 +1,16 @@
+features,modelo,acuracia,acc_IR,acc_B,acc_OR
+tempo,Random Forest,0.4198,0.0043,0.9224,0.3333
+tempo,SVM (RBF),0.3562,0.2740,0.7672,0.0273
+tempo,KNN (k=9),0.4270,0.2582,0.7055,0.3175
+envelope,Random Forest,0.4557,0.6514,0.4353,0.2802
+envelope,SVM (RBF),0.3533,0.6313,0.4282,0.0000
+envelope,KNN (k=9),0.4792,0.6585,0.4310,0.3477
+tempo+envelope,Random Forest,0.4567,0.2482,0.8721,0.2500
+tempo+envelope,SVM (RBF),0.4112,0.4706,0.3693,0.3937
+tempo+envelope,KNN (k=9),0.5381,0.6313,0.3592,0.6236
+forma,Random Forest,0.2580,0.4218,0.3491,0.0029
+forma,SVM (RBF),0.3571,0.5036,0.3233,0.2443
+forma,KNN (k=9),0.4251,0.6112,0.3276,0.3362
+envelope,Regra física (sem treino),0.6573,1.0000,0.2399,0.7313
+sinal bruto,CNN 1D,0.5467,0.3659,1.0000,0.2744
+sinal normalizado,CNN 1D,0.4983,0.5151,0.9569,0.0230

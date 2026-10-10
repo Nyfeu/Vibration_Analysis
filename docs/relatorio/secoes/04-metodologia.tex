@@ -179,8 +179,12 @@ está em \texttt{src/features.py}.
 \subsection{Domínio do tempo}
 \label{sec:features-tempo}
 
-Para cada janela $x$, com média $\mu$ e desvio padrão $\sigma$, são calculados
-cinco indicadores:
+São os indicadores clássicos de condição de máquinas: o RMS mede o nível global de
+vibração, que é a grandeza de avaliação de severidade das normas de
+vibração~\cite{iso20816}, e curtose e fator de crista medem a impulsividade, que
+cresce com os impactos de um defeito localizado~\cite{randall2011livro}. Para cada
+janela $x$, com média $\mu$ e desvio padrão $\sigma$, são calculados cinco
+indicadores:
 \begin{align}
   \text{RMS} &= \sqrt{\tfrac{1}{N}\textstyle\sum_{i=1}^{N} x_i^2}, &
   \text{pico} &= \max_i |x_i|, &
@@ -306,7 +310,7 @@ conjuntos, que funcionam como uma ablação:
 O conjunto ``forma'' exclui as duas features que dependem da amplitude
 absoluta do sinal. A amplitude muda com o defeito, mas também com a montagem, o
 sensor e o dia do ensaio; comparar ``forma'' com ``tempo+envelope'' mostra quanto
-do desempenho vem só do nível de vibração. Todos os modelos são da biblioteca
+do desempenho vem só do nível de vibração. Todos os modelos, exceto a CNN, são da biblioteca
 \texttt{scikit-learn}~\cite{pedregosa2011}, com a semente do projeto.
 
 \subsection{Detecção}
@@ -389,7 +393,8 @@ com \emph{kernel} 3 (32, 64 e 64 filtros), cada um com normalização em lote,
 ReLU e \emph{max pooling}; ao final, média global, \emph{dropout} de
 \num{0.3} e camada linear para as quatro classes. O treino usa Adam (taxa
 $10^{-3}$), lotes de 64 janelas, 30 épocas e entropia cruzada com pesos por
-classe, com a semente do projeto. Duas entradas são comparadas, mantendo a
+classe, com a semente do projeto. A CNN entra também no teste de generalização
+entre montagens (\autoref{sec:res-montagem}). Duas entradas são comparadas, mantendo a
 ablação de amplitude: o sinal como gravado e cada janela normalizada para média
 zero e desvio unitário. A rede é implementada em PyTorch.
 
@@ -410,9 +415,20 @@ Matplotlib). O ambiente de desenvolvimento é um contêiner
 enunciado é o notebook \texttt{notebooks/projeto.ipynb} no Google Colab, que
 clona o repositório e chama as funções de \texttt{src/}.
 
-As tabelas e figuras de dados deste relatório são geradas por
-\texttt{python -m scripts.gerar\_artefatos\_dados} e salvas em
-\texttt{results/}. A suíte de testes (\texttt{python -m pytest tests}) confere,
+As tabelas, figuras e matrizes deste relatório são geradas por quatro scripts,
+que gravam em \texttt{results/} e são chamados também pelo notebook:
+\begin{itemize}
+  \item \texttt{scripts/gerar\_artefatos\_dados.py}: contagens e banda comum;
+  \item \texttt{scripts/gerar\_artefatos\_envelope.py}: validação física;
+  \item \texttt{scripts/gerar\_artefatos\_deteccao.py}: detecção one-class;
+  \item \texttt{scripts/gerar\_artefatos\_classificacao.py}: classificação, CNN e
+  generalização entre montagens.
+\end{itemize}
+O notebook segue o roteiro da disciplina (limpeza dos dados, pré-processamento,
+seleção de modelos, busca em grade, avaliação do melhor modelo e predição) e é
+versionado com as saídas da última execução. A CNN usa a mesma semente e
+algoritmos determinísticos do PyTorch; duas execuções seguidas produziram os
+mesmos números. A suíte de testes (\texttt{python -m pytest tests}) confere,
 entre outros pontos, as frequências características contra o CWRU e Smith e
 Randall, a posição da linha de \SI{120}{\hertz} nos normais decimados, a banda
 comum e a ausência de gravações compartilhadas entre treino e teste.

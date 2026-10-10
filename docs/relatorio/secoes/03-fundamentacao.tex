@@ -182,7 +182,7 @@ determinísticos (DRS), essa escolha compõe o ``método de referência'' de
 \textcite[p.~104--105]{smith2015}. Uma alternativa mais simples é o
 pré-branqueamento cepstral, que iguala a magnitude de todo o espectro e mantém a
 fase: as faixas impulsivas passam a dominar o sinal sem que seja preciso
-escolher uma banda~\cite[p.~104]{smith2015}.
+escolher uma banda~\cites{sawalhi2011,borghesani2013}[p.~104]{smith2015}.
 
 Neste trabalho, o espectro de envelope tem dois usos: como fonte de features para
 os modelos e como validação física, verificando se o pico observado cai na
@@ -204,18 +204,18 @@ o compromisso entre a taxa de verdadeiros positivos (TPR) e a de falsos positivo
 
 Quatro detectores são comparados, do mais simples ao mais flexível:
 \begin{itemize}
-  \item \textbf{Distância de Mahalanobis}~\cite{mahalanobis1936}: distância de
+  \item \textbf{Distância de Mahalanobis}~\cite{mahalanobis1936,demaesschalck2000}: distância de
   cada janela à média dos normais, ponderada pela covariância das features.
   Supõe que os dados normais formam uma nuvem aproximadamente elíptica; é o
   baseline estatístico.
-  \item \textbf{Isolation Forest}~\cite{liu2008}: constrói árvores que isolam
+  \item \textbf{Isolation Forest}~\cite{liu2008,liu2012}: constrói árvores que isolam
   pontos por cortes aleatórios. Pontos anômalos são isolados com menos cortes,
   e o comprimento médio do caminho até o isolamento vira o escore. Não supõe
   forma para a distribuição.
-  \item \textbf{One-Class SVM}~\cite{scholkopf2001}: estima, num espaço de
+  \item \textbf{One-Class SVM}~\cite{scholkopf2001,tax2004}: estima, num espaço de
   \emph{kernel}, a fronteira de uma região que contém a maior parte dos dados
   normais; o que fica fora é anômalo.
-  \item \textbf{Autoencoder}~\cite{hinton2006}: rede neural treinada para
+  \item \textbf{Autoencoder}~\cite{hinton2006,sakurada2014}: rede neural treinada para
   reconstruir as próprias entradas a partir de uma representação comprimida.
   Treinada só com normais, reconstrói mal o que é diferente, e o erro de
   reconstrução vira o escore.
@@ -228,13 +228,16 @@ Depois da detecção, o diagnóstico identifica o tipo de defeito: normal, pista
 interna, pista externa ou esfera. Aqui há exemplos rotulados de todas as classes,
 e o problema é de classificação supervisionada.
 
-O classificador principal é o \textbf{Random Forest}~\cite{breiman2001}, um
+Na seleção de modelos, cinco classificadores clássicos são comparados:
+Regressão Logística, $k$ vizinhos mais próximos (KNN)~\cite{cover1967}, Random
+Forest e SVM~\cite{hastie2009}. O classificador principal é o \textbf{Random
+Forest}~\cite{breiman2001,hastie2009}, um
 conjunto de árvores de decisão treinadas em amostras \emph{bootstrap} dos dados
 e em subconjuntos aleatórios das features, cuja previsão é o voto da maioria.
 Ele lida bem com features de escalas diferentes, tem poucos hiperparâmetros
 sensíveis e informa a importância de cada feature, o que ajuda a verificar se a
 decisão se apoia em grandezas com sentido físico. Como contraponto, usa-se a
-\textbf{máquina de vetores de suporte} (SVM)~\cite{cortes1995}, que procura a
+\textbf{máquina de vetores de suporte} (SVM)~\cite{cortes1995,hastie2009}, que procura a
 fronteira de margem máxima entre as classes, com \emph{kernel} para fronteiras
 não lineares. As implementações são as do
 \texttt{scikit-learn}~\cite{pedregosa2011}.

@@ -231,6 +231,13 @@ menos no teste (68%) e generaliza melhor para o defeito em outra posição (76%
 contra 40%). A CNN 1D chega a 99,7%, mas acerta até as gravações sem assinatura
 e generaliza pior (64%): aprende a montagem, não o defeito.
 
+**Teste decisivo — montagem nova.** Cada defeito do CWRU foi ensaiado numa única
+montagem, presente nas quatro cargas. Deixando um diâmetro (montagem) inteiro
+fora do treino, todos os modelos treinados caem para perto do acaso (26–55%,
+acaso = 33%), enquanto uma **regra física sem treino** — classe pela frequência
+de defeito dominante no envelope — acerta 65,7% do tipo de falha e 99,8% da
+pista externa em outra posição.
+
 Matrizes de confusão completas: `results/metrics/classificacao_matriz_*.csv` e
 Apêndice C do relatório.
 

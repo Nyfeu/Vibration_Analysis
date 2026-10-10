@@ -5,4 +5,31 @@
 Exigida pelo enunciado (item 6.3). O registro detalhado e versionado está em
 \texttt{docs/uso\_de\_ia.md}, no repositório.
 
-TODO(grupo): consolidar aqui a versão final.
+\section*{Ferramenta}
+
+Foi utilizada uma única ferramenta de IA: o Claude Code, com o modelo Claude Opus
+5.5, um assistente de programação que opera no repositório (lê e edita arquivos e
+executa comandos).
+
+\section*{Usos registrados}
+
+\begin{itemize}
+  \item download do subconjunto do CWRU e verificação da taxa de amostragem e do
+  número de arquivos contra a documentação oficial;
+  \item proposta da estrutura dos fichamentos de artigos;
+  \item preenchimento da auditoria de arquivos a partir do fichamento de
+  \textcite{smith2015}, segundo decisões do grupo;
+  \item implementação da escolha da posição do defeito em pista externa no
+  carregamento dos dados;
+  \item rascunho do capítulo de descrição do dataset;
+  \item revisão e reorganização dos módulos de features;
+  \item assistência na depuração de bugs e na escrita de código.
+\end{itemize}
+
+\section*{Limites}
+
+Nenhum número de resultado (acurácia, TPR, FPR, AUC) foi produzido pela
+ferramenta: todos saem da execução do código deste repositório, e cada tabela do
+relatório indica o arquivo de \texttt{results/} de onde vem. Não foram usados
+dados sintéticos. O registro de cada uso, com o que foi aproveitado, o que foi
+descartado e quem revisou, está em \texttt{docs/uso\_de\_ia.md}.

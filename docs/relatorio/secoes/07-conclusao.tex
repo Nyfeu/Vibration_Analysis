@@ -24,9 +24,16 @@ para \SI{76.0}{\percent}. A CNN 1D chega a \SI{99.7}{\percent}, mas acerta
 inclusive as gravações sem assinatura e generaliza pior que o modelo de
 envelope.
 
+\textbf{Generalização entre montagens.} Com um diâmetro --- e, portanto, uma
+montagem --- inteiro fora do treino, todos os modelos treinados caem para perto
+do acaso (de \num{0.26} a \num{0.55}), enquanto uma regra física sem treino, que
+atribui a classe pela frequência de defeito dominante no envelope, acerta
+\num{0.66} e reconhece \SI{99.8}{\percent} da pista externa em outra posição.
+
 A conclusão principal é metodológica. No CWRU, alta acurácia é fácil e diz pouco:
 o conjunto permite acertar pela amplitude e pela montagem. O que dá sentido aos
 resultados é a verificação física --- se o pico do envelope cai na frequência
 prevista --- e a confirmou para pista interna e para a maior parte da pista
 externa, mas, para a esfera, só em duas gravações e só com pré-branqueamento. Um modelo útil fora deste conjunto de dados
-precisa ser avaliado em montagens que não viu.
+precisa ser avaliado em montagens que não viu --- e, neste trabalho, só o
+conhecimento físico passou nesse teste.

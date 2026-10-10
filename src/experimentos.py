@@ -216,3 +216,75 @@ def rodar_cnn(meta=None, entradas=None):
             ).reset_index().assign(**tag)
         )
     return pd.DataFrame(metricas), matrizes, pd.concat(por_reg, ignore_index=True)
+
+
+# =============================================================================
+# Generalização entre montagens
+# =============================================================================
+
+# Família de envelope dominante -> classe prevista pela física (sem treino).
+REGRA_FISICA = {"env_bpfo": "OR", "env_bpfi": "IR", "env_bsf": "B"}
+
+
+def prever_regra_fisica(F: pd.DataFrame) -> pd.Series:
+    """Classe de falha pela família de envelope de maior escore em cada janela.
+    Não usa treino: não tem como memorizar montagens."""
+    return F[list(REGRA_FISICA)].idxmax(axis=1).map(REGRA_FISICA)
+
+
+def classificacao_por_montagem(F, meta, Fg=None, meta_g=None, conjuntos=None, modelos=None):
+    """Tipo de falha (IR, B, OR) com validação deixando um diâmetro de fora.
+
+    No CWRU, cada combinação de defeito e diâmetro foi ensaiada numa única
+    montagem, presente nas quatro cargas. Deixar um diâmetro inteiro de fora
+    obriga o modelo a classificar montagens que nunca viu — o teste que o split
+    por carga não faz. Só as falhas entram (o normal não tem diâmetro). A regra
+    física entra como referência sem treino.
+
+    Devolve (metricas, por_diametro).
+    """
+    from sklearn.model_selection import LeaveOneGroupOut, cross_val_predict
+
+    from src.classification import acuracia_por_classe, modelos_candidatos
+
+    falhas = (meta["classe"] != "normal").to_numpy()
+    y = meta.loc[falhas, "classe"].to_numpy()
+    grupos = meta.loc[falhas, "diametro_pol"].to_numpy()
+    conjuntos = conjuntos or list(CONJUNTOS_FEATURES)
+    modelos = modelos or ["Random Forest", "SVM (RBF)", "KNN (k=9)"]
+    classes = ["IR", "B", "OR"]
+
+    def registrar(tag, p):
+        acc = acuracia_por_classe(y, p, classes)
+        linhas.append({**tag, "acuracia": (p == y).mean(), **{f"acc_{c}": v for c, v in acc.items()}})
+        for d in np.unique(grupos):
+            sel = grupos == d
+            por_d.append({**tag, "diametro_fora": d, "acuracia": (p[sel] == y[sel]).mean()})
+
+    linhas, por_d = [], []
+    for conj in conjuntos:
+        x = F.loc[falhas, CONJUNTOS_FEATURES[conj]]
+        for nome in modelos:
+            p = cross_val_predict(
+                modelos_candidatos()[nome], x, y, groups=grupos, cv=LeaveOneGroupOut(), n_jobs=-1
+            )
+            registrar({"features": conj, "modelo": nome}, p)
+    registrar({"features": "envelope", "modelo": "Regra física (sem treino)"},
+              prever_regra_fisica(F.loc[falhas]).to_numpy())
+
+    try:  # CNN 1D, se o PyTorch estiver disponível
+        from src.cnn import ENTRADAS, ClassificadorCNN
+
+        X, meta_x = montar_janelas("principal")
+        Xf = X[(meta_x["classe"] != "normal").to_numpy()]
+        for entrada in ENTRADAS:
+            p = np.empty(len(y), dtype=object)
+            for d in np.unique(grupos):
+                tr, te = grupos != d, grupos == d
+                clf = ClassificadorCNN(entrada)
+                clf.classes_ = classes
+                p[te] = clf.fit(Xf[tr], y[tr]).predict(Xf[te])
+            registrar({"features": f"sinal {entrada}", "modelo": "CNN 1D"}, p)
+    except ImportError:
+        pass
+    return pd.DataFrame(linhas), pd.DataFrame(por_d)
