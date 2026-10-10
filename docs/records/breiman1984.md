@@ -31,7 +31,7 @@
 
 ## Onde é usado no relatório
 
-- Seção 3.3.4 (Gini e árvores).
+- Seção 3.3.5 (Gini e árvores).
 
 ## Cuidados ao citar
 

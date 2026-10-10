@@ -16,34 +16,36 @@ duas tarefas.
 \section{O que funcionou}
 \label{sec:funcionou}
 
-\paragraph{A validação física.} O espectro de envelope, com um critério simples e
-reproduzível, recuperou o defeito declarado nas 12 gravações de pista interna,
+O que mais funcionou foi a validação física. O espectro de envelope, com um
+critério simples e reproduzível, recuperou o defeito declarado nas 12 gravações de pista interna,
 nas 8 de pista externa a 6~h com assinatura conhecida e nas 16 do conjunto de
 generalização, concordando com o diagnóstico de \textcite{smith2015} em 50 das 52
 gravações de falha (\autoref{sec:res-fisica}). É a parte do trabalho que menos
 depende de suposições: não há modelo treinado, e cada confirmação corresponde a
 um pico na frequência calculada pela geometria do rolamento.
 
-\paragraph{O protocolo.} A divisão por carga, verificada no código, descartou o
+O protocolo também cumpriu o seu papel. A divisão por carga, verificada no
+código, descartou o
 vazamento como explicação dos resultados próximos de \SI{100}{\percent}. Isso
 deixou a explicação real à vista: a amplitude (\autoref{sec:investigacao-amplitude}).
 Sem esse cuidado, um AUC de \num{1.000} teria sido apresentado como sucesso.
 
-\paragraph{As ablações.} Comparar os conjuntos de features --- e não só os
-modelos --- foi o que permitiu separar ``o detector reage ao defeito'' de ``o
+As ablações foram decisivas para a interpretação. Comparar os conjuntos de
+features --- e não só os modelos --- foi o que permitiu separar ``o detector reage ao defeito'' de ``o
 detector reage ao nível de vibração''. Trocar de detector quase não muda o
 quadro (os quatro têm AUC próximo de 1 com features de tempo); trocar de
 features o muda completamente.
 
-\paragraph{A regra física, sem treino.} Quando a montagem muda, a regra que só
+A regra física, sem nenhum treino, foi a abordagem mais robusta. Quando a
+montagem muda, a regra que só
 compara o pico do envelope com a frequência teórica acerta \SI{65.7}{\percent} do
 tipo de falha, contra no máximo \SI{54.7}{\percent} dos modelos treinados, e
 \SI{99.8}{\percent} do conjunto de generalização (\autoref{sec:res-montagem}).
 O conhecimento físico, embutido na geometria do rolamento, generaliza onde o
 aprendizado a partir dos dados não generaliza.
 
-\paragraph{A inferência com a gravação como unidade.} Tratar a gravação, e não a
-janela, como unidade mudou a força de várias afirmações. O teste de
+A inferência com a gravação como unidade também se mostrou essencial. Tratar a
+gravação, e não a janela, como unidade mudou a força de várias afirmações. O teste de
 Kruskal--Wallis por gravação mostrou que o escore de BSF é a única feature sem
 diferença significativa entre as classes; o bootstrap por gravação mostrou que a
 superioridade do modelo com amplitude no teste é real (diferença de \num{0.28},
@@ -52,21 +54,24 @@ quase todo de uma gravação; e o teste binomial por montagem mostrou que só a
 regra física tem evidência de generalização. Com as janelas como unidade, todos os
 testes seriam ``significativos'', e nenhuma dessas distinções apareceria.
 
-\paragraph{O pré-branqueamento.} Sem escolher banda alguma, o pré-branqueamento
-cepstral recuperou o BSF nas duas gravações de esfera que o artigo de referência
+Entre os pré-processamentos do envelope, o pré-branqueamento cepstral foi o
+mais útil: sem escolher banda alguma, recuperou o BSF nas duas gravações de esfera que o artigo de referência
 diagnostica pelo mesmo método (222 e 223), elevando de zero para duas as
 gravações de esfera com assinatura clara (\autoref{tab:preprocessamentos}).
 
-\paragraph{A banda comum.} A verificação espectral da decimação encontrou
+Por fim, a banda comum evitou um atalho antes que ele existisse. A verificação
+espectral da decimação encontrou
 um resíduo de \emph{aliasing} que, sem a banda comum, deixaria normais e falhas
-com cadeias de filtragem diferentes (\autoref{sec:banda-comum}). Foi um atalho
-evitado antes de existir.
+com cadeias de filtragem diferentes (\autoref{sec:banda-comum}).
 
 \section{O que não funcionou}
 \label{sec:nao-funcionou}
 
-\paragraph{A detecção não detecta o defeito, mas a diferença em relação às
-gravações normais.} Todos os detectores com features de tempo têm AUC de
+\subsection{Na detecção}
+\label{sec:nao-funcionou-deteccao}
+
+A detecção não detecta o defeito, e sim a diferença em relação às gravações
+normais. Todos os detectores com features de tempo têm AUC de
 \num{0.995} a \num{1.000}, mas o RMS sozinho já dá \num{1.000}, e as gravações sem
 assinatura física (200 e 225) disparam alarme em todas as janelas. Neste
 conjunto de dados, ``vibra mais que as quatro gravações normais'' basta para
@@ -74,7 +79,30 @@ acertar tudo. Numa planta, onde a amplitude também muda com a temperatura, a
 lubrificação, a rotação e a troca de sensor, esse detector daria alarmes falsos
 e não diria nada sobre o rolamento.
 
-\paragraph{A classe esfera é acertada por atalho.} O Random Forest acerta
+As métricas de detecção também enganam com esta prevalência. Com
+\SI{90}{\percent} de janelas de falha no teste, alarmar sempre já daria precisão
+de \num{0.90} e $F_1$ de \num{0.947}. A precisão alta dos detectores
+(\numrange{0.91}{1.00}) não mede, portanto, a qualidade dos alarmes. Numa planta,
+com falhas raras, a mesma FPR de \num{0.12} faria a maioria dos alarmes ser falsa
+(\autoref{sec:res-deteccao}). Avaliar um detector exige um conjunto de teste com a
+proporção de normais da operação real, que o CWRU, com quatro gravações normais,
+não oferece.
+
+O limiar teórico do baseline não vale. As features normais não são normais
+(Shapiro--Wilk rejeita cinco de oito), e o limiar qui-quadrado do Mahalanobis
+daria \SI{6.2}{\percent} de falsos alarmes no treino em vez de \SI{1}{\percent}.
+O limiar empírico resolveu isso no treino, mas não no teste.
+
+E o limiar empírico não se transfere para a gravação normal de teste. A FPR no limiar variou de 0 a
+\SI{81}{\percent} entre detectores com AUC semelhante, porque o limiar foi
+calibrado em três gravações normais e testado numa quarta, com escores de
+envelope fora da faixa vista no treino. Três gravações não representam a
+variabilidade normal de uma máquina.
+
+\subsection{No diagnóstico}
+\label{sec:nao-funcionou-diagnostico}
+
+A classe esfera é acertada por atalho. O Random Forest acerta
 \SI{99.4}{\percent} das janelas de esfera no teste, inclusive todas as da
 gravação 225, que não tem assinatura do defeito. A validação física não confirmou
 o BSF em nenhuma gravação de esfera, e o escore de BSF tem a menor importância
@@ -87,7 +115,7 @@ modelos não protegeu contra isso: a validação cruzada por carga também mant�
 mesma montagem dos dois lados, e por isso premiou o mesmo atalho
 (\num{0.984} na validação, \SI{40.0}{\percent} na generalização).
 
-\paragraph{O modelo mais acurado é o que pior generaliza.} Com tempo+envelope, a
+O modelo mais acurado é o que pior generaliza. Com tempo+envelope, a
 acurácia no teste é de \SI{95.7}{\percent}, mas só \SI{40.0}{\percent} das janelas
 de pista externa a 3~h e 12~h são reconhecidas como pista externa. Só com
 envelope, a acurácia no teste cai para \SI{67.6}{\percent} e a generalização sobe
@@ -103,14 +131,14 @@ baseamos foi avaliada no próprio CWRU: \textcite{zhang2017} medem a
 generalização treinando numa carga e testando nas outras (seção 4.4.1 do
 artigo), o que, pelos nossos resultados, não separa montagens.
 
-\paragraph{A generalização dos modelos treinados é instável.} Entre 10 sementes, a
+Além disso, a generalização dos modelos treinados é instável. Entre 10 sementes, a
 acurácia no teste do Random Forest com tempo+envelope quase não muda (desvio de
 \num{0.004}), mas a fração da pista externa em outra posição reconhecida varia de
 \num{0.40} a \num{0.72}. Um único treinamento, como é o usual, poderia ter
 reportado qualquer valor nessa faixa. O modelo só de envelope, ao contrário, fica
 entre \num{0.755} e \num{0.762}.
 
-\paragraph{Nenhum modelo treinado generaliza para uma montagem nova.} Com um
+E nenhum modelo treinado generaliza para uma montagem nova. Com um
 diâmetro inteiro fora do treino, todos os classificadores --- inclusive a CNN e os
 modelos só de envelope --- ficam entre \SI{26}{\percent} e \SI{55}{\percent}, perto
 do acaso de \SI{33}{\percent} (\autoref{tab:montagem}). O desempenho de 93 a
@@ -119,27 +147,7 @@ montagens já vistas. Com 12 montagens de falha, uma por combinação de defeito
 diâmetro, não há variedade suficiente para um modelo aprender o que o defeito tem
 em comum entre montagens.
 
-\paragraph{As métricas de detecção enganam com esta prevalência.} Com
-\SI{90}{\percent} de janelas de falha no teste, alarmar sempre já daria precisão
-de \num{0.90} e $F_1$ de \num{0.947}. A precisão alta dos detectores
-(\numrange{0.91}{1.00}) não mede, portanto, a qualidade dos alarmes. Numa planta,
-com falhas raras, a mesma FPR de \num{0.12} faria a maioria dos alarmes ser falsa
-(\autoref{sec:res-deteccao}). Avaliar um detector exige um conjunto de teste com a
-proporção de normais da operação real, que o CWRU, com quatro gravações normais,
-não oferece.
-
-\paragraph{O limiar teórico não vale.} As features normais não são normais
-(Shapiro--Wilk rejeita cinco de oito), e o limiar qui-quadrado do Mahalanobis
-daria \SI{6.2}{\percent} de falsos alarmes no treino em vez de \SI{1}{\percent}.
-O limiar empírico resolveu isso no treino, mas não no teste.
-
-\paragraph{O limiar não se transfere.} A FPR no limiar variou de 0 a
-\SI{81}{\percent} entre detectores com AUC semelhante, porque o limiar foi
-calibrado em três gravações normais e testado numa quarta, com escores de
-envelope fora da faixa vista no treino. Três gravações não representam a
-variabilidade normal de uma máquina.
-
-\paragraph{O envelope não reconhece o normal.} Sem amplitude, a gravação normal
+Por fim, o envelope não reconhece o normal. Sem amplitude, a gravação normal
 de teste é classificada como esfera, porque nenhuma das duas tem pico nas
 frequências de defeito. O envelope distingue \emph{qual} defeito existe quando
 ele é visível, mas não distingue ``sem defeito'' de ``defeito invisível''.

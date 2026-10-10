@@ -30,7 +30,7 @@
 
 ## Onde é usado no relatório
 
-- Seção 3.3.4 (seleção de modelos).
+- Seção 3.3.6 (seleção de modelos).
 
 ## Cuidados ao citar
 

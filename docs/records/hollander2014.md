@@ -31,7 +31,7 @@
 
 ## Onde é usado no relatório
 
-- Seção 3.3.5.
+- Seção 3.3.8.
 
 ## Cuidados ao citar
 

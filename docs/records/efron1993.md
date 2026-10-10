@@ -31,7 +31,7 @@
 
 ## Onde é usado no relatório
 
-- Seções 3.3.5 (estatística aplicada), 4.6 (análise estatística) e 5.7 (inferência).
+- Seções 3.3.8 (estatística aplicada), 4.6 (análise estatística) e 5.7 (inferência).
 
 ## Cuidados ao citar
 

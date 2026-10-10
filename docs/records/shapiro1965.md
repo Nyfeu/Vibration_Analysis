@@ -30,7 +30,7 @@
 
 ## Onde é usado no relatório
 
-- Seções 3.3.5, 4.6 e 5.4 (pressupostos do Mahalanobis).
+- Seções 3.3.8, 4.6 e 5.4.2 (pressupostos do Mahalanobis).
 
 ## Cuidados ao citar
 

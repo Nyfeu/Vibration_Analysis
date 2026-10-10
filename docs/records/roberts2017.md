@@ -30,7 +30,7 @@
 
 ## Onde é usado no relatório
 
-- Seções 3.3.4, 4.5.2, 4.6, 5.6 (montagens) e 5.7 (inferência).
+- Seções 3.3.6, 4.5.2, 4.6, 5.6 (montagens) e 5.7 (inferência).
 
 ## Cuidados ao citar
 

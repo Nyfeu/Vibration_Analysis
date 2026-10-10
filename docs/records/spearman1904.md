@@ -30,7 +30,7 @@
 
 ## Onde é usado no relatório
 
-- Seções 3.3.5 e 5.2 (Figura de correlação).
+- Seções 3.3.8 e 5.2 (Figura de correlação).
 
 ## Cuidados ao citar
 

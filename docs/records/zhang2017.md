@@ -32,7 +32,7 @@
 
 ## Onde é usado no relatório
 
-- Seções 3.3.4 e 4.5.3.
+- Seções 3.3.7 e 4.5.3.
 
 ## Cuidados ao citar
 

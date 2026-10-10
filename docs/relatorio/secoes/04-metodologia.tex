@@ -391,7 +391,7 @@ o resultado correto é sempre ``pista externa''. Esse conjunto faz o papel de
 \subsection{CNN 1D}
 \label{sec:met-cnn}
 
-Como contraponto às features (\autoref{sec:tec-classificacao}), uma CNN 1D
+Como contraponto às features (\autoref{sec:tec-cnn}), uma CNN 1D
 classifica diretamente as janelas de 4096 amostras. A arquitetura segue a WDCNN
 de \textcite{zhang2017}: uma primeira convolução de 16 filtros com
 \emph{kernel} de 64 amostras e passo 16, seguida de três blocos de convolução
@@ -409,7 +409,7 @@ zero e desvio unitário. A rede é implementada em PyTorch.
 
 As métricas seguem a separação entre as duas tarefas.
 
-\paragraph{Detecção.} A classe positiva é ``falha''. Com VP, FP, VN e FN as
+Na detecção, a classe positiva é ``falha''. Com VP, FP, VN e FN as
 contagens de verdadeiros e falsos positivos e negativos, no limiar de alarme:
 \begin{equation}
   \text{TPR} = \text{recall} = \frac{\text{VP}}{\text{VP}+\text{FN}}, \qquad
@@ -424,7 +424,7 @@ alarmasse sempre teria precisão \num{0.90}, recall 1 e $F_1 = \num{0.947}$. Por
 isso a precisão é sempre lida contra essa prevalência, e a comparação principal
 entre detectores usa AUC, TPR e FPR~\cite{hastie2009}.
 
-\paragraph{Diagnóstico.} Para cada classe $c$, a precisão é a fração das janelas
+No diagnóstico, para cada classe $c$, a precisão é a fração das janelas
 previstas como $c$ que são de fato $c$, e o recall é a fração das janelas de $c$
 reconhecidas como $c$ --- o mesmo que a acurácia por classe pedida pelo
 enunciado. O $F_1$ macro é a média simples dos $F_1$ das quatro classes, o que dá
@@ -437,19 +437,28 @@ enunciado. O $F_1$ macro é a média simples dos $F_1$ das quatro classes, o que
 A unidade estatística é a \textbf{gravação}, e não a janela
 (\autoref{sec:tec-estatistica}). Três etapas complementam as métricas:
 
-\paragraph{Análise exploratória.} Com as janelas de treino, calculam-se mediana e
+\subsection{Análise exploratória}
+\label{sec:met-eda}
+
+Com as janelas de treino, calculam-se mediana e
 quartis de cada feature por classe, a correlação de Spearman entre as oito
 features e, para cada feature, o teste de Kruskal--Wallis entre as quatro classes
 aplicado às \emph{medianas por gravação} (30 gravações), com o tamanho de efeito
 $\varepsilon^2$. Aplicado às janelas, o teste daria valores-$p$ artificialmente
 pequenos.
 
-\paragraph{Pressupostos.} Para o baseline de Mahalanobis, testa-se a normalidade
+\subsection{Pressupostos}
+\label{sec:met-pressupostos}
+
+Para o baseline de Mahalanobis, testa-se a normalidade
 de cada feature padronizada nas janelas normais de treino (Shapiro--Wilk), e
 compara-se o limiar empírico (percentil 99) com o limiar teórico
 $\sqrt{\chi^2_{8;\,0{,}99}} = \num{4.48}$, válido sob normalidade multivariada.
 
-\paragraph{Inferência.}
+\subsection{Inferência}
+\label{sec:met-inferencia}
+
+A inferência combina quatro procedimentos:
 \begin{itemize}
   \item \textbf{Intervalos de confiança de 95\%} para acurácia, recall por classe e
   TPR, por bootstrap de percentis com 2000 reamostragens de gravações inteiras,

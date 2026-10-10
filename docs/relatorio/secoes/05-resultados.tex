@@ -211,7 +211,10 @@ simples em 50 das 52 gravações de falha. Por classe:
   não a capta.
 \end{itemize}
 
-\paragraph{Pré-branqueamento e kurtograma.} A
+\subsection{Pré-branqueamento e kurtograma}
+\label{sec:res-preprocessamentos}
+
+A
 \autoref{tab:preprocessamentos} repete a validação com os dois pré-processamentos
 da \autoref{sec:features-envelope}, cada um com o limiar das normais tratadas da
 mesma forma, ao lado do que \textcite[Tab.~B2]{smith2015} diagnosticam por cada
@@ -352,7 +355,10 @@ treino, a variabilidade normal entre montagens e condições não é coberta, e 
 One-Class SVM, cuja fronteira é a mais justa, trata a quarta gravação como
 anômala.
 
-\paragraph{Precisão e prevalência.} Todos os detectores têm precisão acima de
+\subsection{Precisão e prevalência}
+\label{sec:res-prevalencia}
+
+Todos os detectores têm precisão acima de
 \num{0.91}, inclusive os que deixam passar metade das falhas. Isso é efeito da
 prevalência: \SI{90}{\percent} das janelas de teste são de falha, e mesmo um
 detector que alarmasse sempre teria precisão de \num{0.90} e $F_1$ de
@@ -364,7 +370,10 @@ precisão do Mahalanobis com tempo+envelope cairia de \num{0.987} para
 para \num{0.117}. Nesse cenário, a FPR é a métrica que decide se o detector é
 utilizável, e não a acurácia nem a precisão medidas aqui.
 
-\paragraph{Pressupostos do Mahalanobis.} A distância de Mahalanobis ao quadrado
+\subsection{Pressupostos do Mahalanobis}
+\label{sec:res-pressupostos}
+
+A distância de Mahalanobis ao quadrado
 só segue uma qui-quadrado com 8 graus de liberdade se as features normais forem
 normais multivariadas. O teste de Shapiro--Wilk rejeita a normalidade em cinco
 das oito features nas janelas normais de treino (RMS, pico, fator de crista,
@@ -465,7 +474,10 @@ ensaiadas em montagens distintas~\cite{smith2015}.
 \label{sec:res-classificacao}
 
 % Rubrica: peso 1. Matriz de confusão COMPLETA é obrigatória (enunciado, item 6.2).
-\paragraph{Seleção de modelos.} A \autoref{tab:selecao} mostra a acurácia média
+\subsection{Seleção de modelos}
+\label{sec:res-selecao}
+
+A \autoref{tab:selecao} mostra a acurácia média
 dos cinco candidatos na validação cruzada do treino, com as features
 tempo+envelope. O Random Forest é o melhor na validação por carga, e é o modelo
 selecionado.
@@ -497,14 +509,20 @@ mesma gravação. A diferença é pequena porque nem a validação por carga sep
 montagens --- cada combinação de defeito e diâmetro foi ensaiada numa única
 montagem, presente nas quatro cargas (\autoref{sec:limitacoes}).
 
-\paragraph{Busca em grade.} Com tempo+envelope, o \texttt{GridSearchCV}
+\subsection{Busca em grade}
+\label{sec:res-grid}
+
+Com tempo+envelope, o \texttt{GridSearchCV}
 escolheu, para o Random Forest, 100 árvores com profundidade máxima 5 e no mínimo
 5 amostras por folha (acurácia de \num{0.984} na validação por carga), e, para o
 SVM, $C = 10$ e $\gamma = \num{0.1}$ (\num{0.980}). Os parâmetros escolhidos para
 cada conjunto de features estão em
 \texttt{results/metrics/classificacao\_melhores\_parametros.csv}.
 
-\paragraph{Melhor modelo no teste.} A \autoref{tab:classificacao} mostra os
+\subsection{Melhor modelo no teste}
+\label{sec:res-melhor-modelo}
+
+A \autoref{tab:classificacao} mostra os
 pipelines ajustados avaliados no teste, para cada conjunto de features, e a
 fração das janelas do conjunto de generalização classificadas como pista
 externa, que é a resposta correta para todas elas. As linhas da CNN 1D estão na
@@ -577,10 +595,10 @@ gravação 200, e 4 de pista interna. A pista externa tem o padrão oposto,
 precisão \num{0.99} e recall \num{0.89}: quando o modelo diz ``pista externa'',
 acerta, mas perde a gravação sem assinatura. Só com envelope, a pista interna
 mantém $F_1$ de \num{0.91} --- é a classe com assinatura física mais clara
-(\autoref{sec:res-fisica}) ---, enquanto a classe normal vai a zero. Três
-observações relativizam o número global.
+(\autoref{sec:res-fisica}) ---, enquanto a classe normal vai a zero.
 
-\paragraph{A esfera é acertada sem assinatura física.} A validação física pelo
+O número global, porém, precisa ser relativizado, porque a esfera é acertada sem
+assinatura física. A validação física pelo
 envelope do sinal bruto --- o mesmo usado nas features --- não confirmou o defeito
 em nenhuma gravação de esfera (\autoref{sec:res-fisica}). Das três gravações de
 esfera do teste, \textcite{smith2015} só diagnosticam a 121, e apenas com o
@@ -591,7 +609,10 @@ features, e o escore de BSF por \SI{3.3}{\percent}. O classificador reconhece as
 gravações de esfera pelo nível de vibração --- intermediário entre o das pistas e
 o dos normais (\autoref{fig:rms}) ---, e não pela frequência do defeito.
 
-\paragraph{O que o ganho de informação mostra.} A
+\subsection{Ganho de informação}
+\label{sec:res-ganho}
+
+A
 \autoref{tab:ganho-informacao} mostra o ganho de informação de cada feature no
 melhor corte único, no treino. A entropia das quatro classes é de
 \SI{1.868}{bits}. As duas features de amplitude lideram: o pico remove
@@ -648,8 +669,11 @@ outra posição.
   (\texttt{sklearn.tree.export\_text}).}
 \end{figure}
 
-\paragraph{O desempenho no teste não se transfere para outra posição do
-defeito.} No conjunto de generalização, o mesmo modelo classifica como pista
+\subsection{Generalização para outra posição do defeito}
+\label{sec:res-generalizacao}
+
+O desempenho no teste não se transfere para outra posição do defeito. No
+conjunto de generalização, o mesmo modelo classifica como pista
 externa só \SI{40.0}{\percent} das janelas --- valor que, entre sementes, varia de
 40 a \SI{72}{\percent} (\autoref{sec:res-inferencia}) ---; o SVM, \SI{11.5}{\percent}. Com o
 Random Forest, a pista externa a 12~h com \SI{0.007}{\inch} e a 3~h com
@@ -659,14 +683,18 @@ generalização sobe para \SI{76.0}{\percent}, e as janelas de 3~h passam a ser
 classificadas corretamente em \SI{99}{\percent} dos casos (457 de 464). O modelo
 que usa a física acerta menos no teste e generaliza melhor.
 
-\paragraph{Sem amplitude, o normal desaparece.} Com envelope ou ``forma'', a
+O preço de retirar a amplitude é que a classe normal desaparece. Com envelope ou
+``forma'', a
 classe normal quase não é reconhecida (acurácia de \numrange{0}{0.24}): nos
 quatro casos, a maioria das janelas da gravação 100 é classificada como esfera.
 Isso é coerente com a validação física: nem as gravações normais nem as de
 esfera têm pico nas frequências de defeito, e o envelope não tem como
 separá-las.
 
-\paragraph{A CNN 1D.} A rede atinge \SI{97.1}{\percent} com o sinal bruto e
+\subsection{CNN 1D}
+\label{sec:res-cnn}
+
+A rede atinge \SI{97.1}{\percent} com o sinal bruto e
 \SI{99.7}{\percent} com as janelas normalizadas --- o maior valor do trabalho, e
 por isso o mais suspeito. A normalização retira a amplitude, então o atalho do
 RMS não explica esse resultado. A rede acerta, porém, \SI{100}{\percent} das
@@ -678,7 +706,10 @@ nas quatro cargas. Sem amplitude, a rede generaliza melhor que com ela
 (\SI{64.1}{\percent} contra \SI{35.6}{\percent}), mas ainda pior que o Random
 Forest só com envelope.
 
-\paragraph{Severidade.} Desagregando por diâmetro do defeito, o pior caso é a
+\subsection{Severidade}
+\label{sec:res-severidade}
+
+Desagregando por diâmetro do defeito, o pior caso é a
 pista externa de \SI{0.014}{\inch}, a gravação 200: \SI{66}{\percent} de acerto
 com tempo+envelope e \SI{21}{\percent} só com envelope, em que é classificada
 principalmente como esfera. É a mesma gravação que a validação física e o artigo
@@ -762,7 +793,10 @@ Os valores anteriores são estimativas pontuais com a semente 42. Esta seção m
 a incerteza deles com a gravação ou a montagem como unidade
 (\autoref{sec:met-estatistica}).
 
-\paragraph{Intervalos de confiança.} A \autoref{tab:ic} reúne os intervalos de
+\subsection{Intervalos de confiança}
+\label{sec:res-ic}
+
+A \autoref{tab:ic} reúne os intervalos de
 95\%. A acurácia de \SI{95.7}{\percent} do Random Forest com tempo+envelope tem
 intervalo de \numrange{0.894}{1.000}, e a do modelo só de envelope, de
 \numrange{0.552}{0.796}; a diferença entre os dois, \num{0.28}, tem intervalo de
@@ -804,7 +838,10 @@ numa planta, não pode ser estimada com estes dados.
   \texttt{results/metrics/inferencia\_intervalos.csv}.}
 \end{table}
 
-\paragraph{Montagem nova: diferente do acaso?} A \autoref{tab:montagem-inferencia}
+\subsection{Montagem nova: diferente do acaso?}
+\label{sec:res-acaso}
+
+A \autoref{tab:montagem-inferencia}
 testa o experimento da \autoref{sec:res-montagem} com a montagem como unidade.
 Só a regra física acerta significativamente mais montagens que o acaso
 (6 de 9, $p = \num{0.042}$). O Random Forest acerta 4 de 9 ($p = \num{0.35}$) e
@@ -838,7 +875,10 @@ estimativa precisa da sua acurácia.
   \texttt{results/metrics/inferencia\_montagem.csv}.}
 \end{table}
 
-\paragraph{Variabilidade entre sementes.} A \autoref{tab:sementes} mostra que a
+\subsection{Variabilidade entre sementes}
+\label{sec:res-sementes}
+
+A \autoref{tab:sementes} mostra que a
 acurácia no teste é estável entre sementes para todos os modelos (desvio de
 \num{0.003} a \num{0.004}), mas a generalização para o defeito em outra posição
 não é. Para o Random Forest com tempo+envelope, ela varia de \num{0.40} a

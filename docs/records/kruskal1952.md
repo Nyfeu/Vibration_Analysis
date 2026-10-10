@@ -31,7 +31,7 @@
 
 ## Onde é usado no relatório
 
-- Seções 3.3.5, 4.6 e 5.2 (Tabela de Kruskal–Wallis).
+- Seções 3.3.8, 4.6 e 5.2 (Tabela de Kruskal–Wallis).
 
 ## Cuidados ao citar
 

@@ -122,8 +122,7 @@ amostras~\cite[cap.~4]{oppenheim2010}. A operação é necessária quando sinais
 gravados a taxas diferentes precisam ser comparados na mesma base, que é o caso
 das gravações normais do CWRU (\autoref{sec:fs-normais}).
 
-\paragraph{Subamostragem e \emph{aliasing}.} A operação elementar é a
-subamostragem $y[n] = x[nM]$. Pelo teorema da amostragem, um sinal discreto à
+A operação elementar é a subamostragem $y[n] = x[nM]$. Pelo teorema da amostragem, um sinal discreto à
 taxa $f_s$ só representa sem ambiguidade frequências até $f_s/2$, a frequência de
 Nyquist. Após a subamostragem, esse limite cai para $f_s/(2M)$, e o espectro de
 $y$ passa a ser a soma de $M$ cópias deslocadas e dilatadas do espectro de
@@ -140,15 +139,15 @@ exemplo, reapareceria em $\SI{12}{\kilo\hertz} - \SI{9}{\kilo\hertz} =
 \SI{3}{\kilo\hertz}$. Depois de rebatida, ela não pode mais ser separada do
 conteúdo legítimo nessa frequência.
 
-\paragraph{Filtro anti-\emph{aliasing}.} Por isso a decimação é feita em duas
-etapas~\cite{crochiere1983,oppenheim2010}: primeiro, um filtro passa-baixas
+Por isso a decimação é feita em duas etapas, com um filtro
+anti-\emph{aliasing}~\cite{crochiere1983,oppenheim2010}: primeiro, um filtro passa-baixas
 digital remove o conteúdo acima da nova frequência de Nyquist; depois, o sinal
 filtrado é subamostrado. O custo é perder a faixa acima do corte do filtro, que
 de todo modo não seria representável à nova taxa. Como nenhum filtro real tem
 transição abrupta, o corte é posto um pouco abaixo de $f_s/(2M)$, e a faixa entre
 o corte e a nova frequência de Nyquist fica atenuada.
 
-\paragraph{Fase do filtro.} Um filtro causal atrasa o sinal e, se não tiver fase
+Resta a fase do filtro. Um filtro causal atrasa o sinal e, se não tiver fase
 linear, atrasa cada frequência de forma diferente, o que deforma impulsos como os
 gerados por um defeito de rolamento. Aplicar o mesmo filtro duas vezes, uma em
 cada sentido do tempo, cancela a fase e produz resposta de fase
@@ -242,8 +241,10 @@ fronteira de margem máxima entre as classes, com \emph{kernel} para fronteiras
 não lineares. As implementações são as do
 \texttt{scikit-learn}~\cite{pedregosa2011}.
 
-\paragraph{Árvores de decisão e ganho de informação.} Cada árvore do Random
-Forest divide os dados recursivamente, escolhendo em cada nó a feature e o limiar
+\subsection{Árvores de decisão e ganho de informação}
+\label{sec:tec-arvores}
+
+Cada árvore do Random Forest divide os dados recursivamente, escolhendo em cada nó a feature e o limiar
 que mais reduzem a impureza das classes. Com a entropia de Shannon como medida de
 impureza, $H(Y) = -\sum_c p_c \log_2 p_c$, a redução obtida por um corte é o
 \emph{ganho de informação}~\cite{quinlan1986}:
@@ -258,7 +259,10 @@ Forest é a redução de impureza que ela proporciona, somada em todos os nós e
 direta: diz quanto da incerteza sobre a classe uma feature remove sozinha --- e,
 neste trabalho, serve para ver \emph{em que} o classificador se apoia.
 
-\paragraph{Seleção de modelos com validação cruzada agrupada.} Os modelos e seus
+\subsection{Seleção de modelos com validação cruzada agrupada}
+\label{sec:tec-selecao}
+
+Os modelos e seus
 hiperparâmetros são escolhidos por validação cruzada no conjunto de treino. A
 validação cruzada estima o desempenho em dados não vistos treinando em parte dos
 dados e avaliando no restante, alternando as partes~\cite{kohavi1995}; a busca
@@ -269,7 +273,10 @@ divisão aleatória coloca observações quase idênticas dos dois lados e
 superestima o desempenho; a divisão deve respeitar os grupos, deixando grupos
 inteiros de fora em cada partição~\cite{roberts2017}.
 
-\paragraph{Rede neural convolucional 1D.} Como contraponto às features
+\subsection{Rede neural convolucional 1D}
+\label{sec:tec-cnn}
+
+Como contraponto às features
 calculadas à mão, uma rede convolucional unidimensional aprende os filtros
 diretamente do sinal bruto. Em diagnóstico de motores e rolamentos, CNNs 1D
 compactas atingem alto desempenho sem extração manual de
@@ -286,9 +293,9 @@ observações independentes. Tratar as janelas como amostras independentes
 subestima a variância e produz intervalos estreitos demais e valores-$p$ pequenos
 demais. As técnicas abaixo foram escolhidas para respeitar essa estrutura.
 
-\paragraph{Análise exploratória e testes não paramétricos.} As features têm
-distribuições assimétricas e com caudas pesadas (o RMS de uma falha é dezenas de
-vezes o de um normal), o que desaconselha a ANOVA. O teste de
+Na análise exploratória, as features têm distribuições assimétricas e com
+caudas pesadas (o RMS mediano da pista externa é cerca de dez vezes o das
+gravações normais), o que desaconselha a ANOVA. O teste de
 Kruskal--Wallis compara a distribuição de uma variável entre $k$ grupos usando só
 os postos das observações, sem supor normalidade~\cite{kruskal1952,hollander2014}.
 O tamanho do efeito é medido por $\varepsilon^2 = H/(n-1)$, entre 0 e
@@ -298,7 +305,7 @@ lineares~\cite{spearman1904,hollander2014}. A normalidade, quando é pressuposto
 um método --- como a distribuição qui-quadrado da distância de Mahalanobis ---, é
 verificada pelo teste de Shapiro--Wilk~\cite{shapiro1965}.
 
-\paragraph{Bootstrap por grupos.} O bootstrap estima a distribuição amostral de
+Para a inferência, usa-se o bootstrap, que estima a distribuição amostral de
 uma estatística reamostrando os próprios dados com reposição, e dá intervalos de
 confiança sem fórmula fechada~\cite{efron1993}. Quando os dados são agrupados, a
 reamostragem deve ser feita no nível do grupo --- gravações inteiras, e não

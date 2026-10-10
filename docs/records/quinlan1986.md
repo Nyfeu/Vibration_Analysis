@@ -31,7 +31,7 @@
 
 ## Onde é usado no relatório
 
-- Seção 3.3.4 (árvores e ganho de informação), Seção 4.5.2 e resultados de classificação (Tabela de ganho de informação, Figura da árvore).
+- Seção 3.3.5 (árvores e ganho de informação), Seção 4.5.2 e resultados de classificação (Tabela de ganho de informação, Figura da árvore).
 
 ## Cuidados ao citar
 
