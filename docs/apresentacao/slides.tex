@@ -36,7 +36,7 @@
 \newcommand{\nota}[1]{{\color{cinza}\footnotesize #1}}
 
 \title{Detecção e diagnóstico de defeitos em rolamentos}
-\subtitle{Alta acurácia no CWRU é fácil --- e diz pouco}
+\subtitle{Acurácia elevada no CWRU nem sempre indica diagnóstico}
 \author{André Maiolini \and Durval Santos \and Leonardo Amadio \\ Lucas Carvalho \and Estevan Feher}
 \institute{ECM514 --- Ciência de Dados \\ Instituto Mauá de Tecnologia}
 \date{2026}
@@ -103,7 +103,7 @@
     \begin{column}{0.40\textwidth}
       \small
       \begin{itemize}
-        \item Cada defeito bate numa \textbf{frequência própria}, dada pela geometria e pela rotação
+        \item Cada defeito gera impactos numa \textbf{frequência própria}, dada pela geometria e pela rotação
         \item O \textbf{espectro do envelope} mostra essa repetição
         \item Features: 5 do tempo (RMS, curtose\dots) + 3 \emph{scores} de envelope
       \end{itemize}
@@ -140,7 +140,7 @@
 \end{frame}
 
 % ---------------------------------------------------------------- 6 (Leonardo)
-\begin{frame}{Detecção: AUC = 1,00 \dots\ desconfie}
+\begin{frame}{Detecção: AUC = 1,00 exige verificação}
   \begin{columns}[T]
     \begin{column}{0.49\textwidth}
       \begin{itemize}
@@ -183,7 +183,7 @@
   \end{tabular}
 
   \vspace{0.6em}
-  \nota{Esfera vira ``classe-refúgio'' (recall alto, precisão baixa). RMS + pico = 56\% da importância; \emph{score} da esfera, 3\%.}
+  \nota{Esfera atua como classe residual (recall alto, precisão baixa). RMS + pico = 56\% da importância; \emph{score} da esfera, 3\%.}
 \end{frame}
 
 % ---------------------------------------------------------------- 8 (Estevan)
@@ -207,15 +207,20 @@
 
   \vspace{0.6em}
   \nota{Só a regra física acerta mais montagens que o acaso (6 de 9, $p = 0{,}042$). Ela reconhece 99,8\% da pista externa em outra posição.}
+
+  \vspace{0.4em}
+  \begin{itemize}
+    \item Por quê? Sem a esfera (classe sem assinatura), modelos treinados só com envelope reconhecem montagens novas: \textbf{83--95\%} \nota{(IR $\times$ OR, acaso 50\%; análise exploratória)}
+  \end{itemize}
 \end{frame}
 
 % ---------------------------------------------------------------- 9 (Estevan)
 \begin{frame}{Conclusões}
   \begin{itemize}
-    \item \textbf{Detectar} foi fácil demais (amplitude); \textbf{diagnosticar} não sobrevive a uma montagem nova
-    \item No CWRU, \textbf{alta acurácia é fácil e diz pouco}: os modelos aprendem amplitude e montagem
-    \item A \textbf{física generaliza} onde o aprendizado não generaliza
-    \item O que funcionou: protocolo sem vazamento, ablações, validação física
+    \item A \textbf{detecção} é resolvida pela amplitude (RMS: AUC 1,00); o \textbf{diagnóstico} aprendido não se mantém numa montagem nova
+    \item No CWRU, \textbf{acurácia elevada informa pouco}: os modelos aprendem amplitude e montagem
+    \item Generaliza o que tem \textbf{fundamento físico}: a regra sem treino e modelos de envelope com classes de assinatura visível
+    \item O que funcionou: protocolo sem vazamento, comparação de conjuntos de features, validação física
     \item Limites: 4 gravações normais, defeitos artificiais, uma bancada
   \end{itemize}
   \vspace{1em}

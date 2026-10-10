@@ -1,0 +1,27 @@
+classes,features,modelo,acuracia,acc_IR,acc_B,acc_OR,montagens_certas,montagens,p_binomial
+IR+B+OR,tempo+envelope,Random Forest,0.4567,0.2482,0.8721,0.2500,4,9,0.3497
+IR+B+OR,tempo+envelope,SVM (RBF),0.4112,0.4706,0.3693,0.3937,3,9,0.6228
+IR+B+OR,tempo+envelope,KNN (k=9),0.5381,0.6313,0.3592,0.6236,5,9,0.1448
+IR+B+OR,envelope,Random Forest,0.4557,0.6514,0.4353,0.2802,4,9,0.3497
+IR+B+OR,envelope,SVM (RBF),0.3533,0.6313,0.4282,0.0000,3,9,0.6228
+IR+B+OR,envelope,KNN (k=9),0.4792,0.6585,0.4310,0.3477,4,9,0.3497
+IR+B+OR,razões de envelope,Random Forest,0.4868,0.6327,0.4612,0.3664,4,9,0.3497
+IR+B+OR,razões de envelope,SVM (RBF),0.4213,0.3286,0.0445,0.8908,4,9,0.3497
+IR+B+OR,razões de envelope,KNN (k=9),0.4950,0.6758,0.4080,0.4009,4,9,0.3497
+IR+B+OR,tempo normalizado+envelope,Random Forest,0.2599,0.4103,0.3233,0.0460,2,9,0.8569
+IR+B+OR,tempo normalizado+envelope,SVM (RBF),0.2963,0.5136,0.2716,0.1034,3,9,0.6228
+IR+B+OR,tempo normalizado+envelope,KNN (k=9),0.4079,0.6198,0.2687,0.3348,4,9,0.3497
+IR+B+OR,envelope,Regra física (sem treino),0.6573,1.0000,0.2399,0.7313,6,9,0.0424
+IR+OR,tempo+envelope,Random Forest,0.3597,0.4161,,0.3032,2,6,0.8906
+IR+OR,tempo+envelope,SVM (RBF),0.6569,0.6571,,0.6566,4,6,0.3438
+IR+OR,tempo+envelope,KNN (k=9),0.6755,0.7819,,0.5690,4,6,0.3438
+IR+OR,envelope,Random Forest,0.8306,0.7963,,0.8649,5,6,0.1094
+IR+OR,envelope,SVM (RBF),0.9519,0.9297,,0.9741,6,6,0.0156
+IR+OR,envelope,KNN (k=9),0.9426,0.9082,,0.9770,6,6,0.0156
+IR+OR,razões de envelope,Random Forest,0.8162,0.8207,,0.8118,5,6,0.1094
+IR+OR,razões de envelope,SVM (RBF),0.8528,0.9024,,0.8032,5,6,0.1094
+IR+OR,razões de envelope,KNN (k=9),0.8320,0.8379,,0.8261,5,6,0.1094
+IR+OR,tempo normalizado+envelope,Random Forest,0.3575,0.3702,,0.3448,2,6,0.8906
+IR+OR,tempo normalizado+envelope,SVM (RBF),0.6461,0.6557,,0.6365,4,6,0.3438
+IR+OR,tempo normalizado+envelope,KNN (k=9),0.5463,0.6686,,0.4239,3,6,0.6562
+IR+OR,envelope,Regra física (sem treino),0.8708,1.0000,,0.7414,5,6,0.1094

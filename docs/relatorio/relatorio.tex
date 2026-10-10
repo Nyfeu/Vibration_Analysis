@@ -180,12 +180,17 @@
   o defeito apareça no envelope. Com features só de envelope, a acurácia no teste
   cai para 67,6\%, mas a generalização para o defeito em outra posição sobe de
   40,0\% para 76,0\%. A principal limitação é do próprio conjunto de dados: com
-  quatro gravações normais e cada defeito ensaiado numa única montagem, alta
-  acurácia no CWRU é fácil e diz pouco sobre o diagnóstico do defeito. Quando um
+  quatro gravações normais e cada defeito ensaiado numa única montagem, acurácia
+  elevada no CWRU pode ser obtida sem relação com o defeito e informa pouco sobre
+  o diagnóstico. Quando um
   diâmetro inteiro (uma montagem) fica fora do treino, todos os modelos caem para
   perto do acaso, enquanto uma regra física sem treino, baseada na frequência de
   defeito dominante no envelope, acerta 65,7\% do tipo de falha e é a única
   significativamente melhor que o acaso (teste binomial por montagem, $p = 0{,}042$).
+  Uma análise exploratória indica que a dependência da montagem vem de duas
+  causas conjuntas, as features de amplitude e a classe esfera, sem assinatura
+  observável: sem ela, modelos treinados só com o envelope reconhecem montagens
+  novas de pista interna e externa.
   Intervalos de confiança por bootstrap de gravações e a repetição com várias
   sementes confirmam que a vantagem do modelo físico na generalização não é
   efeito do acaso.
@@ -220,12 +225,16 @@
     only, test accuracy drops to 67.6\%, but generalization to a fault at a
     different position rises from 40.0\% to 76.0\%. The main limitation lies
     in the data set itself: with four normal records and each fault tested on a
-    single assembly, high accuracy on CWRU is easy and says little about fault
-    diagnosis. When a whole fault diameter (an assembly) is left out of
+    single assembly, high accuracy on CWRU can be reached without any relation
+    to the fault and says little about fault diagnosis. When a whole fault diameter (an assembly) is left out of
     training, all models fall close to chance, whereas a training-free physical
     rule based on the dominant fault frequency in the envelope gets 65.7\% of
     the fault types right and is the only approach significantly better than
-    chance (binomial test over assemblies, $p = 0.042$). Confidence intervals
+    chance (binomial test over assemblies, $p = 0.042$). An exploratory
+    analysis indicates that the assembly dependence has two joint causes, the
+    amplitude features and the ball class, which has no observable signature:
+    without it, models trained on envelope features alone recognize new
+    inner- and outer-race assemblies. Confidence intervals
     from a recording-level bootstrap and retraining with several seeds confirm
     that the advantage of the physics-based model in generalization is not due
     to chance.

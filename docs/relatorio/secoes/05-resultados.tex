@@ -153,7 +153,7 @@ o maior pico está em BPFI e há outro forte em $2 \times$BPFI, cercados por
 componentes espaçadas da rotação. A gravação normal (98) não tem pico em nenhuma
 frequência característica; seus picos mais altos, em torno de \SI{60}{\hertz} e
 \SI{118}{\hertz}, não pertencem a nenhuma família. A esfera (223) é o caso
-difícil: há uma componente larga e ``borrada'' em torno de $2 \times$BSF, mas o
+difícil: há uma componente larga e difusa em torno de $2 \times$BSF, mas o
 pico discreto mais alto está em BPFI.
 
 \begin{figure}[htb]
@@ -684,8 +684,8 @@ e para o mesmo modelo só com envelope.
 \end{table}
 
 A combinação de precisão e recall diz mais que a acurácia. A esfera tem recall de
-\num{0.99}, mas precisão de \num{0.88}: ela funciona como classe-refúgio, para
-onde vão as janelas que o modelo não reconhece --- 20 de pista externa, todas da
+\num{0.99}, mas precisão de \num{0.88}: ela funciona como classe residual, à qual
+são atribuídas as janelas que o modelo não reconhece --- 20 de pista externa, todas da
 gravação 200, e 4 de pista interna. A pista externa tem o padrão oposto,
 precisão \num{0.99} e recall \num{0.89}: quando o modelo diz ``pista externa'',
 acerta, mas perde a gravação sem assinatura. Só com envelope, a pista interna
@@ -795,7 +795,7 @@ por isso o mais suspeito. A normalização retira a amplitude, então o atalho d
 RMS não explica esse resultado. A rede acerta, porém, \SI{100}{\percent} das
 janelas das gravações 200 e 225, que não mostram o defeito declarado, e reconhece
 como pista externa só \SI{64.1}{\percent} do conjunto de generalização. A
-explicação mais provável é que ela aprende a ``impressão digital'' espectral de
+explicação mais provável é que ela aprende as características espectrais próprias de
 cada montagem --- ressonâncias, componentes do eixo e da bancada ---, que se repete
 nas quatro cargas. Sem amplitude, a rede generaliza melhor que com ela
 (\SI{64.1}{\percent} contra \SI{35.6}{\percent}), mas ainda pior que o Random
@@ -863,8 +863,8 @@ modelos treinados caem para perto do acaso: de \num{0.258} a \num{0.547}, contra
 carga. O Random Forest com tempo+envelope,
 selecionado na \autoref{sec:res-classificacao}, passa de \SI{95.7}{\percent} para
 \SI{45.7}{\percent}, e a CNN com janelas normalizadas, de \SI{99.7}{\percent} para
-\SI{49.8}{\percent}. Os padrões por classe também denunciam o atalho: vários
-modelos acertam quase toda a esfera e quase nada das pistas, isto é, jogam as
+\SI{49.8}{\percent}. Os padrões por classe também evidenciam o atalho: vários
+modelos acertam quase toda a esfera e pouco das pistas, isto é, atribuem as
 montagens desconhecidas na classe ``esfera''.
 
 A regra física, que não aprende nada dos dados, é a melhor de todas:
@@ -917,7 +917,89 @@ cada quatro janelas que a regra chama de pista externa é de outra classe
 O resultado inverte a leitura da \autoref{tab:resumo}: os modelos de maior
 acurácia no teste por carga são os que mais dependem da montagem, e o
 procedimento menos sofisticado --- comparar o pico do envelope com a frequência
-calculada pela geometria --- é o único que se mantém quando a montagem muda.
+calculada pela geometria --- é o único que se mantém, entre os três tipos de
+falha, quando a montagem muda. A \autoref{sec:res-causas-atalho} investiga a
+origem dessa dependência.
+
+\subsection{Origem da dependência da montagem (análise exploratória)}
+\label{sec:res-causas-atalho}
+
+Duas hipóteses podem explicar por que os modelos treinados reconhecem a montagem
+em vez do defeito. A primeira é a \emph{amplitude}: RMS e pico carregam o nível
+de vibração de cada montagem. A segunda é o \emph{rótulo sem assinatura}: como a
+validação física não confirmou o BSF em nenhuma gravação de esfera
+(\autoref{sec:res-fisica}), o único padrão comum às janelas rotuladas como esfera
+é o conjunto de características das três montagens de esfera, e um modelo que
+aprende essa classe passa a atribuir a ela janelas de pista interna e externa de
+montagens desconhecidas. As duas hipóteses foram formuladas depois de observar a
+\autoref{tab:montagem}, e por isso esta análise é exploratória.
+
+Para testar a primeira hipótese, o protocolo da \autoref{tab:montagem} foi
+repetido com dois conjuntos de features sem a amplitude absoluta: as
+\emph{razões de envelope}, isto é, o \emph{score} de cada família dividido pela
+soma dos três, e o conjunto \emph{tempo normalizado+envelope}, em que RMS e pico
+são divididos pela mediana do RMS da própria gravação. Para testar a segunda, o
+mesmo protocolo foi aplicado só às classes com assinatura confirmada, pista
+interna e pista externa, com seis montagens e acaso de \SI{50}{\percent}. A
+\autoref{tab:causas-atalho} resume os resultados.
+
+\begin{table}[htb]
+  \centering
+  \caption{Acurácia com um diâmetro (montagem) fora do treino, com três classes
+  de falha e só com as duas classes de assinatura confirmada, e número de
+  montagens com a maioria das janelas corretas (faixa entre os três modelos).}
+  \label{tab:causas-atalho}
+  \scriptsize
+  \begin{tabular}{lcccccccc}
+    \toprule
+    & \multicolumn{4}{c}{\textbf{IR, B e OR (acaso 0,33)}} &
+      \multicolumn{4}{c}{\textbf{IR e OR (acaso 0,50)}} \\
+    \cmidrule(lr){2-5}\cmidrule(lr){6-9}
+    \textbf{Features} & \textbf{RF} & \textbf{SVM} & \textbf{KNN} & \textbf{Mont.} &
+      \textbf{RF} & \textbf{SVM} & \textbf{KNN} & \textbf{Mont.} \\
+    \midrule
+    tempo+envelope             & 0,457 & 0,411 & 0,538 & 3--5/9 & 0,360 & 0,657 & 0,676 & 2--4/6 \\
+    envelope                   & 0,456 & 0,353 & 0,479 & 3--4/9 & 0,831 & 0,952 & 0,943 & 5--6/6 \\
+    razões de envelope         & 0,487 & 0,421 & 0,495 & 4/9    & 0,816 & 0,853 & 0,832 & 5/6 \\
+    tempo normalizado+envelope & 0,260 & 0,296 & 0,408 & 2--4/9 & 0,358 & 0,646 & 0,546 & 2--4/6 \\
+    \midrule
+    Regra física (sem treino)  & \multicolumn{3}{c}{0,657} & 6/9 & \multicolumn{3}{c}{0,871} & 5/6 \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/montagem\_causas\_atalho.csv}.}
+\end{table}
+
+Retirar a amplitude não basta. Com três classes, nenhuma das variantes sem
+amplitude tira os modelos da faixa do acaso: as razões de envelope ficam entre
+\num{0.42} e \num{0.50}, e nenhum modelo acerta significativamente mais montagens
+que o acaso (4 de 9, $p = \num{0.35}$). A normalização por gravação é pior que o
+envelope sozinho (\numrange{0.26}{0.41}), porque curtose, fator de crista e
+assimetria, que não dependem da escala, também variam de uma montagem para
+outra.
+
+Retirar a classe sem assinatura muda o quadro, desde que as features sejam só de
+envelope. Com pista interna e pista externa, os modelos treinados só com os
+\emph{scores} de envelope acertam de \num{0.83} a \num{0.95} das janelas de
+montagens novas; o SVM e o KNN acertam as seis montagens ($p = \num{0.016}$ contra
+o acaso de \SI{50}{\percent}), e a regra física, cinco ($p = \num{0.11}$). Com
+features de tempo, mesmo normalizadas, os modelos continuam presos à montagem
+(\numrange{0.36}{0.68}). A dependência da montagem tem, portanto, duas causas que
+atuam em conjunto: features que descrevem a montagem, e não o defeito, e uma
+classe cujo rótulo não corresponde a uma assinatura observável no sinal. O
+resultado sugere que o obstáculo à generalização está mais nos dados e nos
+rótulos do que nos algoritmos de aprendizado.
+
+Três ressalvas limitam essa conclusão. A análise foi decidida depois de ver os
+resultados; há só seis montagens no caso de duas classes, de modo que a diferença
+entre os modelos de envelope e a regra física (uma montagem) não é
+estatisticamente distinguível; e o problema com duas classes tem acaso de
+\SI{50}{\percent}, de modo que \num{0.95} não é comparável ao \num{0.657} da
+regra física com três classes. Retirar a esfera também não é uma solução
+aplicável em campo, onde defeitos de esfera ocorrem: o resultado indica que a
+esfera precisa de uma assinatura detectável --- por exemplo, com o
+pré-branqueamento, que recuperou o BSF em duas gravações
+(\autoref{sec:res-preprocessamentos}) --- antes de entrar como classe num modelo treinado.
 
 \section{Inferência estatística}
 \label{sec:res-inferencia}
@@ -979,7 +1061,7 @@ testa o experimento da \autoref{sec:res-montagem} com a montagem como unidade.
 Só a regra física acerta significativamente mais montagens que o acaso
 (6 de 9, $p = \num{0.042}$). O Random Forest acerta 4 de 9 ($p = \num{0.35}$) e
 o KNN, 5 de 9 ($p = \num{0.14}$): não há evidência de que generalizem para
-montagens novas melhor que um sorteio. A diferença de acurácia entre a regra
+montagens novas melhor que o acaso. A diferença de acurácia entre a regra
 física e o Random Forest é de \num{0.20}, com intervalo de \numrange{0.04}{0.38}
 por bootstrap de montagens, que exclui o zero. Os intervalos são largos porque há
 só 9 montagens: o poder dos testes é baixo, e a conclusão deve ser lida como

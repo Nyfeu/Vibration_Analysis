@@ -168,7 +168,10 @@ partir do espectro de potência de normais e falhas (\autoref{sec:banda-comum});
 a forma do \emph{score} de envelope (harmônicos e fundo) foi ajustada uma vez depois
 de inspecionar os \emph{scores} de todas as gravações
 (\autoref{sec:met-regra-fisica}). A quarta usa: o detector recomendado foi
-escolhido a partir das métricas do teste (\autoref{sec:met-deteccao}).
+escolhido a partir das métricas do teste (\autoref{sec:met-deteccao}). Além
+dessas decisões, a análise da origem da dependência da montagem
+(\autoref{sec:res-causas-atalho}) foi formulada depois de ver os resultados e é
+apresentada como exploratória.
 
 O split por carga tem um limite, discutido no \autoref{cap:discussao}: a carga do
 CWRU é um torque que altera pouco a rotação (\autoref{sec:setup}), e cada
@@ -246,7 +249,7 @@ Três decisões condicionam o uso dessas frequências:
   \item \textbf{Convenção da BSF.} Adota-se a BSF de \textcite{smith2015},
   $\num{2.357}\,f_r$. A documentação do CWRU lista como frequência do elemento
   rolante o valor $\num{4.7135}\,f_r$~\cite{cwru}, que é $2 \times \text{BSF}$:
-  a esfera com defeito bate nas duas pistas a cada giro. As duas convenções
+  a esfera com defeito impacta as duas pistas a cada rotação em torno do próprio eixo. As duas convenções
   descrevem o mesmo fenômeno, mas misturá-las faz procurar o pico na frequência
   errada. Como os harmônicos pares da BSF costumam dominar o espectro de envelope
   de um defeito de esfera~\cite[p.~103]{smith2015}, o pico em $2 \times \text{BSF}$
@@ -313,7 +316,8 @@ resolução de cerca de \SI{0.1}{\hertz}, servem à validação física
 
 Detecção e classificação usam as mesmas oito features por janela --- as cinco do
 domínio do tempo e os três \emph{scores} de envelope --- organizadas em quatro
-conjuntos, que funcionam como uma ablação:
+conjuntos, comparados entre si para isolar a contribuição de cada grupo de
+features:
 \begin{itemize}
   \item \textbf{tempo}: RMS, curtose, fator de crista, assimetria e pico;
   \item \textbf{envelope}: os \emph{scores} de BPFO, BPFI e BSF;
@@ -420,8 +424,8 @@ ReLU e \emph{max pooling}; ao final, média global, \emph{dropout} de
 \num{0.3} e camada linear para as quatro classes. O treino usa Adam (taxa
 $10^{-3}$), lotes de 64 janelas, 30 épocas e entropia cruzada com pesos por
 classe, com a semente do projeto. A CNN entra também no teste de generalização
-entre montagens (\autoref{sec:res-montagem}). Duas entradas são comparadas, mantendo a
-ablação de amplitude: o sinal como gravado e cada janela normalizada para média
+entre montagens (\autoref{sec:res-montagem}). Duas entradas são comparadas, para isolar
+o efeito da amplitude: o sinal como gravado e cada janela normalizada para média
 zero e desvio unitário. A rede é implementada em PyTorch.
 
 \subsection{Regra física e generalização entre montagens}
@@ -565,6 +569,6 @@ inclusive os da CNN, com uma exceção: na linha ``forma'' do Random Forest, a b
 em grade escolheu outra combinação de hiperparâmetros, porque duas estavam
 praticamente empatadas na validação cruzada (\num{0.8599} contra \num{0.8595}),
 e a acurácia no teste passou de \num{0.654} para \num{0.713}. Essa linha é uma
-ablação e não sustenta nenhuma conclusão do trabalho. A execução completa do
+comparação auxiliar e não sustenta nenhuma conclusão do trabalho. A execução completa do
 notebook levou cerca de \SI{2}{\minute} numa máquina de 32 núcleos; num ambiente
 com poucos núcleos de CPU, como o do Colab sem GPU, ela é mais lenta.

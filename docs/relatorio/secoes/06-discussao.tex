@@ -7,10 +7,10 @@
 
 O enunciado separa detectar que algo mudou de identificar o que
 mudou~\cite{enunciado2026}. Os resultados confirmam essa distinção, mas de um modo
-que não estava previsto: neste conjunto de dados, \emph{detectar} é trivialmente
-fácil --- basta o nível de vibração ---, e \emph{diagnosticar} é muito mais difícil
-do que a acurácia de \SI{95.7}{\percent} sugere, porque o diagnóstico aprendido não
-sobrevive a uma montagem nova. A discussão a seguir se organiza em torno dessas
+que não estava previsto: neste conjunto de dados, a \emph{detecção} é resolvida
+pelo nível de vibração, sem depender da assinatura do defeito, e o
+\emph{diagnóstico} é bem menos confiável do que a acurácia de \SI{95.7}{\percent}
+sugere, porque o diagnóstico aprendido não se mantém numa montagem nova. A discussão a seguir se organiza em torno dessas
 duas tarefas.
 
 \section{O que funcionou}
@@ -30,8 +30,8 @@ vazamento como explicação dos resultados próximos de \SI{100}{\percent}. Isso
 deixou a explicação real à vista: a amplitude (\autoref{sec:investigacao-amplitude}).
 Sem esse cuidado, um AUC de \num{1.000} teria sido apresentado como sucesso.
 
-As ablações foram decisivas para a interpretação. Comparar os conjuntos de
-features --- e não só os modelos --- foi o que permitiu separar ``o detector reage ao defeito'' de ``o
+A comparação entre conjuntos de features foi decisiva para a interpretação.
+Variar as features --- e não só os modelos --- foi o que permitiu separar ``o detector reage ao defeito'' de ``o
 detector reage ao nível de vibração''. Trocar de detector quase não muda o
 quadro (os quatro têm AUC próximo de 1 com features de tempo); trocar de
 features o muda completamente.
@@ -123,21 +123,21 @@ faixa de amplitude, sem usar o \emph{score} de BSF (\autoref{fig:arvore}). O
 classificador aprendeu a reconhecer a montagem e o nível de vibração das
 gravações de esfera. A seleção de
 modelos não protegeu contra isso: a validação cruzada por carga também mantém a
-mesma montagem dos dois lados, e por isso premiou o mesmo atalho
+mesma montagem dos dois lados, e por isso favoreceu o mesmo atalho
 (\num{0.984} na validação, \SI{40.0}{\percent} na generalização).
 
 O modelo mais acurado é o que pior generaliza. Com tempo+envelope, a
 acurácia no teste é de \SI{95.7}{\percent}, mas só \SI{40.0}{\percent} das janelas
 de pista externa a 3~h e 12~h são reconhecidas como pista externa. Só com
 envelope, a acurácia no teste cai para \SI{67.6}{\percent} e a generalização sobe
-para \SI{76.0}{\percent}. O teste em \SI{3}{\hp} premia o modelo que memoriza a
+para \SI{76.0}{\percent}. O teste em \SI{3}{\hp} favorece o modelo que memoriza a
 amplitude de cada montagem, porque cada montagem aparece nas quatro cargas; o
-conjunto de generalização, com montagens novas, o penaliza. A CNN 1D repete o
+conjunto de generalização, com montagens novas, expõe essa dependência. A CNN 1D repete o
 padrão com outro mecanismo: com janelas normalizadas, sem acesso à amplitude,
 chega a \SI{99.7}{\percent} no teste e acerta todas as janelas das gravações sem
 assinatura (200 e 225), mas reconhece só \SI{64.1}{\percent} do conjunto de
-generalização. Uma rede que aprende do sinal bruto aprende também a ``impressão
-digital'' de cada montagem. É o mesmo protocolo com que a arquitetura em que nos
+generalização. Uma rede que aprende do sinal bruto aprende também as características
+espectrais próprias de cada montagem. É o mesmo protocolo com que a arquitetura em que nos
 baseamos foi avaliada no próprio CWRU: \textcite{zhang2017} medem a
 generalização treinando numa carga e testando nas outras (seção 4.4.1 do
 artigo), o que, pelos nossos resultados, não separa montagens.
@@ -156,7 +156,14 @@ do acaso de \SI{33}{\percent} (\autoref{tab:montagem}). O desempenho de 93 a
 \SI{99.7}{\percent} do teste por carga mede, portanto, o reconhecimento de
 montagens já vistas. Com 12 montagens de falha, uma por combinação de defeito e
 diâmetro, não há variedade suficiente para um modelo aprender o que o defeito tem
-em comum entre montagens.
+em comum entre montagens. A análise exploratória da
+\autoref{sec:res-causas-atalho} localiza a origem do problema: com as três
+classes, retirar a amplitude das features não basta, mas, sem a esfera --- a
+classe sem assinatura observável ---, os modelos treinados só com os
+\emph{scores} de envelope reconhecem montagens novas de pista interna e externa
+(\numrange{0.83}{0.95}, contra \num{0.871} da regra física). O limite, portanto,
+não está no aprendizado em si, mas em treinar com features que descrevem a
+montagem e com um rótulo que o sinal não sustenta.
 
 Por fim, o envelope não reconhece o normal. Sem amplitude, a gravação normal
 de teste é classificada como esfera, porque nenhuma das duas tem pico nas
@@ -266,14 +273,18 @@ resultado deste trabalho:
 \label{sec:trabalhos-futuros}
 
 \begin{itemize}
-  \item \textbf{Modelos guiados pela física.} A regra sem treino foi a única
-  abordagem a generalizar entre montagens. Combinar o aprendizado com essa
-  estrutura --- por exemplo, usar como features só razões entre famílias de
-  envelope, ou treinar o classificador apenas para decidir entre as famílias
-  candidatas --- poderia unir a robustez da regra à flexibilidade do modelo.
-  \item \textbf{Normalizar a amplitude por gravação.} Dividir cada janela pelo
-  RMS da gravação --- ou usar só features adimensionais --- e verificar se algum
-  desempenho sobra sem o atalho.
+  \item \textbf{Diagnóstico em duas etapas.} A análise exploratória da
+  \autoref{sec:res-causas-atalho} indica que um modelo de envelope generaliza
+  entre montagens quando só entram classes com assinatura observável. Um
+  diagnóstico em duas etapas --- primeiro verificar se alguma família de
+  envelope se destaca do fundo, depois classificar só entre as famílias
+  visíveis --- testaria essa ideia sem retirar a esfera do problema. Razões
+  entre famílias e normalização da amplitude por gravação já foram testadas e,
+  sozinhas, não resolveram (\autoref{tab:causas-atalho}).
+  \item \textbf{Assinatura da esfera antes do treino.} Usar o
+  pré-branqueamento, que recuperou o BSF em duas gravações, na extração dos
+  \emph{scores} de envelope, e verificar se a esfera passa a generalizar como as
+  pistas.
   \item \textbf{Separação de componentes discretos antes do kurtograma.} O
   kurtograma sozinho não encontrou banda impulsiva na gravação 197 e não
   recuperou a 121 (\autoref{tab:preprocessamentos}); o método de referência de
