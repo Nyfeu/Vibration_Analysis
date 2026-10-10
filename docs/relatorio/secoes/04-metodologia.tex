@@ -524,8 +524,9 @@ A inferência combina quatro procedimentos:
   da acurácia e o da diferença entre a regra física e o Random Forest vêm de
   bootstrap por montagem.
   \item \textbf{Sementes}: os dois Random Forest (com os hiperparâmetros da busca)
-  são retreinados com 10 sementes, e a CNN com 5, para separar o efeito do modelo
-  do efeito do acaso no treinamento.
+  são retreinados com 10 sementes (0 a 9), e a CNN com 5 (0 a 4), todas além da
+  semente 42 usada no resto do trabalho, para separar o efeito do modelo do
+  efeito do acaso no treinamento.
 \end{itemize}
 
 \section{Reprodutibilidade}
@@ -556,3 +557,14 @@ confere, entre outros pontos, as frequências características contra o CWRU, a
 posição da linha de \SI{120}{\hertz} nos normais decimados e a ausência de
 gravações compartilhadas entre treino e teste, e interrompe a execução se alguma
 falhar.
+
+Para verificar a sensibilidade às versões das bibliotecas, o notebook foi
+executado também num ambiente isolado com versões mais recentes (NumPy 2.0,
+scikit-learn 1.6, pandas 2.2, PyTorch 2.14). Todos os resultados se repetiram,
+inclusive os da CNN, com uma exceção: na linha ``forma'' do Random Forest, a busca
+em grade escolheu outra combinação de hiperparâmetros, porque duas estavam
+praticamente empatadas na validação cruzada (\num{0.8599} contra \num{0.8595}),
+e a acurácia no teste passou de \num{0.654} para \num{0.713}. Essa linha é uma
+ablação e não sustenta nenhuma conclusão do trabalho. A execução completa do
+notebook levou cerca de \SI{2}{\minute} numa máquina de 32 núcleos; num ambiente
+com poucos núcleos de CPU, como o do Colab sem GPU, ela é mais lenta.

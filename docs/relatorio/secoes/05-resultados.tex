@@ -643,7 +643,11 @@ Apêndice~\ref{ap:matrizes}.
     \bottomrule
   \end{tabular}
   \fonte{Elaborado pelos autores a partir de
-  \texttt{results/metrics/classificacao\_metricas.csv}.}
+  \texttt{results/metrics/classificacao\_metricas.csv}. Na linha ``forma'' do
+  Random Forest, duas combinações de hiperparâmetros empatam na validação
+  (diferença de \num{0.0004}); com versões mais recentes do
+  \texttt{scikit-learn}, a outra é escolhida e a acurácia no teste passa a
+  \num{0.713} (\autoref{sec:reprodutibilidade}).}
 \end{table}
 
 O modelo selecionado, Random Forest com tempo+envelope, acerta
@@ -1025,7 +1029,8 @@ outras cinco sementes, ela fica entre \num{0.44} e \num{0.60} (média
   \centering
   \caption{Variabilidade entre sementes: média, desvio-padrão e amplitude da
   acurácia no teste e da fração do conjunto de generalização classificada como
-  pista externa.}
+  pista externa. Random Forest com as sementes 0 a 9 e CNN com as sementes 0 a 4,
+  todas além da semente 42 usada no resto do trabalho.}
   \label{tab:sementes}
   \footnotesize
   \begin{tabular}{lccc}
@@ -1035,9 +1040,9 @@ outras cinco sementes, ela fica entre \num{0.44} e \num{0.60} (média
     \cmidrule(lr){3-4}
     & média $\pm$ desvio & média $\pm$ desvio & mín.--máx. \\
     \midrule
-    Random Forest tempo+envelope (10) & 0,958 $\pm$ 0,004 & 0,481 $\pm$ 0,094 & 0,40 -- 0,72 \\
-    Random Forest envelope (10)       & 0,679 $\pm$ 0,003 & 0,759 $\pm$ 0,002 & 0,755 -- 0,762 \\
-    CNN 1D normalizada (5)            & 0,998 $\pm$ 0,004 & 0,552 $\pm$ 0,066 & 0,44 -- 0,60 \\
+    Random Forest tempo+envelope (0--9) & 0,958 $\pm$ 0,004 & 0,481 $\pm$ 0,094 & 0,40 -- 0,72 \\
+    Random Forest envelope (0--9)       & 0,679 $\pm$ 0,003 & 0,759 $\pm$ 0,002 & 0,755 -- 0,762 \\
+    CNN 1D normalizada (0--4)            & 0,998 $\pm$ 0,004 & 0,552 $\pm$ 0,066 & 0,44 -- 0,60 \\
     \bottomrule
   \end{tabular}
   \fonte{Elaborado pelos autores a partir de \texttt{results/metrics/sementes.csv}.}

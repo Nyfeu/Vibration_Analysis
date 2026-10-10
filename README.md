@@ -108,6 +108,17 @@ Colab; localmente, `pip install torch`); sem ele, é ignorada.
 (os `.mat` estão versionados nele) e instala as dependências; não há download
 manual.
 
+**Tempo de execução:** cerca de 2 minutos numa máquina de 32 núcleos (CPU). No
+Colab sem GPU, com poucos núcleos, é mais lento: a CNN 1D treina em CPU
+(13 treinos de 30 épocas). _Tempo medido no Colab: preencher após a execução._
+
+**Versões das bibliotecas:** no Colab, o notebook usa as versões já instaladas e
+só instala o que faltar. O notebook foi executado também num ambiente isolado
+com versões recentes (NumPy 2.0, scikit-learn 1.6, PyTorch 2.14): todos os
+resultados se repetiram, exceto a linha "forma" do Random Forest, em que a busca
+em grade tem duas combinações empatadas na validação (acurácia no teste 0,654 →
+0,713; ver o relatório, seção de reprodutibilidade).
+
 **Seeds:** `SEED = 42`, declarada no início do notebook e usada por todos os modelos. A etapa de
 dados é determinística.
 
