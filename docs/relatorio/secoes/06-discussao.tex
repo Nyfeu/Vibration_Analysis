@@ -8,19 +8,114 @@
 \section{O que funcionou}
 \label{sec:funcionou}
 
-TODO(grupo).
+\paragraph{A validação física.} O espectro de envelope, com um critério simples e
+reproduzível, recuperou o defeito declarado nas 12 gravações de pista interna,
+nas 8 de pista externa a 6~h com assinatura conhecida e nas 16 do conjunto de
+generalização, concordando com o diagnóstico de \textcite{smith2015} em 50 das 52
+gravações de falha (\autoref{sec:res-fisica}). É a parte do trabalho que menos
+depende de suposições: não há modelo treinado, e cada confirmação corresponde a
+um pico na frequência calculada pela geometria do rolamento.
+
+\paragraph{O protocolo.} A divisão por carga, verificada no código, descartou o
+vazamento como explicação dos resultados próximos de \SI{100}{\percent}. Isso
+deixou a explicação real à vista: a amplitude (\autoref{sec:investigacao-amplitude}).
+Sem esse cuidado, um AUC de \num{1.000} teria sido apresentado como sucesso.
+
+\paragraph{As ablações.} Comparar os conjuntos de features --- e não só os
+modelos --- foi o que permitiu separar ``o detector reage ao defeito'' de ``o
+detector reage ao nível de vibração''. Trocar de detector quase não muda o
+quadro (os quatro têm AUC próximo de 1 com features de tempo); trocar de
+features o muda completamente.
+
+\paragraph{O pré-processamento.} A verificação espectral da decimação encontrou
+um resíduo de \emph{aliasing} que, sem a banda comum, deixaria normais e falhas
+com cadeias de filtragem diferentes (\autoref{sec:banda-comum}). Foi um atalho
+evitado antes de existir.
 
 \section{O que não funcionou}
 \label{sec:nao-funcionou}
 
-TODO(grupo): esta seção não é opcional nem uma confissão de fracasso --- é o
-principal item da rubrica. Casos concretos, não generalidades.
+\paragraph{A detecção não detecta o defeito, mas a diferença em relação às
+gravações normais.} Todos os detectores com features de tempo têm AUC de
+\num{0.995} a \num{1.000}, mas o RMS sozinho já dá \num{1.000}, e as gravações sem
+assinatura física (200 e 225) disparam alarme em todas as janelas. Neste
+conjunto de dados, ``vibra mais que as quatro gravações normais'' basta para
+acertar tudo. Numa planta, onde a amplitude também muda com a temperatura, a
+lubrificação, a rotação e a troca de sensor, esse detector daria alarmes falsos
+e não diria nada sobre o rolamento.
+
+\paragraph{A classe esfera é acertada por atalho.} O Random Forest acerta
+\SI{99.4}{\percent} das janelas de esfera no teste, inclusive todas as da
+gravação 225, que não tem assinatura do defeito. A validação física não confirmou
+o BSF em nenhuma gravação de esfera, e o escore de BSF tem a menor importância
+entre as oito features (\SI{3.5}{\percent}). O classificador aprendeu a
+reconhecer a montagem e o nível de vibração das gravações de esfera.
+
+\paragraph{O modelo mais acurado é o que pior generaliza.} Com tempo+envelope, a
+acurácia no teste é de \SI{95.7}{\percent}, mas só \SI{45.6}{\percent} das janelas
+de pista externa a 3~h e 12~h são reconhecidas como pista externa. Só com
+envelope, a acurácia no teste cai para \SI{67.6}{\percent} e a generalização sobe
+para \SI{76.0}{\percent}. O teste em \SI{3}{\hp} premia o modelo que memoriza a
+amplitude de cada montagem, porque cada montagem aparece nas quatro cargas; o
+conjunto de generalização, com montagens novas, o penaliza.
+
+\paragraph{O limiar não se transfere.} A FPR no limiar variou de 0 a
+\SI{81}{\percent} entre detectores com AUC semelhante, porque o limiar foi
+calibrado em três gravações normais e testado numa quarta, com escores de
+envelope fora da faixa vista no treino. Três gravações não representam a
+variabilidade normal de uma máquina.
+
+\paragraph{O envelope não reconhece o normal.} Sem amplitude, a gravação normal
+de teste é classificada como esfera, porque nenhuma das duas tem pico nas
+frequências de defeito. O envelope distingue \emph{qual} defeito existe quando
+ele é visível, mas não distingue ``sem defeito'' de ``defeito invisível''.
 
 \section{Análise dos erros}
 \label{sec:erros}
 
-TODO(grupo): quais janelas foram classificadas errado, sob qual carga, com qual
-severidade de defeito, e a hipótese para cada padrão de erro.
+Os erros de cada experimento estão em \texttt{results/metrics/}
+(\texttt{deteccao\_erros.csv} e \texttt{classificacao\_erros.csv}), janela por
+janela, com gravação, carga, classe verdadeira, classe predita e diâmetro. Como
+o teste é todo em \SI{3}{\hp}, os erros se concentram por gravação, e cada
+padrão tem uma explicação física:
+\begin{itemize}
+  \item \textbf{Gravação 200 (pista externa, \SI{0.014}{\inch}).} É o erro mais
+  persistente: 18 janelas tomadas por esfera no Random Forest com tempo+envelope,
+  46 de 58 erradas só com envelope, e 24 sem alarme no Isolation Forest. As
+  janelas erradas se espalham ao longo da gravação, e não num trecho contínuo, o
+  que é compatível com os pulsos aleatórios que \textcite[p.~110]{smith2015}
+  atribuem a folga mecânica. Não há BPFO no envelope (escore de
+  \SI{4.1}{\decibel}, no nível dos normais). O erro é esperado: o rótulo diz pista
+  externa, mas o sinal não mostra o defeito.
+  \item \textbf{Gravação 121 (esfera, \SI{0.007}{\inch}).} Sem alarme em 26
+  janelas no Isolation Forest e em 51 no Mahalanobis de envelope; só com envelope,
+  22 janelas são tomadas por pista externa. É a gravação que
+  \textcite{smith2015} só diagnosticam com o método mais elaborado (DRS e
+  kurtograma), e o nosso envelope do sinal bruto não tem esse
+  pré-processamento.
+  \item \textbf{Gravação 225 (esfera, \SI{0.021}{\inch}).} Com envelope, 19
+  janelas são tomadas por pista interna. A validação física mostrou nela um
+  escore de BPFI de \SI{14.2}{\decibel}, maior que o de BSF, o que concorda com a
+  observação de danos não intencionais nas pistas de várias gravações de
+  esfera~\cite[p.~109--110]{smith2015}. O classificador ``vê'' o defeito que
+  está no sinal, e não o declarado.
+  \item \textbf{Gravação 172 (pista interna, \SI{0.014}{\inch}).} Seis janelas
+  tomadas por esfera com tempo+envelope, e 38 sem alarme no Mahalanobis de
+  envelope. Por janela, o escore de BPFI é mais fraco que na gravação inteira
+  (resolução de \SI{2.93}{\hertz} contra \SI{0.1}{\hertz}), e o diâmetro de
+  \SI{0.014}{\inch} tem a menor amplitude entre as pistas internas
+  (\autoref{fig:rms}).
+  \item \textbf{Gravação 100 (normal).} Todos os falsos positivos vêm dela, a
+  única normal do teste. Seus escores de envelope e sua curtose estão fora da
+  faixa das três normais de treino (\autoref{sec:res-deteccao}).
+\end{itemize}
+
+Os erros não são aleatórios: concentram-se nas gravações que a auditoria de
+\textcite{smith2015} e a nossa validação física já apontavam como sem assinatura
+ou com assinatura fraca. O inverso, porém, é o achado mais importante: os
+modelos com features de amplitude \emph{acertam} essas mesmas gravações (225 com
+\SI{100}{\percent}, 200 com \SI{69}{\percent}), o que só é possível por um caminho
+que não passa pelo defeito.
 
 \section{Limitações}
 \label{sec:limitacoes}
@@ -63,4 +158,22 @@ resultado deste trabalho:
 \section{O que faríamos com mais tempo ou mais dados}
 \label{sec:trabalhos-futuros}
 
-TODO(grupo).
+\begin{itemize}
+  \item \textbf{Split por montagem, não por carga.} Treinar com dois diâmetros e
+  testar no terceiro obrigaria o modelo a lidar com uma montagem nova, que é o
+  que o conjunto de generalização sugere ser o teste realmente difícil.
+  \item \textbf{Normalizar a amplitude por gravação.} Dividir cada janela pelo
+  RMS da gravação --- ou usar só features adimensionais --- e verificar se algum
+  desempenho sobra sem o atalho.
+  \item \textbf{Banda de demodulação por kurtograma.} O envelope do sinal bruto
+  perde as gravações que só o método de referência de \textcite{smith2015}
+  diagnostica (121, 197); escolher a banda por curtose
+  espectral~\cite{antoni2007} deveria recuperá-las.
+  \item \textbf{Mais dados normais.} Com uma gravação normal por carga, a FPR e o
+  limiar são estimados sobre uma única gravação. Gravações normais de outras
+  montagens, ou de outro conjunto de dados como o MFPT, testariam se o detector
+  aprende ``normal'' ou ``esta montagem''.
+  \item \textbf{Generalização entre bancadas.} Treinar no CWRU e testar em outro
+  conjunto mediria a transferência para outra máquina, que nenhum teste deste
+  trabalho cobre.
+\end{itemize}

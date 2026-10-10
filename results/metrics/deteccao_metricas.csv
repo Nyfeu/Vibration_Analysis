@@ -1,0 +1,17 @@
+features,detector,auc,tpr,fpr,n_falha,n_normal,tpr_generalizacao,limiar
+tempo,mahalanobis,1.0000,1.0000,0.0345,523,58,1.0000,4.9428
+tempo,isolation_forest,0.9946,0.7763,0.0000,523,58,1.0000,0.6505
+tempo,ocsvm,1.0000,1.0000,0.2931,523,58,1.0000,-0.8983
+tempo,autoencoder,1.0000,1.0000,0.0000,523,58,1.0000,0.8412
+envelope,mahalanobis,0.7183,0.5755,0.1379,523,58,0.7619,3.5993
+envelope,isolation_forest,0.6881,0.4340,0.0862,523,58,0.4547,0.6365
+envelope,ocsvm,0.7708,0.7591,0.5000,523,58,0.8556,-0.8001
+envelope,autoencoder,0.8278,0.5449,0.0345,523,58,0.6886,2.2104
+tempo+envelope,mahalanobis,1.0000,1.0000,0.1207,523,58,1.0000,5.1212
+tempo+envelope,isolation_forest,0.9849,0.9025,0.0690,523,58,1.0000,0.5855
+tempo+envelope,ocsvm,1.0000,1.0000,0.8103,523,58,1.0000,-0.6659
+tempo+envelope,autoencoder,0.9998,1.0000,0.1724,523,58,1.0000,1.7410
+forma,mahalanobis,0.8661,0.8279,0.2414,523,58,1.0000,4.1446
+forma,isolation_forest,0.8748,0.7629,0.1552,523,58,0.8739,0.5749
+forma,ocsvm,0.8732,0.9101,0.7586,523,58,1.0000,-0.6324
+forma,autoencoder,0.8318,0.8069,0.3966,523,58,1.0000,1.4009

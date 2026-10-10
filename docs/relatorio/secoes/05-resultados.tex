@@ -7,36 +7,249 @@
 \section{Tabela resumo}
 \label{sec:tabela-resumo}
 
+A \autoref{tab:resumo} segue o formato exigido pelo enunciado. Todos os valores
+são do conjunto de teste (\SI{3}{\hp}, 10 gravações, 581 janelas). Para os
+classificadores, TPR e FPR tratam ``falha'' como qualquer classe diferente de
+normal. A acurácia por classe está na ordem normal / pista interna / esfera /
+pista externa. A tabela mostra só as configurações principais; as demais estão
+nas \autoref{tab:deteccao} e~\ref{tab:classificacao}.
+
 \begin{table}[htb]
   \centering
-  \caption{Resumo dos resultados por técnica.}
+  \caption{Resumo dos resultados por técnica (teste em \SI{3}{\hp}).}
   \label{tab:resumo}
   \footnotesize
-  \begin{tabular}{llcccc}
+  \begin{tabular}{p{0.07\textwidth}p{0.3\textwidth}p{0.13\textwidth}ccp{0.2\textwidth}}
     \toprule
-    \textbf{Dataset} & \textbf{Técnica} & \textbf{Falha identificada} &
+    \textbf{Dataset} & \textbf{Técnica (features)} & \textbf{Falha identificada} &
     \textbf{TPR} & \textbf{FPR} & \textbf{Acurácia/classe} \\
     \midrule
-    CWRU & TODO & TODO & TODO & TODO & TODO \\
+    CWRU & Mahalanobis (tempo+envelope)      & não se aplica & 1,00 & 0,12 & --- \\
+    CWRU & Isolation Forest (tempo+envelope) & não se aplica & 0,90 & 0,07 & --- \\
+    CWRU & One-Class SVM (tempo+envelope)    & não se aplica & 1,00 & 0,81 & --- \\
+    CWRU & Autoencoder (tempo+envelope)      & não se aplica & 1,00 & 0,17 & --- \\
+    CWRU & Mahalanobis (envelope)            & não se aplica & 0,58 & 0,14 & --- \\
+    CWRU & Mahalanobis (forma)               & não se aplica & 0,83 & 0,24 & --- \\
+    CWRU & Random Forest (tempo+envelope)    & N, IR, B, OR  & 1,00 & 0,00 & 1,00 / 0,97 / 0,99 / 0,90 \\
+    CWRU & SVM (tempo+envelope)              & N, IR, B, OR  & 0,99 & 0,02 & 0,98 / 0,99 / 0,96 / 0,87 \\
+    CWRU & Random Forest (envelope)          & N, IR, B, OR  & 0,96 & 1,00 & 0,00 / 0,94 / 0,65 / 0,67 \\
     \bottomrule
   \end{tabular}
-  \fonte{Elaborado pelos autores.}
+  \fonte{Elaborado pelos autores a partir de \texttt{results/metrics/}.}
 \end{table}
 
-Técnicas que apenas detectam anomalia deixam a coluna de tipo de falha como
-``não se aplica''.
+Os números altos da \autoref{tab:resumo} precisam ser lidos junto com a
+\autoref{sec:investigacao-amplitude}: eles medem, em grande parte, o nível de
+vibração das gravações, e não a assinatura do defeito.
 
 \section{Detecção}
 \label{sec:res-deteccao}
 
 % Rubrica: peso 2.
-TODO(grupo): curvas ROC, TPR e FPR, comparação entre os detectores one-class.
+A \autoref{tab:deteccao} mostra os quatro detectores em cada conjunto de
+features, e a \autoref{fig:roc} mostra as curvas ROC correspondentes.
+
+\begin{table}[htb]
+  \centering
+  \caption{Detecção one-class no teste (\SI{3}{\hp}) e TPR no conjunto de
+  generalização (pista externa a 3~h e 12~h).}
+  \label{tab:deteccao}
+  \footnotesize
+  \begin{tabular}{llcccc}
+    \toprule
+    \textbf{Features} & \textbf{Detector} & \textbf{AUC} & \textbf{TPR} &
+    \textbf{FPR} & \textbf{TPR generalização} \\
+    \midrule
+    tempo          & Mahalanobis      & 1,000 & 1,000 & 0,034 & 1,000 \\
+                   & Isolation Forest & 0,995 & 0,776 & 0,000 & 1,000 \\
+                   & One-Class SVM    & 1,000 & 1,000 & 0,293 & 1,000 \\
+                   & Autoencoder      & 1,000 & 1,000 & 0,000 & 1,000 \\
+    \midrule
+    envelope       & Mahalanobis      & 0,718 & 0,576 & 0,138 & 0,762 \\
+                   & Isolation Forest & 0,688 & 0,434 & 0,086 & 0,455 \\
+                   & One-Class SVM    & 0,771 & 0,759 & 0,500 & 0,856 \\
+                   & Autoencoder      & 0,828 & 0,545 & 0,034 & 0,689 \\
+    \midrule
+    tempo+envelope & Mahalanobis      & 1,000 & 1,000 & 0,121 & 1,000 \\
+                   & Isolation Forest & 0,985 & 0,902 & 0,069 & 1,000 \\
+                   & One-Class SVM    & 1,000 & 1,000 & 0,810 & 1,000 \\
+                   & Autoencoder      & 1,000 & 1,000 & 0,172 & 1,000 \\
+    \midrule
+    forma          & Mahalanobis      & 0,866 & 0,828 & 0,241 & 1,000 \\
+                   & Isolation Forest & 0,875 & 0,763 & 0,155 & 0,874 \\
+                   & One-Class SVM    & 0,873 & 0,910 & 0,759 & 1,000 \\
+                   & Autoencoder      & 0,832 & 0,807 & 0,397 & 1,000 \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/deteccao\_metricas.csv}.}
+\end{table}
+
+\begin{figure}[htb]
+  \centering
+  \caption{Curvas ROC dos quatro detectores no teste (\SI{3}{\hp}), por conjunto
+  de features.}
+  \label{fig:roc}
+  \includegraphics[width=0.92\textwidth]{deteccao_roc_por_conjunto_de_features.png}
+  \fonte{Elaborado pelos autores.}
+\end{figure}
+
+Três padrões aparecem. Primeiro, com as features de tempo, os quatro detectores
+separam normal de falha quase perfeitamente (AUC de \num{0.995} a \num{1.000}).
+Segundo, só com o envelope, o AUC cai para \numrange{0.69}{0.83}, e sem as
+features de amplitude (``forma''), para \numrange{0.83}{0.88}. Terceiro, a FPR no
+limiar varia muito entre detectores com o mesmo AUC: com tempo+envelope, todos
+têm AUC próximo de 1, mas a FPR vai de \num{0.07} (Isolation Forest) a
+\num{0.81} (One-Class SVM). O ranqueamento das janelas está correto, mas o limiar
+calibrado nos normais de 0 a \SI{2}{\hp} não se transfere para o normal de
+\SI{3}{\hp}. A gravação 100 não difere das normais de treino em amplitude --- seu
+RMS mediano, \num{0.055}, é praticamente o da gravação 99 ---, e sim no envelope e
+na curtose: em relação às janelas normais de treino, sua mediana fica
+\num{1.65} desvios-padrão acima no escore de BPFO, \num{1.68} abaixo no de BSF e
+\num{1.07} acima na curtose. É também a gravação normal com o maior escore de BPFO
+na validação física (\autoref{sec:res-fisica}). Com só três gravações normais no
+treino, a variabilidade normal entre montagens e condições não é coberta, e o
+One-Class SVM, cuja fronteira é a mais justa, trata a quarta gravação como
+anômala.
+
+\subsection{Investigação dos resultados próximos de 100\%}
+\label{sec:investigacao-amplitude}
+
+Um AUC de \num{1.000} num problema real é, antes de tudo, suspeito. A primeira
+hipótese investigada foi vazamento entre treino e teste. Ela foi descartada:
+nenhuma gravação aparece nos dois lados (verificado pelo código), e a
+padronização e o limiar usam apenas normais de treino.
+
+A segunda hipótese foi que a separação viesse de uma única grandeza trivial. Ela
+se confirmou. Tomado isoladamente, o RMS das janelas tem AUC de \num{1.000} no
+teste, assim como o pico; a curtose, \num{0.833}; e o melhor escore de envelope,
+o de BPFI, \num{0.836}. A \autoref{fig:rms} mostra a razão: todas as 36 gravações
+de falha do conjunto principal vibram mais que todas as quatro gravações normais.
+Isso vale inclusive para as gravações sem assinatura física do defeito, como a
+200 e a 225, do teste.
+
+\begin{figure}[htb]
+  \centering
+  \caption{RMS mediano das janelas de cada gravação, por classe (escala
+  logarítmica). Círculos vazios: gravações de teste (\SI{3}{\hp}).}
+  \label{fig:rms}
+  \includegraphics[width=\textwidth]{rms_por_gravacao.png}
+  \fonte{Elaborado pelos autores.}
+\end{figure}
+
+A \autoref{tab:deteccao-grupos} confirma que, com as features de tempo, o
+detector não distingue gravações em que o defeito é visível das que não o
+mostram. Ela agrega a taxa de alarme por gravação segundo a diagnosticabilidade
+de \textcite{smith2015}. No teste, o grupo Y tem seis gravações, o P uma (188) e o
+N duas (200 e 225).
+
+\begin{table}[htb]
+  \centering
+  \caption{Taxa média de alarme por gravação de falha do teste, segundo a
+  diagnosticabilidade de Smith e Randall (2015): Y = defeito diagnosticável,
+  P = parcialmente, N = não diagnosticável.}
+  \label{tab:deteccao-grupos}
+  \footnotesize
+  \begin{tabular}{llccc}
+    \toprule
+    \textbf{Features} & \textbf{Detector} & \textbf{Y (6)} & \textbf{P (1)} & \textbf{N (2)} \\
+    \midrule
+    tempo+envelope & Mahalanobis      & 1,00 & 1,00 & 1,00 \\
+                   & Isolation Forest & 0,93 & 1,00 & 0,78 \\
+    envelope       & Mahalanobis      & 0,73 & 0,00 & 0,41 \\
+                   & Isolation Forest & 0,55 & 0,00 & 0,29 \\
+                   & Autoencoder      & 0,67 & 0,02 & 0,42 \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/deteccao\_tpr\_por\_grupo\_smith.csv}.}
+\end{table}
+
+Com tempo+envelope, o Mahalanobis alarma em todas as janelas das gravações N, tão
+bem quanto nas Y. Só com o envelope, a ordem passa a seguir a física: as
+gravações Y disparam mais alarmes que as N. Na gravação 200, cuja falta de
+assinatura foi confirmada também pela nossa validação física
+(\autoref{sec:res-fisica}), o Mahalanobis de envelope alarma em
+\SI{5}{\percent} das janelas; na 225 alarma em \SI{76}{\percent}, mas é a
+componente de BPFI, não a de BSF, que a destaca (\autoref{sec:res-fisica}).
+
+O resultado, portanto, não é vazamento, mas um \emph{atalho}: o detector aprendeu
+que as gravações normais deste conjunto vibram pouco. Essa diferença existe
+nos dados e é compatível com um defeito, mas também com qualquer outra mudança
+entre a montagem das gravações normais e a das de falha, que no CWRU foram
+ensaiadas em montagens distintas~\cite{smith2015}.
 
 \section{Classificação}
 \label{sec:res-classificacao}
 
 % Rubrica: peso 1. Matriz de confusão COMPLETA é obrigatória (enunciado, item 6.2).
-TODO(grupo). Matrizes completas no Apêndice~\ref{ap:matrizes}.
+A \autoref{tab:classificacao} mostra a acurácia dos dois classificadores em cada
+conjunto de features, e a fração das janelas do conjunto de generalização
+classificadas como pista externa, que é a resposta correta para todas elas. As
+matrizes de confusão completas estão no Apêndice~\ref{ap:matrizes}.
+
+\begin{table}[htb]
+  \centering
+  \caption{Classificação no teste (\SI{3}{\hp}): acurácia global e por classe, e
+  fração do conjunto de generalização classificada como pista externa.}
+  \label{tab:classificacao}
+  \footnotesize
+  \begin{tabular}{llcccccc}
+    \toprule
+    \textbf{Features} & \textbf{Classificador} & \textbf{Global} & \textbf{Normal} &
+    \textbf{P. interna} & \textbf{Esfera} & \textbf{P. externa} & \textbf{Generalização} \\
+    \midrule
+    tempo          & Random Forest & 0,933 & 1,000 & 0,909 & 0,971 & 0,897 & 0,500 \\
+                   & SVM           & 0,933 & 1,000 & 0,949 & 0,937 & 0,891 & 0,499 \\
+    envelope       & Random Forest & 0,676 & 0,000 & 0,937 & 0,649 & 0,667 & 0,760 \\
+                   & SVM           & 0,661 & 0,069 & 0,954 & 0,621 & 0,603 & 0,712 \\
+    tempo+envelope & Random Forest & 0,957 & 1,000 & 0,966 & 0,994 & 0,897 & 0,456 \\
+                   & SVM           & 0,947 & 0,983 & 0,994 & 0,960 & 0,874 & 0,273 \\
+    forma          & Random Forest & 0,704 & 0,052 & 0,880 & 0,684 & 0,764 & 0,605 \\
+                   & SVM           & 0,744 & 0,207 & 0,971 & 0,701 & 0,736 & 0,190 \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/classificacao\_metricas.csv}.}
+\end{table}
+
+A melhor acurácia no teste é a do Random Forest com tempo+envelope:
+\SI{95.7}{\percent}, com \SI{99.4}{\percent} na esfera. Três observações
+relativizam esse número.
+
+\paragraph{A esfera é acertada sem assinatura física.} A validação física não
+confirmou o defeito em nenhuma gravação de esfera (\autoref{sec:res-fisica}).
+Das três gravações de esfera do teste, \textcite{smith2015} só diagnosticam a 121,
+e apenas com o método mais elaborado; a 188 é parcial e a 225, não
+diagnosticável. Mesmo assim, a gravação 225, que não tem
+assinatura, é classificada como esfera em todas as 58 janelas. No Random Forest,
+RMS e pico respondem por \SI{58}{\percent} da importância das features, e o
+escore de BSF por \SI{3.5}{\percent}. O classificador reconhece as gravações de
+esfera pelo nível de vibração --- intermediário entre o das pistas e o dos
+normais (\autoref{fig:rms}) ---, e não pela frequência do defeito.
+
+\paragraph{O desempenho no teste não se transfere para outra posição do
+defeito.} No conjunto de generalização, o mesmo modelo classifica como pista
+externa só \SI{45.6}{\percent} das janelas; o SVM, \SI{27.3}{\percent}. Os erros
+seguem a amplitude: a pista externa a 12~h com \SI{0.007}{\inch} é tomada por
+pista interna, e a 3~h com \SI{0.021}{\inch}, por esfera. Só com as features de
+envelope, a acurácia no teste cai para \SI{67.6}{\percent}, mas a generalização
+sobe para \SI{76.0}{\percent}, e as janelas de 3~h e \SI{0.021}{\inch} passam a
+ser classificadas corretamente em \SI{97}{\percent} dos casos (225 de 232). O modelo que usa a física acerta menos
+no teste e generaliza melhor.
+
+\paragraph{Sem amplitude, o normal desaparece.} Com envelope ou ``forma'', a
+classe normal quase não é reconhecida (acurácia de \numrange{0}{0.21}): nos quatro
+casos, a maioria das janelas da gravação 100 é classificada como esfera. Isso é coerente com a
+validação física: nem as gravações normais nem as de esfera têm pico nas
+frequências de defeito, e o envelope não tem como separá-las.
+
+\paragraph{Severidade.} Desagregando por diâmetro do defeito, o pior caso é a
+pista externa de \SI{0.014}{\inch}, a gravação 200: \SI{69}{\percent} de acerto
+com tempo+envelope e \SI{21}{\percent} só com envelope, em que é classificada
+principalmente como esfera. É a mesma gravação que a validação física e o artigo
+de referência apontam como sem assinatura. Nas demais combinações de classe e
+diâmetro, o Random Forest com tempo+envelope acerta \SI{90}{\percent} ou mais.
 
 \section{Validação física}
 \label{sec:res-fisica}

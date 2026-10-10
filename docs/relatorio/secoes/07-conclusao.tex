@@ -2,5 +2,28 @@
 \chapter{Conclusão}
 \label{cap:conclusao}
 
-TODO(grupo): responder objetivamente às duas perguntas do objetivo, sem
-introduzir resultado novo.
+O trabalho avaliou duas tarefas sobre os dados de rolamentos do CWRU, sempre
+com treino em \SIlist{0;1;2}{\hp} e teste em \SI{3}{\hp}.
+
+\textbf{Detecção sem exemplos de falha.} Os detectores one-class treinados só com
+sinais normais separaram normal de falha com AUC de até \num{1.000} e TPR de
+\num{1.000}, com FPR de \num{0.12} no baseline de Mahalanobis. Esse resultado,
+porém, é explicado pelo nível de vibração: todas as gravações de falha vibram
+mais que as normais, inclusive as que não mostram o defeito, e o RMS sozinho
+atinge o mesmo AUC. Usando só o espectro de envelope, que carrega a assinatura
+física, o AUC cai para \numrange{0.69}{0.83}, mas os alarmes passam a seguir a
+diagnosticabilidade do defeito.
+
+\textbf{Diagnóstico do tipo de falha.} O Random Forest com features de tempo e de
+envelope atingiu \SI{95.7}{\percent} de acurácia, mas acerta a classe esfera sem
+que o defeito apareça no envelope de nenhuma gravação, e reconhece como pista
+externa menos da metade das janelas com o defeito em outra posição. Só com o
+envelope, a acurácia cai para \SI{67.6}{\percent} e a generalização sobe para
+\SI{76.0}{\percent}.
+
+A conclusão principal é metodológica. No CWRU, alta acurácia é fácil e diz pouco:
+o conjunto permite acertar pela amplitude e pela montagem. O que dá sentido aos
+resultados é a verificação física --- se o pico do envelope cai na frequência
+prevista --- e a confirmou para pista interna e para a maior parte da pista
+externa, mas não para a esfera. Um modelo útil fora deste conjunto de dados
+precisa ser avaliado em montagens que não viu.

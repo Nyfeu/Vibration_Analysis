@@ -279,11 +279,70 @@ resolução de cerca de \SI{0.1}{\hertz}, servem à validação física
 \section{Modelos}
 \label{sec:modelos}
 
+Detecção e classificação usam as mesmas oito features por janela --- as cinco do
+domínio do tempo e os três escores de envelope --- organizadas em quatro
+conjuntos, que funcionam como uma ablação:
+\begin{itemize}
+  \item \textbf{tempo}: RMS, curtose, fator de crista, assimetria e pico;
+  \item \textbf{envelope}: os escores de BPFO, BPFI e BSF;
+  \item \textbf{tempo+envelope}: as oito features;
+  \item \textbf{forma}: as oito, menos RMS e pico.
+\end{itemize}
+O conjunto ``forma'' exclui as duas features que dependem da amplitude
+absoluta do sinal. A amplitude muda com o defeito, mas também com a montagem, o
+sensor e o dia do ensaio; comparar ``forma'' com ``tempo+envelope'' mostra quanto
+do desempenho vem só do nível de vibração. Todos os modelos são da biblioteca
+\texttt{scikit-learn}~\cite{pedregosa2011}, com a semente do projeto.
+
 \subsection{Detecção}
-TODO(grupo): treinada \emph{somente} com dados normais.
+\label{sec:met-deteccao}
+
+Os detectores são treinados \emph{somente} com as 144 janelas normais de
+\SIlist{0;1;2}{\hp}. A função de treino verifica isso e recusa qualquer conjunto
+que contenha uma janela de falha. A padronização das features (média e desvio)
+também é estimada só com esses normais. Os quatro detectores
+(\autoref{sec:tec-one-class}) produzem um escore em que valores maiores indicam
+mais anomalia:
+\begin{itemize}
+  \item \textbf{Mahalanobis}: distância à média dos normais, com a covariância
+  empírica deles;
+  \item \textbf{Isolation Forest}: 300 árvores; escore igual ao simétrico do
+  escore de normalidade;
+  \item \textbf{One-Class SVM}: \emph{kernel} RBF, $\nu = \num{0.05}$;
+  \item \textbf{Autoencoder}: rede com camadas de 6, 3 e 6 neurônios
+  (tangente hiperbólica), treinada para reproduzir a entrada; o escore é o erro
+  quadrático médio de reconstrução.
+\end{itemize}
+
+O limiar de alarme é o percentil 99 dos escores das próprias janelas normais de
+treino. É a única calibração possível sem exemplos de falha, e corresponde a uma
+taxa de falsos positivos esperada de cerca de \SI{1}{\percent} \emph{nos dados de
+treino}. A avaliação usa as 581 janelas de \SI{3}{\hp}: a área sob a curva ROC
+(AUC), que independe do limiar, e a TPR e a FPR no limiar. A FPR é estimada sobre
+uma única gravação normal, a 100 (58 janelas). Os detectores são aplicados também
+às 928 janelas do conjunto de generalização, todas de falha, onde só a TPR se
+define. Por fim, a taxa de alarme é calculada por gravação e agregada pelas
+categorias de diagnosticabilidade de \textcite{smith2015} (Y, P e N), para saber
+se o detector reage mais às gravações em que o defeito é fisicamente visível.
 
 \subsection{Classificação}
-TODO(grupo).
+\label{sec:met-classificacao}
+
+A classificação usa todas as janelas de treino (\num{1710}), com as quatro
+classes, e é avaliada nas 581 janelas de \SI{3}{\hp}. Dois classificadores são
+comparados (\autoref{sec:tec-classificacao}): Random Forest com 500 árvores e
+SVM com \emph{kernel} RBF ($C = 10$) sobre features padronizadas. Ambos usam
+pesos inversamente proporcionais à frequência de cada classe, porque o treino
+tem 144 janelas normais contra cerca de 520 de cada falha. Não há ajuste de
+hiperparâmetros: uma busca exigiria separar parte do treino para validação, e com
+três cargas e uma gravação por combinação de defeito e carga, qualquer divisão
+interna também teria de ser por carga, deixando o treino ainda menor.
+
+As métricas são a acurácia global e por classe, e a matriz de confusão completa
+(Apêndice~\ref{ap:matrizes}). A severidade entra como recorte secundário: a
+acurácia é desagregada por diâmetro do defeito, sem transformar os diâmetros em
+classes. O classificador é aplicado também ao conjunto de generalização, em que
+o resultado correto é sempre ``pista externa''.
 
 \section{Reprodutibilidade}
 \label{sec:reprodutibilidade}

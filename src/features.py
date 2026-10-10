@@ -289,3 +289,30 @@ def features_envelope(janelas: np.ndarray, rpm, fs: float, indice=None) -> pd.Da
     if indice is not None:
         df.index = indice
     return df
+
+
+# =============================================================================
+# Matriz de features completa
+# =============================================================================
+
+NOMES_FEATURES = NOMES_FEATURES_TEMPO + NOMES_FEATURES_ENVELOPE
+
+# Conjuntos usados nos experimentos. "forma" exclui rms e pico, que dependem da
+# amplitude absoluta do sinal: serve para testar se um modelo reage ao defeito
+# ou só ao nível de vibração (que também muda com a montagem e o sensor).
+CONJUNTOS_FEATURES = {
+    "tempo": NOMES_FEATURES_TEMPO,
+    "envelope": NOMES_FEATURES_ENVELOPE,
+    "tempo+envelope": NOMES_FEATURES,
+    "forma": ["curtose", "fator_crista", "assimetria"] + NOMES_FEATURES_ENVELOPE,
+}
+
+
+def matriz_features(janelas: np.ndarray, rpm, fs: float, indice=None) -> pd.DataFrame:
+    """Features de tempo e de envelope por janela, na ordem de NOMES_FEATURES."""
+    tempo = features_tempo(janelas)
+    env = features_envelope(janelas, rpm, fs)
+    df = pd.concat([tempo, env], axis=1)[NOMES_FEATURES]
+    if indice is not None:
+        df.index = indice
+    return df

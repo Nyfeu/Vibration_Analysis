@@ -4,7 +4,8 @@ Projeto Desafio do 2º semestre — ECM514 Ciência de Dados.
 Detecção de anomalias e diagnóstico do tipo de falha em rolamentos, sobre o dataset
 público **CWRU (Case Western Reserve University)**.
 
-**Status:** em desenvolvimento.
+**Status:** pipeline completo (dados, features, validação física, detecção e
+classificação); relatório em revisão pelo grupo.
 
 ## Grupo
 
@@ -24,9 +25,9 @@ público **CWRU (Case Western Reserve University)**.
 
 | Entrega | Onde |
 |---|---|
-| Notebook executável no Colab | [`notebooks/projeto.ipynb`](notebooks/projeto.ipynb) — _TODO: badge do Colab_ |
+| Notebook executável no Colab | [`notebooks/projeto.ipynb`](notebooks/projeto.ipynb) · [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Nyfeu/Vibration_Analysis/blob/main/notebooks/projeto.ipynb) |
 | Dados empregados | [`data/raw/`](data/raw/) |
-| Relatório técnico (LaTeX/ABNT) | fonte em [`docs/relatorio/`](docs/relatorio/) · PDF: _TODO — link do GitHub Pages_ |
+| Relatório técnico (LaTeX/ABNT) | fonte em [`docs/relatorio/`](docs/relatorio/) · PDF: [https://nyfeu.github.io/Vibration_Analysis/](https://nyfeu.github.io/Vibration_Analysis/) |
 | Apresentação (vídeo, máx. 5 min) | _TODO: link do YouTube_ |
 | Slides | _TODO_ |
 | Declaração de uso de IA | [`docs/uso_de_ia.md`](docs/uso_de_ia.md) |
@@ -56,8 +57,9 @@ conferir a integridade: `python scripts/download_cwru.py`.
 Descrição completa do setup experimental, quantidade de amostras por classe e
 origem dos dados: ver relatório técnico.
 
-Arquivos descartados com base na auditoria de Smith & Randall (2015) estão listados
-em [`docs/arquivos_excluidos.md`](docs/arquivos_excluidos.md).
+A auditoria gravação por gravação, com base em Smith & Randall (2015), está em
+[`docs/arquivos_excluidos.md`](docs/arquivos_excluidos.md): nenhum registro foi
+excluído; 20 são usados com ressalva.
 
 ---
 
@@ -83,17 +85,26 @@ sudo apt install texlive-latex-recommended texlive-latex-extra texlive-publisher
 
 ## Reprodutibilidade
 
-> _TODO: preencher quando o pipeline estiver rodando._
-
 ```bash
-git clone <url-do-repo>
-cd <repo>
+git clone https://github.com/Nyfeu/Vibration_Analysis.git
+cd Vibration_Analysis
 pip install -r requirements.txt
+python -m pytest tests                          # testes: dados, features, detecção
+python -m scripts.gerar_artefatos_dados         # contagens, banda comum
+python -m scripts.gerar_artefatos_envelope      # validação física
+python -m scripts.gerar_artefatos_deteccao      # detecção one-class
+python -m scripts.gerar_artefatos_classificacao # classificação e matrizes
 ```
 
-Para rodar no Colab: _TODO — link e instruções de obtenção dos dados._
+Os scripts escrevem em `results/metrics/` e `results/figures/`, de onde o
+relatório lê as figuras e as matrizes de confusão.
 
-Seeds fixas em: _TODO._
+**Colab:** [abrir o notebook](https://colab.research.google.com/github/Nyfeu/Vibration_Analysis/blob/main/notebooks/projeto.ipynb). A primeira célula clona o repositório
+(os `.mat` estão versionados nele) e instala as dependências; não há download
+manual.
+
+**Seeds:** `SEED = 42` em `src/data.py`, usada por todos os modelos. A etapa de
+dados é determinística.
 
 ---
 
@@ -128,8 +139,8 @@ preâmbulo de `relatorio.tex` (está comentado onde).
 
 | Quero | Onde |
 |---|---|
-| A versão atual de `main`, no navegador | GitHub Pages — _TODO: link_ |
-| Baixar o PDF direto | `<url-do-pages>/relatorio.pdf` |
+| A versão atual de `main`, no navegador | [https://nyfeu.github.io/Vibration_Analysis/](https://nyfeu.github.io/Vibration_Analysis/) |
+| Baixar o PDF direto | [https://nyfeu.github.io/Vibration_Analysis/relatorio.pdf](https://nyfeu.github.io/Vibration_Analysis/relatorio.pdf) |
 | O PDF de um pull request | Aba **Actions** → execução do PR → artifact `relatorio-pdf` |
 | O PDF da entrega | Anexo da release da tag `v*` |
 
@@ -179,11 +190,33 @@ discussão crítica.
 > Tabela exigida pelo enunciado (item 6.2). Preencher apenas com valores obtidos de
 > execuções reais.
 
-| Dataset | Técnica | Tipo de falha identificada | Taxa de detecção (TPR) | Falso positivo (FPR) | Acurácia por classe |
-|---|---|---|---|---|---|
-| CWRU | _TODO_ | | | | |
+Teste em 3 HP (10 gravações, 581 janelas), treino em 0/1/2 HP. Para os
+classificadores, TPR/FPR tratam "falha" como qualquer classe ≠ normal; acurácia
+por classe na ordem normal / pista interna / esfera / pista externa.
 
-Matrizes de confusão completas: `results/metrics/`.
+| Dataset | Técnica (features) | Tipo de falha identificada | Taxa de detecção (TPR) | Falso positivo (FPR) | Acurácia por classe |
+|---|---|---|---|---|---|
+| CWRU | Mahalanobis (tempo+envelope) | não se aplica | 1,00 | 0,12 | — |
+| CWRU | Isolation Forest (tempo+envelope) | não se aplica | 0,90 | 0,07 | — |
+| CWRU | One-Class SVM (tempo+envelope) | não se aplica | 1,00 | 0,81 | — |
+| CWRU | Autoencoder (tempo+envelope) | não se aplica | 1,00 | 0,17 | — |
+| CWRU | Mahalanobis (envelope) | não se aplica | 0,58 | 0,14 | — |
+| CWRU | Mahalanobis (forma, sem RMS/pico) | não se aplica | 0,83 | 0,24 | — |
+| CWRU | Random Forest (tempo+envelope) | normal, IR, B, OR | 1,00 | 0,00 | 1,00 / 0,97 / 0,99 / 0,90 |
+| CWRU | SVM (tempo+envelope) | normal, IR, B, OR | 0,99 | 0,02 | 0,98 / 0,99 / 0,96 / 0,87 |
+| CWRU | Random Forest (envelope) | normal, IR, B, OR | 0,96 | 1,00 | 0,00 / 0,94 / 0,65 / 0,67 |
+
+**Leitura crítica (detalhes no relatório, cap. 5 e 6):** os valores próximos de
+100% não vêm de vazamento (verificado em código), mas de um atalho de amplitude:
+o RMS sozinho separa normal de falha (AUC = 1,00), inclusive nas gravações sem
+assinatura física do defeito. A validação física pelo espectro de envelope
+confirma o defeito em 12/12 gravações de pista interna e 8/12 de pista externa
+(@6), e em **nenhuma** de esfera — a classe que o Random Forest acerta em 99%.
+O modelo só com envelope acerta menos no teste (68%) e generaliza melhor para
+o defeito em outra posição (76% contra 46%).
+
+Matrizes de confusão completas: `results/metrics/classificacao_matriz_*.csv` e
+Apêndice C do relatório.
 
 ---
 
@@ -196,6 +229,8 @@ data/          dados brutos (raw) e derivados (processed, não versionado)
 docs/          enunciado, relatório LaTeX/ABNT, declarações
 notebooks/     notebook principal, executável no Colab
 src/           código do pipeline (dados, features, detecção, classificação)
+scripts/       download dos dados e geração dos artefatos de results/
+tests/         testes automatizados (pytest)
 results/       figuras e métricas
 ```
 

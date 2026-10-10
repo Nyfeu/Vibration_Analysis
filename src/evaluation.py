@@ -106,3 +106,56 @@ def resumo_validacao(v: pd.DataFrame) -> pd.DataFrame:
         concorda_com_m1=("concorda_m1", "sum"),
     )
     return r.loc[[o for o in ordem if o in r.index]]
+
+
+# =============================================================================
+# Métricas de detecção (issue #17) e registro de erros (issue #18)
+# =============================================================================
+
+
+def metricas_deteccao(eh_falha, escore, alarme) -> dict:
+    """AUC da curva ROC e TPR/FPR no limiar de alarme do detector.
+
+    `eh_falha`: verdadeiro para janelas de falha (positivas). TPR = fração das
+    falhas com alarme; FPR = fração das normais com alarme.
+    """
+    from sklearn.metrics import roc_auc_score
+
+    eh_falha = np.asarray(eh_falha, dtype=bool)
+    alarme = np.asarray(alarme, dtype=bool)
+    tem_as_duas = eh_falha.any() and (~eh_falha).any()
+    return {
+        "auc": roc_auc_score(eh_falha, escore) if tem_as_duas else np.nan,
+        "tpr": alarme[eh_falha].mean() if eh_falha.any() else np.nan,
+        "fpr": alarme[~eh_falha].mean() if (~eh_falha).any() else np.nan,
+        "n_falha": int(eh_falha.sum()),
+        "n_normal": int((~eh_falha).sum()),
+    }
+
+
+def erros_deteccao(meta: pd.DataFrame, escore, alarme, limiar: float) -> pd.DataFrame:
+    """Janelas em que o detector errou: falha sem alarme (FN) ou normal com
+    alarme (FP), com carga, classe, severidade e escore (CLAUDE.md, regra 8)."""
+    eh_falha = (meta["classe"] != "normal").to_numpy()
+    alarme = np.asarray(alarme, dtype=bool)
+    errou = eh_falha != alarme
+    e = meta.loc[errou, ["registro", "janela", "classe", "diametro_pol", "posicao_or_h", "carga_hp"]].copy()
+    e["predito"] = np.where(alarme[errou], "anomalia", "normal")
+    e["tipo_erro"] = np.where(eh_falha[errou], "FN", "FP")
+    e["escore"] = np.asarray(escore)[errou]
+    e["limiar"] = limiar
+    return e
+
+
+def alarmes_por_registro(meta: pd.DataFrame, alarme) -> pd.DataFrame:
+    """Fração de janelas com alarme por gravação, com a auditoria de Smith &
+    Randall (grupo Y/P/N) para estratificar as métricas."""
+    d = meta[["registro", "classe", "diametro_pol", "posicao_or_h", "carga_hp"]].copy()
+    d["alarme"] = np.asarray(alarme, dtype=bool)
+    r = (
+        d.groupby(["registro", "classe", "diametro_pol", "posicao_or_h", "carga_hp"], dropna=False)
+        .agg(janelas=("alarme", "size"), taxa_alarme=("alarme", "mean"))
+        .reset_index()
+    )
+    aud = ler_auditoria()[["registro", "m1", "grupo"]]
+    return r.merge(aud, on="registro", how="left")

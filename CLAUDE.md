@@ -285,7 +285,7 @@ vale 1 ponto.
 
 ## 8. Estado atual
 
-**Fase:** dados e protocolo prontos; próxima é features de envelope e detecção.
+**Fase:** pipeline completo e relatório redigido; falta revisão do grupo e a apresentação.
 
 Feito:
 
@@ -325,8 +325,22 @@ Próximos passos:
       Resultado: concorda com Smith & Randall (M1) em 50/52 falhas; **esfera:
       0/12 confirmadas** — acerto do classificador em B é suspeito de atalho.
       Auditoria transcrita em `data/auditoria_smith2015.csv` (Tab. B2)
-- [ ] Detecção baseline (#15): Mahalanobis + Isolation Forest, ROC/TPR/FPR (#17),
-      guardar erros (#18)
+- [x] Detecção (#15–#18): Mahalanobis, Isolation Forest, One-Class SVM,
+      autoencoder (MLPRegressor, sem torch) × 4 conjuntos de features (tempo,
+      envelope, tempo+envelope, forma = sem RMS/pico). Limiar = p99 dos normais
+      de treino. **Achado:** AUC 1,00 com tempo vem do RMS (AUC 1,00 sozinho),
+      não de vazamento; gravações sem assinatura (200, 225) dão alarme em 100%
+- [x] Classificação (#19, #20, #22): RF e SVM. RF tempo+envelope 95,7%, mas
+      esfera 99% sem assinatura física e generalização @3/@12 só 46%; RF só
+      envelope 67,6% no teste e 76% na generalização. Matrizes geradas em
+      `results/metrics/matrizes_confusao.tex` (Apêndice C via \input)
+- [x] Relatório: resultados, discussão crítica e conclusão redigidos; README com
+      a tabela de resultados
+- [ ] Pendências do grupo: responsáveis por capítulo, Apêndice A (uso de IA),
+      vídeo e slides; revisar referências escritas de memória (técnicas one-class
+      e classificação)
+- [ ] Extras possíveis: split por diâmetro (montagem), normalização de amplitude
+      por gravação, kurtograma (#14), MFPT (#23), CNN 1D (#21)
 - [x] Features de tempo (issue #10) e frequências características do
       rolamento (issue #12) em `src/features.py`, com testes em `tests/`;
       BSF na convenção de Smith & Randall

@@ -1,0 +1,17 @@
+features,detector,Y,P,N
+envelope,autoencoder,0.6724,0.0172,0.4224
+envelope,isolation_forest,0.5531,0.0000,0.2931
+envelope,mahalanobis,0.7270,0.0000,0.4052
+envelope,ocsvm,0.9109,0.1379,0.6121
+forma,autoencoder,0.8477,1.0000,0.5862
+forma,isolation_forest,0.8391,0.9483,0.4397
+forma,mahalanobis,0.8506,1.0000,0.6724
+forma,ocsvm,0.9109,1.0000,0.8621
+tempo,autoencoder,1.0000,1.0000,1.0000
+tempo,isolation_forest,0.8420,1.0000,0.4655
+tempo,mahalanobis,1.0000,1.0000,1.0000
+tempo,ocsvm,1.0000,1.0000,1.0000
+tempo+envelope,autoencoder,1.0000,1.0000,1.0000
+tempo+envelope,isolation_forest,0.9253,1.0000,0.7845
+tempo+envelope,mahalanobis,1.0000,1.0000,1.0000
+tempo+envelope,ocsvm,1.0000,1.0000,1.0000

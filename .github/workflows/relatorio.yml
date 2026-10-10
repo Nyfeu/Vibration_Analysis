@@ -23,11 +23,13 @@ on:
     paths:
       - 'docs/relatorio/**'
       - 'results/figures/**'
+      - 'results/metrics/**'
       - '.github/workflows/relatorio.yml'
   pull_request:
     paths:
       - 'docs/relatorio/**'
       - 'results/figures/**'
+      - 'results/metrics/**'
       - '.github/workflows/relatorio.yml'
   workflow_dispatch:
 
