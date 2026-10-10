@@ -56,6 +56,15 @@ Configuração fixada pelo grupo — **não altere sem discussão**:
   arquivos normais (97–100) estão a **48 kHz** e precisam ser decimados para
   12 kHz antes de qualquer uso — sem isso o detector separa pela taxa de
   amostragem, não pela falha. Evidência em `data/raw/README.md`.
+- **Banda comum (decidido):** depois da decimação, **todas** as gravações passam
+  pelo mesmo passa-baixas (Chebyshev I, ordem 8, 4,8 kHz, fase zero). O filtro
+  padrão do `decimate` deixa resíduo de aliasing em 4,8–6 kHz nos normais;
+  sem a banda comum essa faixa diferencia normal de falha por artefato. Banda
+  útil do projeto: 0–4,8 kHz. Evidência: `sec:banda-comum` e
+  `results/metrics/energia_banda_4k8_6k_por_classe.csv`.
+- **Janela (decidido):** 4096 amostras (0,341 s), 50% de sobreposição. Derivada
+  de 3 períodos da FTF na menor rotação do manifesto (1718 rpm) → 3157,
+  arredondado para potência de 2. Conta em `tamanho_janela()` e `sec:janelas`.
 - **`99.mat`** contém também as variáveis de `98.mat`: ler sempre a variável
   pelo número do arquivo (`X099_DE_time`).
 - **Classes-alvo (4):** normal, defeito em pista interna (IR), defeito em pista
@@ -198,6 +207,7 @@ Técnicas que só detectam deixam a coluna de tipo de falha como "não se aplica
 │   ├── detection.py           # one-class
 │   ├── classification.py
 │   └── evaluation.py          # métricas e matrizes de confusão
+├── scripts/                   # download, backlog e geração de artefatos
 ├── tests/                     # pytest; rodar da raiz: python -m pytest tests
 └── results/
     ├── figures/
@@ -219,6 +229,7 @@ vale 1 ponto.
 - Funções com docstring curta explicando **o parâmetro físico** quando houver
   (por que essa janela, por que essa banda).
 - Figuras salvas em `results/figures/` com nome descritivo, não `fig1.png`.
+  São **versionadas**: o CI compila o PDF sem rodar o pipeline.
 - Identificadores em português (`features_tempo`, `catalogo`); siglas físicas
   ficam como na literatura (`bpfo`, `rms`).
 - Commits em português, no imperativo: "adiciona parser dos arquivos .mat".
@@ -274,7 +285,7 @@ vale 1 ponto.
 
 ## 8. Estado atual
 
-**Fase:** montagem do repositório e seleção do dataset.
+**Fase:** dados e protocolo prontos; próxima é features de envelope e detecção.
 
 Feito:
 
@@ -304,12 +315,12 @@ Próximos passos:
 - [ ] **Discutir no grupo:** o split por carga não separa montagens (Smith &
       Randall: a montagem domina o sinal) — avaliar split por diâmetro como
       experimento complementar
-- [ ] Implementar o parser dos `.mat` e a segmentação (incluindo a decimação
-      48→12 kHz dos normais)
-      — filtro já declarado em `sec:decimacao-normais`: `scipy.signal.decimate`
-      padrão (Chebyshev I ordem 8, corte 4,8 kHz, fase zero)
-- [ ] **Discutir no grupo:** a faixa de 4,8–6 kHz fica atenuada só nos normais;
-      comparar espectros e decidir se a mesma banda vale para todas as gravações
+- [x] Dados (issues #6–#9) em `src/data.py`: parser pelo manifesto, decimação,
+      banda comum, janelas, split por carga com verificação de vazamento,
+      `SEED = 42`, contagem em `results/metrics/`; testes em `tests/test_data.py`.
+      Artefatos: `python -m scripts.gerar_artefatos_dados`
+- [x] Esqueleto de `notebooks/projeto.ipynb` (clone no Colab + etapa de dados)
+- [ ] Features de envelope (#11) e validação física (#13)
 - [x] Features de tempo (issue #10) e frequências características do
       rolamento (issue #12) em `src/features.py`, com testes em `tests/`;
       BSF na convenção de Smith & Randall

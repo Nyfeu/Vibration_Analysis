@@ -22,10 +22,12 @@ on:
     tags: ['v*']
     paths:
       - 'docs/relatorio/**'
+      - 'results/figures/**'
       - '.github/workflows/relatorio.yml'
   pull_request:
     paths:
       - 'docs/relatorio/**'
+      - 'results/figures/**'
       - '.github/workflows/relatorio.yml'
   workflow_dispatch:
 

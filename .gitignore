@@ -19,8 +19,8 @@ models/
 *.pt
 *.pth
 *.ckpt
-results/figures/*
-!results/figures/.gitkeep
+# results/figures/ é versionado: o relatório inclui as figuras via \graphicspath
+# e o CI compila o PDF sem rodar o pipeline.
 # Métricas em .csv/.md são leves e DEVEM ser versionadas (results/metrics/)
 
 # ---- Python ----

@@ -37,29 +37,136 @@ $0{,}8$ vezes a nova frequência de Nyquist, isto é, \SI{4.8}{\kilo\hertz}. O
 filtro é aplicado nos dois sentidos do tempo, o que dá fase zero e preserva a
 forma dos impulsos.
 
-Essa escolha cria uma diferença que precisa ser controlada. Nas gravações
-normais, a faixa de \SIrange{4.8}{6}{\kilo\hertz} fica atenuada pelo nosso
-filtro; nas de falha, essa faixa depende do filtro de aquisição do próprio CWRU,
-que não é documentado. Um modelo que use energia nessa faixa poderia, de novo,
-separar as classes pelo pré-processamento. Por isso o espectro de uma gravação
-normal decimada é comparado ao de uma gravação de falha antes do uso.
-% TODO(grupo): incluir a figura dessa comparação (gerada por src/data.py) e
-% decidir se a mesma banda de 0 a 4,8 kHz deve ser aplicada a todas as gravações.
+\subsection{Banda comum de análise}
+\label{sec:banda-comum}
+
+A decimação cria uma diferença que precisa ser controlada. Nas gravações normais,
+a faixa de \SIrange{4.8}{6}{\kilo\hertz} passa pelo nosso filtro; nas de falha,
+ela depende do filtro de aquisição do próprio CWRU, que não é documentado. Um
+modelo que use energia nessa faixa poderia, de novo, separar as classes pelo
+pré-processamento.
+
+A \autoref{fig:espectro-decimacao} compara o espectro de potência do registro
+normal 97, decimado, com o das três falhas de mesma carga e menor diâmetro. As
+gravações de falha também caem a partir de cerca de \SI{5}{\kilo\hertz}, o que
+indica um filtro de aquisição de corte próximo ao nosso; o normal decimado cai
+um pouco antes. Na pista externa (130), essa diferença basta para deixar de fora
+do normal uma ressonância próxima de \SI{5.2}{\kilo\hertz} que a falha exibe.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Densidade espectral de potência (Welch, segmentos de 4096 amostras)
+  do registro normal 97, decimado, e de três registros de falha a
+  \SI{0}{\hp} e \SI{0.007}{\inch}, como gravados. A faixa sombreada,
+  \SIrange{4.8}{6}{\kilo\hertz}, fica acima do corte do filtro da decimação.}
+  \label{fig:espectro-decimacao}
+  \includegraphics[width=\textwidth]{espectro_normal_decimado_vs_falhas.png}
+  \fonte{Elaborado pelos autores.}
+\end{figure}
+
+A \autoref{tab:banda-comum} quantifica a diferença pela fração da potência de
+cada registro que cai na faixa de \SIrange{4.8}{6}{\kilo\hertz}. Antes de
+qualquer correção, os normais decimados ainda guardam de \num{0.13} a
+\SI{0.93}{\percent} da potência nessa faixa, mais do que o filtro deveria deixar
+passar. A causa é a própria decimação: a \SI{48}{\kilo\hertz}, as gravações
+normais têm energia de \SIrange{6}{24}{\kilo\hertz}, que o filtro padrão atenua
+mas não elimina, e o resíduo é rebatido para a faixa logo abaixo da nova
+frequência de Nyquist (\autoref{sec:decimacao}).
+
+Por isso todas as gravações, normais e de falha, passam ainda, já a
+\SI{12}{\kilo\hertz}, pelo mesmo passa-baixas da decimação (Chebyshev do tipo~I,
+ordem 8, corte em \SI{4.8}{\kilo\hertz}, fase zero). Nas falhas ele faz o papel
+do filtro anti-\emph{aliasing}; nos normais, remove o resíduo rebatido. Depois
+dele, a fração de potência acima de \SI{4.8}{\kilo\hertz} fica abaixo de
+\SI{0.09}{\percent} em todas as classes, e a dos normais cai dentro da faixa das
+falhas (\autoref{tab:banda-comum}). O custo é renunciar à faixa de
+\SIrange{4.8}{6}{\kilo\hertz} em todo o conjunto, inclusive à ressonância da
+pista externa vista na \autoref{fig:espectro-decimacao}. A banda útil do
+trabalho é, portanto, de \SIrange{0}{4.8}{\kilo\hertz}.
+
+\begin{table}[htb]
+  \centering
+  \caption{Fração da potência na faixa de \SIrange{4.8}{6}{\kilo\hertz}, por
+  classe (mínimo e máximo entre os registros), antes e depois da banda comum.}
+  \label{tab:banda-comum}
+  \begin{tabular}{lcc}
+    \toprule
+    \textbf{Classe} & \textbf{Antes (\%)} & \textbf{Depois (\%)} \\
+    \midrule
+    Normal (decimado) & \numrange{0.13}{0.93} & \numrange{0.025}{0.051} \\
+    Pista interna     & \numrange{0.058}{0.33} & \numrange{0.005}{0.083} \\
+    Esfera            & \numrange{0.045}{2.2}  & \numrange{0.002}{0.044} \\
+    Pista externa     & \numrange{0.10}{5.5}   & \numrange{0.004}{0.019} \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/energia\_banda\_4k8\_6k\_por\_classe.csv}.}
+\end{table}
 
 \section{Segmentação em janelas}
 \label{sec:janelas}
 
-TODO(grupo): o tamanho da janela é \emph{derivado} da rotação do eixo e da taxa
-de amostragem, de modo a cobrir várias revoluções. Apresentar a conta, não só o
-número escolhido.
+Cada gravação é cortada em janelas de tamanho fixo, que são as unidades de
+análise dos modelos. O tamanho não é escolhido por conveniência: é derivado da
+rotação do eixo e da taxa de amostragem, a partir da modulação mais lenta que as
+assinaturas de defeito podem ter.
+
+Essa modulação é a da esfera, cujas bandas laterais são espaçadas da frequência
+da gaiola, FTF (\autoref{tab:assinaturas}). Para separá-las dos picos vizinhos no
+espectro, a resolução em frequência $f_s/N$ deve ser no máximo um terço da FTF,
+ou seja, a janela deve conter pelo menos três períodos da gaiola:
+\begin{equation}
+  N \geq \frac{3 f_s}{\text{FTF}_{\min}}.
+\end{equation}
+A FTF mais baixa ocorre na menor rotação do conjunto, \SI{1718}{rpm}
+(registro 261). Com ela,
+\begin{align*}
+  f_r &= 1718/60 = \SI{28.63}{\hertz}, &
+  \text{FTF}_{\min} &= \num{0.3983}\,f_r = \SI{11.40}{\hertz}, &
+  N &\geq \frac{3 \times 12\,000}{11{,}40} = 3157.
+\end{align*}
+O valor é arredondado para a potência de 2 seguinte, por eficiência da FFT:
+$N = 4096$ amostras, ou \SI{0.341}{\second}. A janela cobre \num{3.9} períodos
+da gaiola e de \num{9.8} a \num{10.2} revoluções do eixo (de 1718 a
+\SI{1797}{rpm}), com resolução espectral de \SI{2.93}{\hertz}. O mesmo tamanho
+vale para todas as gravações, inclusive as do conjunto de generalização.
+
+As janelas se sobrepõem em \SI{50}{\percent} (passo de 2048 amostras), e a sobra
+no fim de cada gravação é descartada. A sobreposição aumenta o número de janelas
+sem criar vazamento, porque janelas de uma mesma gravação nunca são separadas
+entre treino e teste (\autoref{sec:split}). Ela torna, porém, as janelas de uma
+gravação fortemente correlacionadas: o número efetivo de observações independentes
+é o de gravações, não o de janelas, e isso deve ser lembrado ao interpretar as
+métricas. A contagem resultante está na \autoref{tab:janelas}.
 
 \section{Protocolo de divisão treino/teste}
 \label{sec:split}
 
-TODO(grupo): divisão por condição de carga --- treino com \SIlist{0;1;2}{\hp},
-teste com \SI{3}{\hp}. Explicar por que a divisão aleatória em nível de janela é
-inválida aqui: janelas vizinhas da mesma gravação são quase idênticas e o modelo
-passa a memorizar a gravação, não a falha.
+A divisão é feita por condição de carga: treino com as gravações de
+\SIlist{0;1;2}{\hp} e teste com as de \SI{3}{\hp}. No conjunto principal, isso dá
+30 gravações (\num{1710} janelas) no treino e 10 gravações (581 janelas) no
+teste, uma normal e nove de falha. A pergunta respondida é se o modelo
+generaliza para uma condição de operação que não viu.
+
+A divisão aleatória em nível de janela é inválida neste problema. Janelas
+vizinhas de uma mesma gravação são quase idênticas --- com \SI{50}{\percent} de
+sobreposição, metade das amostras é literalmente a mesma. Espalhá-las entre
+treino e teste faz o modelo reconhecer a gravação, e não a falha, e leva a
+acurácias próximas de \SI{100}{\percent} sem significado. Como cada gravação tem
+uma única carga, o split por carga já mantém todas as janelas de uma gravação do
+mesmo lado. Essa propriedade é verificada no código: a função de divisão falha se
+algum registro aparecer nos dois lados, e um teste automatizado cobre o caso.
+
+O split por carga tem um limite, discutido no \autoref{cap:discussao}: a carga do
+CWRU é um torque que altera pouco a rotação (\autoref{sec:setup}), e cada
+combinação de defeito foi ensaiada numa mesma montagem nas quatro cargas. O
+teste em \SI{3}{\hp} não separa, portanto, montagens diferentes.
+
+Para a detecção, o treino usa apenas as janelas normais de
+\SIlist{0;1;2}{\hp} (144 janelas, de três gravações), e o teste usa todas as
+janelas de \SI{3}{\hp}. As gravações de pista externa a 3~h e a 12~h
+(\num{928} janelas, 232 por carga) formam um conjunto de teste à parte, nunca
+usado no treino (\autoref{sec:config-adotada}).
 
 \section{Extração de features}
 \label{sec:features}
@@ -155,5 +262,23 @@ TODO(grupo).
 \section{Reprodutibilidade}
 \label{sec:reprodutibilidade}
 
-TODO(grupo): seeds fixas e declaradas, versões das bibliotecas, ambiente de
-execução (devcontainer e Colab).
+Toda aleatoriedade do projeto parte de uma semente única, \texttt{SEED = 42},
+declarada em \texttt{src/data.py} e aplicada por uma função que fixa as sementes
+do \texttt{random} e do \texttt{numpy}. A etapa de dados é determinística:
+leitura, decimação, filtragem e segmentação produzem sempre as mesmas janelas.
+
+Os arquivos brutos estão versionados no repositório, com o SHA-256 de cada um em
+\texttt{data/raw/manifesto.csv}, o que garante que todos os membros e o corretor
+usem exatamente os mesmos dados. As versões mínimas das bibliotecas estão em
+\texttt{requirements.txt} (Python 3.11, NumPy, SciPy, pandas, scikit-learn,
+Matplotlib). O ambiente de desenvolvimento é um contêiner
+(\texttt{.devcontainer/}) com Python e \LaTeX; o caminho de execução exigido pelo
+enunciado é o notebook \texttt{notebooks/projeto.ipynb} no Google Colab, que
+clona o repositório e chama as funções de \texttt{src/}.
+
+As tabelas e figuras de dados deste relatório são geradas por
+\texttt{python -m scripts.gerar\_artefatos\_dados} e salvas em
+\texttt{results/}. A suíte de testes (\texttt{python -m pytest tests}) confere,
+entre outros pontos, as frequências características contra o CWRU e Smith e
+Randall, a posição da linha de \SI{120}{\hertz} nos normais decimados, a banda
+comum e a ausência de gravações compartilhadas entre treino e teste.

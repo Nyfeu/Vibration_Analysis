@@ -98,7 +98,7 @@ Cada escolha da \autoref{tab:config} tem um motivo:
 \subsection{Taxa de amostragem das gravações normais}
 \label{sec:fs-normais}
 
-A página oficial das gravações normais não informa a taxa de amostragem. As quatro gravações (97 a 100), porém, foram feitas a \SI{48}{\kilo\hertz}, e não a \SI{12}{\kilo\hertz}, como registra a Tabela~A1 de \textcite{smith2015}. O grupo confirmou isso de forma independente: a componente de \SI{120}{\hertz} (o dobro da frequência da rede elétrica, que não depende da carga) só aparece em \SI{120.0}{\hertz} nas gravações normais quando elas são lidas a \SI{48}{\kilo\hertz}, e nas gravações de falha quando lidas a \SI{12}{\kilo\hertz}. Por isso, as gravações normais são decimadas por um fator 4, com filtro anti-\emph{aliasing}, antes de qualquer processamento. Sem essa correção, todo o conteúdo espectral das gravações normais ficaria comprimido quatro vezes, e um detector poderia separar ``normal'' de ``falha'' pela taxa de
+A página oficial das gravações normais não informa a taxa de amostragem. As quatro gravações (97 a 100), porém, foram feitas a \SI{48}{\kilo\hertz}, e não a \SI{12}{\kilo\hertz}, como registra a Tabela~A1 de \textcite{smith2015}. O grupo confirmou isso de forma independente: a componente de \SI{120}{\hertz} (o dobro da frequência da rede elétrica, que não depende da carga) só aparece em \SI{120.0}{\hertz} nas gravações normais quando elas são lidas a \SI{48}{\kilo\hertz}, e nas gravações de falha quando lidas a \SI{12}{\kilo\hertz}. Por isso, as gravações normais são decimadas por um fator 4, com filtro anti-\emph{aliasing}, antes de qualquer processamento (\autoref{sec:decimacao-normais}). Sem essa correção, todo o conteúdo espectral das gravações normais ficaria comprimido quatro vezes, e um detector poderia separar ``normal'' de ``falha'' pela taxa de
 amostragem, e não pelo defeito.
 
 \section{Quantidade de amostras por classe}
@@ -126,9 +126,34 @@ A \autoref{tab:gravacoes} mostra a quantidade de gravações e a duração total
 
 A classe normal tem menos de um terço da duração de cada classe de falha e só uma gravação por carga. Isso pesa especialmente na detecção: com o teste em \SI{3}{\hp}, o detector é treinado com três gravações normais, e a taxa de falsos positivos é estimada sobre uma única gravação, a de número 100.
 
-% Preencher SOMENTE com a contagem produzida por src/data.py. Nada de estimativa.
-TODO(grupo): tabela de janelas por classe e por carga, gerada pelo código após a
-segmentação (\autoref{cap:metodologia}).
+Após a segmentação em janelas de 4096 amostras com \SI{50}{\percent} de
+sobreposição (\autoref{sec:janelas}), o conjunto principal tem \num{2291}
+janelas, distribuídas como na \autoref{tab:janelas}. O desequilíbrio entre normal
+e falha se mantém: há 202 janelas normais contra cerca de 700 de cada classe de
+falha. Na carga de \SI{0}{\hp} ele é ainda maior, porque o registro normal 97 tem
+só \SI{5.1}{\second}. O conjunto de generalização (pista externa a 3~h e a 12~h)
+tem mais \num{928} janelas, 232 por carga.
+
+% Gerada por scripts/gerar_artefatos_dados.py (results/metrics/). Nada de estimativa.
+\begin{table}[htb]
+  \centering
+  \caption{Janelas por classe e por carga no conjunto principal.}
+  \label{tab:janelas}
+  \begin{tabular}{lccccc}
+    \toprule
+    \textbf{Classe} & \SI{0}{\hp} & \SI{1}{\hp} & \SI{2}{\hp} & \SI{3}{\hp} & \textbf{Total} \\
+    \midrule
+    Normal        & 28  & 58  & 58  & 58  & 202 \\
+    Pista interna & 174 & 174 & 174 & 175 & 697 \\
+    Esfera        & 174 & 174 & 174 & 174 & 696 \\
+    Pista externa & 174 & 174 & 174 & 174 & 696 \\
+    \midrule
+    \textbf{Total} & 550 & 580 & 580 & 581 & \num{2291} \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/contagem\_janelas\_principal.csv}.}
+\end{table}
 
 \section{Auditoria dos arquivos}
 \label{sec:auditoria}
