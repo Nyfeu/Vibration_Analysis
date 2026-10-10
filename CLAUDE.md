@@ -320,7 +320,13 @@ Próximos passos:
       `SEED = 42`, contagem em `results/metrics/`; testes em `tests/test_data.py`.
       Artefatos: `python -m scripts.gerar_artefatos_dados`
 - [x] Esqueleto de `notebooks/projeto.ipynb` (clone no Colab + etapa de dados)
-- [ ] Features de envelope (#11) e validação física (#13)
+- [x] Envelope (#11) e validação física (#13): SES "método 1", escores por
+      família com harmônicos sem colisão (BPFO/BPFI ×1,2; BSF ×2,4).
+      Resultado: concorda com Smith & Randall (M1) em 50/52 falhas; **esfera:
+      0/12 confirmadas** — acerto do classificador em B é suspeito de atalho.
+      Auditoria transcrita em `data/auditoria_smith2015.csv` (Tab. B2)
+- [ ] Detecção baseline (#15): Mahalanobis + Isolation Forest, ROC/TPR/FPR (#17),
+      guardar erros (#18)
 - [x] Features de tempo (issue #10) e frequências características do
       rolamento (issue #12) em `src/features.py`, com testes em `tests/`;
       BSF na convenção de Smith & Randall

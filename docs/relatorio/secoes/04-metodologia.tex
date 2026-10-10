@@ -247,8 +247,34 @@ Três decisões condicionam o uso dessas frequências:
 \subsection{Domínio da frequência e envelope}
 \label{sec:features-envelope}
 
-TODO(grupo): FFT e espectro de envelope (Hilbert), com a banda de demodulação
-justificada. Ainda não implementado em \texttt{src/features.py}.
+O espectro de envelope segue o ``método 1'' de \textcite[p.~104]{smith2015}:
+envelope ao quadrado do sinal analítico, sem filtro de banda adicional, e
+espectro desse envelope (SES), com a média removida e janela de Hann. O sinal já
+chega limitado à banda comum de \SIrange{0}{4.8}{\kilo\hertz}
+(\autoref{sec:banda-comum}), que faz o papel de banda de demodulação. A escolha
+de uma banda ótima por curtose espectral~\cite{antoni2007} fica como extensão.
+
+Do SES extrai-se um escore por família de defeito (BPFO, BPFI e BSF). Para cada
+harmônico considerado, toma-se o maior valor do SES dentro da tolerância de
+\SI{\pm 2}{\percent} em torno da frequência teórica, calculada com a rotação da
+própria gravação, e divide-se pela mediana do SES na vizinhança de
+\SI{\pm 20}{\percent}, excluída a banda de tolerância. O escore da família é a
+média dessas razões, em decibéis. O fundo local compensa a queda do SES com a
+frequência.
+
+Os harmônicos foram escolhidos para que famílias diferentes nunca disputem a
+mesma faixa do espectro. Com a tolerância de \SI{\pm 2}{\percent}, dois pares
+colidem abaixo de $12 f_r$: $3 \times \text{BPFO} = \num{10.75}\,f_r$ e
+$2 \times \text{BPFI} = \num{10.83}\,f_r$ diferem \SI{0.7}{\percent}, e
+$2 \times \text{BPFO} = \num{7.17}\,f_r$ e $3 \times \text{BSF} = \num{7.07}\,f_r$,
+\SI{1.4}{\percent}. Por isso usam-se BPFO e $2 \times$BPFO, BPFI e
+$2 \times$BPFI, e, para a esfera, só os harmônicos pares, $2 \times$BSF e
+$4 \times$BSF, que costumam dominar~\cite[p.~103]{smith2015}.
+
+Os três escores são usados de duas formas. Calculados por janela de 4096
+amostras, são features para os modelos. Calculados sobre a gravação inteira, com
+resolução de cerca de \SI{0.1}{\hertz}, servem à validação física
+(\autoref{sec:res-fisica}).
 
 \section{Modelos}
 \label{sec:modelos}

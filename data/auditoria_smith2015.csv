@@ -1,0 +1,57 @@
+# Diagnóstico do canal DE por Smith & Randall (2015), Tab. B2, p. 128 (12 kHz).
+# M1: envelope do sinal bruto; M2: pré-branqueamento cepstral; M3: DRS + kurtograma.
+# M2/M3 vazios: não aplicados (o artigo só os usa quando M1 fica em P1 ou abaixo).
+# melhor: melhor categoria entre os três métodos; grupo: Y, P ou N.
+registro,m1,m2,m3,melhor,grupo
+105,Y2,,,Y2,Y
+106,Y2,,,Y2,Y
+107,Y2,,,Y2,Y
+108,Y2,,,Y2,Y
+169,Y2,Y2,Y2,Y2,Y
+170,Y2,Y2,Y2,Y2,Y
+171,P1,Y2,Y2,Y2,Y
+172,Y2,Y2,Y2,Y2,Y
+209,Y1,,,Y1,Y
+210,Y1,,,Y1,Y
+211,Y1,,,Y1,Y
+212,Y1,,,Y1,Y
+118,N1,N1,N1,N1,N
+119,N1,N2,N1,N1,N
+120,N1,N2,N1,N1,N
+121,N1,N1,Y2,Y2,Y
+185,P2,P2,N1,P2,P
+186,P2,P2,P2,P2,P
+187,N1,P2,N1,P2,P
+188,P2,P2,P2,P2,P
+222,P1,Y2,Y2,Y2,Y
+223,Y2,Y2,P2,Y2,Y
+224,N1,N1,N1,N1,N
+225,N1,N1,N1,N1,N
+130,Y1,,,Y1,Y
+131,Y1,,,Y1,Y
+132,Y1,,,Y1,Y
+133,Y1,,,Y1,Y
+197,N1,N1,Y2,Y2,Y
+198,P2,N2,N2,P2,P
+199,P1,N2,N2,P1,P
+200,N1,N1,N1,N1,N
+234,Y2,,,Y2,Y
+235,Y2,,,Y2,Y
+236,Y2,,,Y2,Y
+237,Y2,,,Y2,Y
+144,Y2,,,Y2,Y
+145,Y2,,,Y2,Y
+146,Y2,,,Y2,Y
+147,Y2,,,Y2,Y
+246,Y2,Y2,Y2,Y2,Y
+247,Y2,Y2,Y2,Y2,Y
+248,Y2,,,Y2,Y
+249,Y2,,,Y2,Y
+156,Y2,Y2,Y2,Y2,Y
+158,Y2,Y2,Y2,Y2,Y
+159,Y2,,,Y2,Y
+160,Y2,,,Y2,Y
+258,Y2,Y2,Y2,Y2,Y
+259,Y2,Y2,Y2,Y2,Y
+260,Y2,,,Y2,Y
+261,Y2,,,Y2,Y

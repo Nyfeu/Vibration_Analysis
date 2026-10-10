@@ -41,5 +41,98 @@ TODO(grupo). Matrizes completas no Apêndice~\ref{ap:matrizes}.
 \section{Validação física}
 \label{sec:res-fisica}
 
-TODO(grupo): comparação entre o pico observado no espectro de envelope e a
-frequência característica prevista para cada tipo de defeito.
+Esta seção verifica, gravação por gravação, se o espectro de envelope mostra o
+defeito declarado na frequência prevista pela teoria. É a verificação que não
+depende de nenhum modelo treinado e que dá sentido físico aos demais resultados.
+
+A \autoref{fig:envelope-classes} mostra o SES de uma gravação de cada classe, a
+\SI{1}{\hp}, com as frequências teóricas calculadas pela rotação medida. Na pista
+externa (131), os picos dominantes caem exatamente em BPFO e $2 \times$BPFO, sem
+bandas laterais, como prevê a \autoref{tab:assinaturas}. Na pista interna (210),
+o maior pico está em BPFI e há outro forte em $2 \times$BPFI, cercados por
+componentes espaçadas da rotação. A gravação normal (98) não tem pico em nenhuma
+frequência característica; seus picos mais altos, em torno de \SI{60}{\hertz} e
+\SI{118}{\hertz}, não pertencem a nenhuma família. A esfera (223) é o caso
+difícil: há uma componente larga e ``borrada'' em torno de $2 \times$BSF, mas o
+pico discreto mais alto está em BPFI.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Espectro do envelope ao quadrado (normalizado pela mediana) de uma
+  gravação por classe, a \SI{1}{\hp}, com as frequências características
+  teóricas marcadas.}
+  \label{fig:envelope-classes}
+  \includegraphics[width=\textwidth]{envelope_por_classe_1hp.png}
+  \fonte{Elaborado pelos autores.}
+\end{figure}
+
+Para transformar a inspeção visual num critério reproduzível, uma gravação de
+falha é considerada \emph{confirmada} quando (i) a família de maior escore é a
+esperada para a classe declarada e (ii) esse escore supera o maior valor que a
+mesma família atinge nas quatro gravações normais. As gravações normais, que não
+têm defeito, definem assim o nível de escore que o método produz por acaso:
+\SI{10.8}{\decibel} para BPFO, \SI{8.6}{\decibel} para BPFI e
+\SI{9.9}{\decibel} para BSF. O resultado é comparado, na
+\autoref{tab:validacao-fisica}, com o diagnóstico de \textcite[Tab.~B2,
+p.~128]{smith2015} pelo mesmo método (M1, envelope do sinal bruto) e pelo melhor
+dos três métodos que eles aplicaram.
+
+\begin{table}[htb]
+  \centering
+  \caption{Gravações de falha confirmadas pela validação física, comparadas ao
+  diagnóstico de Smith e Randall (2015).}
+  \label{tab:validacao-fisica}
+  \begin{tabular}{lccccc}
+    \toprule
+    & & & \multicolumn{2}{c}{\textbf{Smith e Randall (Y)}} & \\
+    \cmidrule(lr){4-5}
+    \textbf{Classe} & \textbf{Gravações} & \textbf{Confirmadas} &
+    \textbf{M1} & \textbf{Melhor} & \textbf{Concordância com M1} \\
+    \midrule
+    Pista interna        & 12 & 12 & 11 & 12 & 11 \\
+    Esfera               & 12 & 0  & 1  & 3  & 11 \\
+    Pista externa (6~h)  & 12 & 8  & 8  & 9  & 12 \\
+    Pista externa (3~h)  & 8  & 8  & 8  & 8  & 8 \\
+    Pista externa (12~h) & 8  & 8  & 8  & 8  & 8 \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/validacao\_fisica\_resumo.csv} e de
+  \textcite[Tab.~B2]{smith2015}.}
+\end{table}
+
+O critério concorda com o diagnóstico de \textcite{smith2015} pelo envelope
+simples em 50 das 52 gravações de falha. Por classe:
+\begin{itemize}
+  \item \textbf{Pista interna:} as 12 gravações são confirmadas, com escore de
+  BPFI entre \num{17.5} e \SI{23.5}{\decibel}, mais que o dobro do limiar.
+  A única divergência é a 171, que confirmamos e que o artigo classifica como
+  apenas provável (P1) pelo método 1.
+  \item \textbf{Pista externa a 6~h:} as oito gravações de \SI{0.007}{\inch} e
+  \SI{0.021}{\inch} são confirmadas, e as quatro de \SI{0.014}{\inch} (197 a 200)
+  não: nelas o escore de BPFO fica entre \num{4.1} e \SI{10.5}{\decibel}, no
+  nível dos normais. São exatamente as gravações que o artigo não diagnostica com
+  o método 1, e cuja montagem ele associa a folga mecânica~\cite[p.~110]{smith2015}.
+  \item \textbf{Pista externa a 3~h e a 12~h:} as 16 gravações do conjunto de
+  generalização são confirmadas. O defeito fora da zona de carga continua
+  visível no envelope, o que justifica testar nelas um modelo treinado a 6~h.
+  \item \textbf{Esfera:} nenhuma gravação é confirmada. O escore de BSF fica
+  entre \num{4.3} e \SI{8.1}{\decibel}, sempre abaixo do maior escore normal.
+  Nas gravações de \SI{0.014}{\inch} (185 a 188) a família dominante é a BSF, mas
+  com margem inferior a \SI{1}{\decibel} sobre as outras e no nível do ruído; nas
+  demais, dominam BPFI ou BPFO. Isso concorda com o artigo, que só diagnostica uma
+  gravação de esfera (223) pelo método 1, e com a observação de que várias
+  gravações de esfera exibem componentes discretas de BPFO e BPFI, atribuídas a
+  danos não intencionais nas pistas~\cite[p.~109--110]{smith2015}. A gravação
+  223 é a outra divergência: a \autoref{fig:envelope-classes} mostra que sua
+  energia em $2 \times$BSF existe, mas é larga, e o critério, que mede o pico,
+  não a capta.
+\end{itemize}
+
+Duas consequências seguem para os modelos. Primeiro, um acerto do classificador
+na classe esfera não pode ser atribuído à assinatura física do defeito, porque
+ela não aparece no envelope de nenhuma gravação; qualquer acerto nessa classe
+deve ser investigado como possível atalho (\autoref{sec:erros}). Segundo, as
+gravações de pista externa de \SI{0.014}{\inch} formam um subgrupo que se
+comporta, no envelope, mais como ruído do que como falha; a gravação 200, que
+está no teste, é a mais extrema.

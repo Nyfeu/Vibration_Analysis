@@ -18,6 +18,7 @@ from math import cos, radians
 import numpy as np
 import pandas as pd
 from scipy import stats
+from scipy.signal import hilbert
 
 # =============================================================================
 # Domínio do tempo (issue #10)
@@ -200,3 +201,91 @@ def banda_tolerancia(freq_hz: float, tol: float = 0.02) -> tuple[float, float]:
     Os 2% vêm do escorregamento típico de 1% a 2% (Smith & Randall, 2015, p. 102).
     """
     return freq_hz * (1.0 - tol), freq_hz * (1.0 + tol)
+
+
+# =============================================================================
+# Espectro de envelope (issue #11)
+# =============================================================================
+#
+# Envelope ao quadrado do sinal analítico, |x + j H{x}|^2, e seu espectro (SES,
+# squared envelope spectrum), como no "método 1" de Smith & Randall (2015,
+# p. 104): sem filtro de banda, sobre todo o sinal. Aqui o sinal já chega
+# limitado a 0-4,8 kHz pela banda comum (src/data.py). A taxa de repetição
+# dos impactos aparece como pico na frequência característica do defeito.
+
+# Harmônicos procurados para cada família. Escolhidos para que nenhum caia a
+# menos de 2% (a tolerância) de um harmônico de outra família: 3 x BPFO e
+# 2 x BPFI diferem 0,7%, e 2 x BPFO e 3 x BSF, 1,4%; com esses conjuntos as
+# famílias ficam disjuntas. Na esfera, só os pares, que costumam dominar
+# (Smith & Randall, 2015, Tab. 1, p. 103).
+HARMONICOS = {"bpfo": (1, 2), "bpfi": (1, 2), "bsf": (2, 4)}
+
+# Vizinhança usada para o nível de fundo local: +-20% em torno de cada
+# harmônico, excluída a própria banda de tolerância.
+VIZINHANCA_FUNDO = 0.20
+
+
+def espectro_envelope(x: np.ndarray, fs: float) -> tuple[np.ndarray, np.ndarray]:
+    """Espectro do envelope ao quadrado (SES) ao longo do último eixo.
+
+    Aceita um sinal 1D ou uma matriz (n_janelas, tamanho). A média do envelope
+    é removida (senão o pico em 0 Hz domina) e uma janela de Hann reduz o
+    vazamento espectral. Devolve (f, amplitude), com resolução fs / tamanho.
+    """
+    x = np.asarray(x, dtype=float)
+    env2 = np.abs(hilbert(x, axis=-1)) ** 2
+    env2 = env2 - env2.mean(axis=-1, keepdims=True)
+    n = x.shape[-1]
+    ses = np.abs(np.fft.rfft(env2 * np.hanning(n), axis=-1)) * 2.0 / n
+    return np.fft.rfftfreq(n, 1.0 / fs), ses
+
+
+def pico_na_banda(
+    f: np.ndarray, ses: np.ndarray, freq_hz: float, tol: float = 0.02
+) -> np.ndarray:
+    """Maior amplitude do SES em freq_hz +- tol (ao menos +- 1 raia espectral)."""
+    df = f[1] - f[0]
+    meia = max(freq_hz * tol, df)
+    banda = (f >= freq_hz - meia) & (f <= freq_hz + meia)
+    return ses[..., banda].max(axis=-1)
+
+
+def escores_envelope(
+    f: np.ndarray, ses: np.ndarray, rpm, geometria: GeometriaRolamento = SKF_6205_DE
+) -> pd.DataFrame:
+    """Força de cada família de defeito no SES, em dB acima do fundo local.
+
+    Para cada harmônico de `HARMONICOS`, razão entre o pico na banda de
+    tolerância e a mediana do SES na vizinhança de +-`VIZINHANCA_FUNDO`; a
+    família recebe a média dessas razões, em dB. O fundo local compensa a
+    queda do SES com a frequência. `rpm` é escalar ou um valor por linha de
+    `ses` (a rotação de cada janela).
+    """
+    ses = np.atleast_2d(ses)
+    rpm = np.broadcast_to(np.asarray(rpm, dtype=float), (ses.shape[0],))
+
+    saida = {}
+    for familia, hs in HARMONICOS.items():
+        valores = np.empty(ses.shape[0])
+        for i, (linha, r) in enumerate(zip(ses, rpm)):
+            base = getattr(frequencias_caracteristicas(r, geometria), familia)
+            razoes = []
+            for h in hs:
+                fc = h * base
+                viz = (np.abs(f - fc) <= VIZINHANCA_FUNDO * fc) & (np.abs(f - fc) > 0.02 * fc)
+                razoes.append(pico_na_banda(f, linha, fc) / np.median(linha[viz]))
+            valores[i] = np.mean(razoes)
+        saida[f"env_{familia}"] = 10 * np.log10(valores)
+    return pd.DataFrame(saida)
+
+
+NOMES_FEATURES_ENVELOPE = [f"env_{familia}" for familia in HARMONICOS]
+
+
+def features_envelope(janelas: np.ndarray, rpm, fs: float, indice=None) -> pd.DataFrame:
+    """Escores de envelope por janela (uma linha por janela, mesma ordem)."""
+    f, ses = espectro_envelope(janelas, fs)
+    df = escores_envelope(f, ses, rpm)
+    if indice is not None:
+        df.index = indice
+    return df
