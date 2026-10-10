@@ -1,0 +1,8 @@
+variante,acuracia,recall_IR,recall_B,recall_OR,precisao_OR,generalizacao_OR
+"adotada (×1,2; BSF×2,4; fundo local ±20%; ±2%)",0.6573,1.0000,0.2399,0.7313,0.7677,0.9978
+original (×1–3; BSF×1–4; fundo global; ±2%),0.7066,0.9842,0.3664,0.7687,0.7610,1.0000
+só o 1.º harmônico (BSF×2); fundo local,0.6606,1.0000,0.2557,0.7256,0.7928,0.9817
+"adotada, tolerância ±1%",0.6491,1.0000,0.2155,0.7313,0.7345,0.9989
+"adotada, tolerância ±3%",0.6640,1.0000,0.2629,0.7284,0.7922,0.9386
+"adotada, vizinhança ±10%",0.6410,1.0000,0.1825,0.7399,0.7421,0.9903
+"adotada, vizinhança ±30%",0.6630,1.0000,0.2802,0.7083,0.7926,0.9871

@@ -21,7 +21,7 @@
 
 ## Ideias principais
 
-1. Propõe um intervalo para uma proporção obtido invertendo o teste de escore, em vez de somar e subtrair um múltiplo do erro-padrão estimado.
+1. Propõe um intervalo para uma proporção obtido invertendo o teste de *score*, em vez de somar e subtrair um múltiplo do erro-padrão estimado.
 2. O intervalo nunca sai de [0, 1] e se comporta bem com proporções próximas de 0 ou 1 e amostras pequenas.
 
 ## Pontos relevantes para o projeto

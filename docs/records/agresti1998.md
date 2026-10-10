@@ -22,7 +22,7 @@
 ## Ideias principais
 
 1. Mostra que o intervalo de Wald tem cobertura ruim, sobretudo com proporções extremas e amostras pequenas.
-2. O intervalo de Wilson (escore) tem cobertura próxima da nominal e é recomendado; propõe também o ajuste "some 2 sucessos e 2 fracassos".
+2. O intervalo de Wilson (*score*) tem cobertura próxima da nominal e é recomendado; propõe também o ajuste "some 2 sucessos e 2 fracassos".
 
 ## Pontos relevantes para o projeto
 

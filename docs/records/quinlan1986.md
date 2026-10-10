@@ -27,7 +27,7 @@
 
 ## Pontos relevantes para o projeto
 
-- → Projeto: calculamos o ganho de informação de cada feature no nó raiz e uma árvore de profundidade 3 com critério de entropia. Pico e RMS dão o maior ganho; o escore de BSF, o menor. A árvore define a esfera como uma faixa de amplitude.
+- → Projeto: calculamos o ganho de informação de cada feature no nó raiz e uma árvore de profundidade 3 com critério de entropia. Pico e RMS dão o maior ganho; o *score* de BSF, o menor. A árvore define a esfera como uma faixa de amplitude.
 
 ## Onde é usado no relatório
 

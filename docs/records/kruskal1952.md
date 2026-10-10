@@ -27,7 +27,7 @@
 
 ## Pontos relevantes para o projeto
 
-- → Projeto: aplicado às medianas por gravação (n = 30) de cada feature; o escore de BSF é a única sem diferença significativa entre classes (p = 0,071).
+- → Projeto: aplicado às medianas por gravação (n = 30) de cada feature; o *score* de BSF é a única sem diferença significativa entre classes (p = 0,071).
 
 ## Onde é usado no relatório
 

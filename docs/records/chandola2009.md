@@ -23,11 +23,11 @@
 
 1. Organiza as técnicas por modo de aprendizado (supervisionado, semi-supervisionado com só a classe normal, não supervisionado) e por família (estatísticas, vizinhança, classificação, agrupamento, espectrais).
 2. Destaca o cenário semi-supervisionado — treinar só com dados normais — como o mais aplicável quando anomalias rotuladas são raras.
-3. Discute a saída como escore versus rótulo e a necessidade de um limiar.
+3. Discute a saída como *score* versus rótulo e a necessidade de um limiar.
 
 ## Pontos relevantes para o projeto
 
-- → Projeto: nosso cenário é exatamente o semi-supervisionado com só normais (regra metodológica do projeto); a saída é um escore com limiar no percentil 99 dos normais.
+- → Projeto: nosso cenário é exatamente o semi-supervisionado com só normais (regra metodológica do projeto); a saída é um *score* com limiar no percentil 99 dos normais.
 
 ## Onde é usado no relatório
 

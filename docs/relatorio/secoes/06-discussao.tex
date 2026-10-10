@@ -39,14 +39,17 @@ features o muda completamente.
 A regra física, sem nenhum treino, foi a abordagem mais robusta. Quando a
 montagem muda, a regra que só
 compara o pico do envelope com a frequência teórica acerta \SI{65.7}{\percent} do
-tipo de falha, contra no máximo \SI{54.7}{\percent} dos modelos treinados, e
-\SI{99.8}{\percent} do conjunto de generalização (\autoref{sec:res-montagem}).
+tipo de falha, contra no máximo \SI{54.7}{\percent} dos modelos treinados
+(\autoref{sec:res-montagem}), e o resultado se mantém quando as escolhas do
+\emph{score} variam (\autoref{tab:sensibilidade}). Ela também reconhece
+\SI{99.8}{\percent} da pista externa em outra posição --- número que mede
+reconhecimento, e não discriminação, porque esse conjunto só tem uma classe.
 O conhecimento físico, embutido na geometria do rolamento, generaliza onde o
 aprendizado a partir dos dados não generaliza.
 
 A inferência com a gravação como unidade também se mostrou essencial. Tratar a
 gravação, e não a janela, como unidade mudou a força de várias afirmações. O teste de
-Kruskal--Wallis por gravação mostrou que o escore de BSF é a única feature sem
+Kruskal--Wallis por gravação mostrou que o \emph{score} de BSF é a única feature sem
 diferença significativa entre as classes; o bootstrap por gravação mostrou que a
 superioridade do modelo com amplitude no teste é real (diferença de \num{0.28},
 IC de \numrange{0.20}{0.36}), mas também que o recall da pista externa depende
@@ -95,7 +98,7 @@ O limiar empírico resolveu isso no treino, mas não no teste.
 
 E o limiar empírico não se transfere para a gravação normal de teste. A FPR no limiar variou de 0 a
 \SI{81}{\percent} entre detectores com AUC semelhante, porque o limiar foi
-calibrado em três gravações normais e testado numa quarta, com escores de
+calibrado em três gravações normais e testado numa quarta, com \emph{scores} de
 envelope fora da faixa vista no treino. Três gravações não representam a
 variabilidade normal de uma máquina.
 
@@ -105,10 +108,10 @@ variabilidade normal de uma máquina.
 A classe esfera é acertada por atalho. O Random Forest acerta
 \SI{99.4}{\percent} das janelas de esfera no teste, inclusive todas as da
 gravação 225, que não tem assinatura do defeito. A validação física não confirmou
-o BSF em nenhuma gravação de esfera, e o escore de BSF tem a menor importância
+o BSF em nenhuma gravação de esfera, e o \emph{score} de BSF tem a menor importância
 entre as oito features (\SI{3.3}{\percent}) e o menor ganho de informação
 (\SI{0.17}{bits}). Uma árvore com critério de entropia define a esfera como uma
-faixa de amplitude, sem usar o escore de BSF (\autoref{fig:arvore}). O
+faixa de amplitude, sem usar o \emph{score} de BSF (\autoref{fig:arvore}). O
 classificador aprendeu a reconhecer a montagem e o nível de vibração das
 gravações de esfera. A seleção de
 modelos não protegeu contra isso: a validação cruzada por carga também mantém a
@@ -166,7 +169,7 @@ padrão tem uma explicação física:
   46 de 58 erradas só com envelope, e 24 sem alarme no Isolation Forest. As
   janelas erradas se espalham ao longo da gravação, e não num trecho contínuo, o
   que é compatível com os pulsos aleatórios que \textcite[p.~110]{smith2015}
-  atribuem a folga mecânica. Não há BPFO no envelope (escore de
+  atribuem a folga mecânica. Não há BPFO no envelope (\emph{score} de
   \SI{4.1}{\decibel}, no nível dos normais). O erro é esperado: o rótulo diz pista
   externa, mas o sinal não mostra o defeito.
   \item \textbf{Gravação 121 (esfera, \SI{0.007}{\inch}).} Sem alarme em 26
@@ -177,18 +180,18 @@ padrão tem uma explicação física:
   (\autoref{tab:preprocessamentos}).
   \item \textbf{Gravação 225 (esfera, \SI{0.021}{\inch}).} Com envelope, 19
   janelas são tomadas por pista interna. A validação física mostrou nela um
-  escore de BPFI de \SI{14.2}{\decibel}, maior que o de BSF, o que concorda com a
+  \emph{score} de BPFI de \SI{14.2}{\decibel}, maior que o de BSF, o que concorda com a
   observação de danos não intencionais nas pistas de várias gravações de
   esfera~\cite[p.~109--110]{smith2015}. O classificador ``vê'' o defeito que
   está no sinal, e não o declarado.
   \item \textbf{Gravação 172 (pista interna, \SI{0.014}{\inch}).} Quatro janelas
   tomadas por esfera com tempo+envelope, e 38 sem alarme no Mahalanobis de
-  envelope. Por janela, o escore de BPFI é mais fraco que na gravação inteira
+  envelope. Por janela, o \emph{score} de BPFI é mais fraco que na gravação inteira
   (resolução de \SI{2.93}{\hertz} contra \SI{0.1}{\hertz}), e o diâmetro de
   \SI{0.014}{\inch} tem a menor amplitude entre as pistas internas
   (\autoref{fig:rms}).
   \item \textbf{Gravação 100 (normal).} Todos os falsos positivos vêm dela, a
-  única normal do teste. Seus escores de envelope e sua curtose estão fora da
+  única normal do teste. Seus \emph{scores} de envelope e sua curtose estão fora da
   faixa das três normais de treino (\autoref{sec:res-deteccao}).
 \end{itemize}
 
@@ -243,7 +246,7 @@ resultado deste trabalho:
   comparações da \autoref{tab:montagem-inferencia} é pequena e deve ser lida com
   esse cuidado.
   \item \textbf{Limiar de confirmação com quatro normais.} Na validação física, o
-  limiar de cada família é o maior escore de quatro gravações normais. Com tão
+  limiar de cada família é o maior \emph{score} de quatro gravações normais. Com tão
   poucas, o limiar é incerto, e confirmações por margem de menos de
   \SI{1}{\decibel} (185 a 187, 197) não devem ser tomadas como diagnóstico.
   \item \textbf{Uma única bancada.} Todos os dados vêm do mesmo motor e do mesmo

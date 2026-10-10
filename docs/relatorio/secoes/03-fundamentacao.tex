@@ -196,8 +196,8 @@ Na detecção de anomalia, o modelo aprende só como é o comportamento normal e
 sinaliza o que se afasta dele. É a formulação adequada à manutenção preditiva:
 antes da primeira falha, não existem exemplos rotulados de falha para
 treinar~\cite{chandola2009}. Os detectores deste trabalho são treinados
-\emph{somente} com janelas normais e produzem um escore de anomalia; um limiar
-sobre esse escore define o que é alarme. A avaliação usa a curva ROC, que mostra
+\emph{somente} com janelas normais e produzem um \emph{score} de anomalia; um limiar
+sobre esse \emph{score} define o que é alarme. A avaliação usa a curva ROC, que mostra
 o compromisso entre a taxa de verdadeiros positivos (TPR) e a de falsos positivos
 (FPR) para todos os limiares possíveis.
 
@@ -209,7 +209,7 @@ Quatro detectores são comparados, do mais simples ao mais flexível:
   baseline estatístico.
   \item \textbf{Isolation Forest}~\cite{liu2008,liu2012}: constrói árvores que isolam
   pontos por cortes aleatórios. Pontos anômalos são isolados com menos cortes,
-  e o comprimento médio do caminho até o isolamento vira o escore. Não supõe
+  e o comprimento médio do caminho até o isolamento vira o \emph{score}. Não supõe
   forma para a distribuição.
   \item \textbf{One-Class SVM}~\cite{scholkopf2001,tax2004}: estima, num espaço de
   \emph{kernel}, a fronteira de uma região que contém a maior parte dos dados
@@ -217,7 +217,7 @@ Quatro detectores são comparados, do mais simples ao mais flexível:
   \item \textbf{Autoencoder}~\cite{hinton2006,sakurada2014}: rede neural treinada para
   reconstruir as próprias entradas a partir de uma representação comprimida.
   Treinada só com normais, reconstrói mal o que é diferente, e o erro de
-  reconstrução vira o escore.
+  reconstrução vira o \emph{score}.
 \end{itemize}
 
 \subsection{Classificação supervisionada}

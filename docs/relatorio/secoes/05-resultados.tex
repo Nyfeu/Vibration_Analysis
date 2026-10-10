@@ -8,7 +8,10 @@
 \label{sec:tabela-resumo}
 
 A \autoref{tab:resumo} segue o formato exigido pelo enunciado. Todos os valores
-são do conjunto de teste (\SI{3}{\hp}, 10 gravações, 581 janelas). Para os
+são do conjunto de teste (\SI{3}{\hp}, 10 gravações, 581 janelas). São
+estimativas pontuais: as 581 janelas não são independentes, a FPR vem de uma
+única gravação normal, e os intervalos de confiança estão na
+\autoref{sec:res-inferencia}. Para os
 classificadores, TPR e FPR tratam ``falha'' como qualquer classe diferente de
 normal. A acurácia por classe está na ordem normal / pista interna / esfera /
 pista externa. A tabela mostra só as configurações principais; as demais estão
@@ -51,7 +54,7 @@ A \autoref{fig:eda-boxplots} mostra a distribuição das oito features por class
 nas janelas de treino, com a mediana de cada gravação sobreposta. O RMS e o pico
 crescem de normal para esfera, pista interna e pista externa, com medianas de RMS
 de \num{0.058}, \num{0.136}, \num{0.291} e \num{0.556}: as classes ocupam faixas
-de amplitude quase disjuntas. Os escores de envelope separam as classes de outra
+de amplitude quase disjuntas. Os \emph{scores} de envelope separam as classes de outra
 forma --- o de BPFI é alto só na pista interna (mediana de
 \SI{9.3}{\decibel}, contra 1,2 a \SI{3.8}{\decibel} nas demais) e o de BPFO, só na
 pista externa (\SI{6.5}{\decibel}) ---, enquanto o de BSF quase não varia entre as
@@ -71,9 +74,9 @@ classes.
 A \autoref{tab:kruskal} testa essas diferenças com a gravação como unidade. Sete
 das oito features diferem significativamente entre as classes ($p < 0{,}05$),
 com efeitos grandes ($\varepsilon^2$ de \numrange{0.31}{0.54}). A exceção é o
-escore de BSF ($p = \num{0.071}$), justamente a feature que deveria caracterizar
+\emph{score} de BSF ($p = \num{0.071}$), justamente a feature que deveria caracterizar
 a esfera --- o mesmo resultado, por outro caminho, da validação física
-(\autoref{sec:res-fisica}). Vale notar que, por gravação, os escores de BPFI e de
+(\autoref{sec:res-fisica}). Vale notar que, por gravação, os \emph{scores} de BPFI e de
 BPFO têm efeito tão grande quanto o RMS e o pico: a informação física existe nos
 dados, mas os modelos preferem a amplitude porque ela separa \emph{também} a
 classe normal e a esfera.
@@ -88,14 +91,14 @@ classe normal e a esfera.
     \toprule
     \textbf{Feature} & \textbf{$H$} & \textbf{Valor-$p$} & \textbf{$\varepsilon^2$} \\
     \midrule
-    escore BPFI     & 15,52 & 0,001 & 0,54 \\
+    \emph{Score} BPFI     & 15,52 & 0,001 & 0,54 \\
     assimetria      & 15,33 & 0,002 & 0,53 \\
-    escore BPFO     & 15,25 & 0,002 & 0,53 \\
+    \emph{Score} BPFO     & 15,25 & 0,002 & 0,53 \\
     pico            & 14,12 & 0,003 & 0,49 \\
     RMS             & 14,11 & 0,003 & 0,49 \\
     curtose         & 10,14 & 0,017 & 0,35 \\
     fator de crista &  9,01 & 0,029 & 0,31 \\
-    escore BSF      &  7,04 & 0,071 & 0,24 \\
+    \emph{Score} BSF      &  7,04 & 0,071 & 0,24 \\
     \bottomrule
   \end{tabular}
   \fonte{Elaborado pelos autores a partir de
@@ -104,7 +107,7 @@ classe normal e a esfera.
 
 A \autoref{fig:eda-correlacao} mostra a correlação de Spearman entre as
 features. Há dois pares quase redundantes: RMS e pico ($\rho = \num{0.95}$) e
-curtose e fator de crista ($\rho = \num{0.94}$). Os escores de envelope, ao
+curtose e fator de crista ($\rho = \num{0.94}$). Os \emph{scores} de envelope, ao
 contrário, são pouco correlacionados com as features de tempo
 ($|\rho| \le \num{0.54}$) e entre si. Duas consequências: a importância que o
 Random Forest atribui a RMS e pico deve ser lida em conjunto, porque as duas
@@ -149,10 +152,10 @@ pico discreto mais alto está em BPFI.
 \end{figure}
 
 Para transformar a inspeção visual num critério reproduzível, uma gravação de
-falha é considerada \emph{confirmada} quando (i) a família de maior escore é a
-esperada para a classe declarada e (ii) esse escore supera o maior valor que a
+falha é considerada \emph{confirmada} quando (i) a família de maior \emph{score} é a
+esperada para a classe declarada e (ii) esse \emph{score} supera o maior valor que a
 mesma família atinge nas quatro gravações normais. As gravações normais, que não
-têm defeito, definem assim o nível de escore que o método produz por acaso:
+têm defeito, definem assim o nível de \emph{score} que o método produz por acaso:
 \SI{10.8}{\decibel} para BPFO, \SI{8.6}{\decibel} para BPFI e
 \SI{9.9}{\decibel} para BSF. O resultado é comparado, na
 \autoref{tab:validacao-fisica}, com o diagnóstico de \textcite[Tab.~B2,
@@ -186,20 +189,20 @@ dos três métodos que eles aplicaram.
 O critério concorda com o diagnóstico de \textcite{smith2015} pelo envelope
 simples em 50 das 52 gravações de falha. Por classe:
 \begin{itemize}
-  \item \textbf{Pista interna:} as 12 gravações são confirmadas, com escore de
+  \item \textbf{Pista interna:} as 12 gravações são confirmadas, com \emph{score} de
   BPFI entre \num{17.5} e \SI{23.5}{\decibel}, mais que o dobro do limiar.
   A única divergência é a 171, que confirmamos e que o artigo classifica como
   apenas provável (P1) pelo método 1.
   \item \textbf{Pista externa a 6~h:} as oito gravações de \SI{0.007}{\inch} e
   \SI{0.021}{\inch} são confirmadas, e as quatro de \SI{0.014}{\inch} (197 a 200)
-  não: nelas o escore de BPFO fica entre \num{4.1} e \SI{10.5}{\decibel}, no
+  não: nelas o \emph{score} de BPFO fica entre \num{4.1} e \SI{10.5}{\decibel}, no
   nível dos normais. São exatamente as gravações que o artigo não diagnostica com
   o método 1, e cuja montagem ele associa a folga mecânica~\cite[p.~110]{smith2015}.
   \item \textbf{Pista externa a 3~h e a 12~h:} as 16 gravações do conjunto de
   generalização são confirmadas. O defeito fora da zona de carga continua
   visível no envelope, o que justifica testar nelas um modelo treinado a 6~h.
-  \item \textbf{Esfera:} nenhuma gravação é confirmada. O escore de BSF fica
-  entre \num{4.3} e \SI{8.1}{\decibel}, sempre abaixo do maior escore normal.
+  \item \textbf{Esfera:} nenhuma gravação é confirmada. O \emph{score} de BSF fica
+  entre \num{4.3} e \SI{8.1}{\decibel}, sempre abaixo do maior \emph{score} normal.
   Nas gravações de \SI{0.014}{\inch} (185 a 188) a família dominante é a BSF, mas
   com margem inferior a \SI{1}{\decibel} sobre as outras e no nível do ruído; nas
   demais, dominam BPFI ou BPFO. Isso concorda com o artigo, que só diagnostica uma
@@ -248,7 +251,7 @@ método.
 \end{table}
 
 O pré-branqueamento é o que mais muda o quadro da esfera: confirma as gravações
-222 e 223, exatamente as que o artigo diagnostica pelo método 2, com o escore de
+222 e 223, exatamente as que o artigo diagnostica pelo método 2, com o \emph{score} de
 BSF em \num{7.7} e \SI{7.3}{\decibel} contra um limiar de \SI{4.4}{\decibel}.
 Confirma também as gravações 185 a 187, mas com margem de só \num{0.1} a
 \SI{0.7}{\decibel}; o artigo as classifica como apenas potencialmente
@@ -348,8 +351,8 @@ calibrado nos normais de 0 a \SI{2}{\hp} não se transfere para o normal de
 \SI{3}{\hp}. A gravação 100 não difere das normais de treino em amplitude --- seu
 RMS mediano, \num{0.055}, é praticamente o da gravação 99 ---, e sim no envelope e
 na curtose: em relação às janelas normais de treino, sua mediana fica
-\num{1.65} desvios-padrão acima no escore de BPFO, \num{1.68} abaixo no de BSF e
-\num{1.07} acima na curtose. É também a gravação normal com o maior escore de BPFO
+\num{1.65} desvios-padrão acima no \emph{score} de BPFO, \num{1.68} abaixo no de BSF e
+\num{1.07} acima na curtose. É também a gravação normal com o maior \emph{score} de BPFO
 na validação física (\autoref{sec:res-fisica}). Com só três gravações normais no
 treino, a variabilidade normal entre montagens e condições não é coberta, e o
 One-Class SVM, cuja fronteira é a mais justa, trata a quarta gravação como
@@ -377,7 +380,7 @@ A distância de Mahalanobis ao quadrado
 só segue uma qui-quadrado com 8 graus de liberdade se as features normais forem
 normais multivariadas. O teste de Shapiro--Wilk rejeita a normalidade em cinco
 das oito features nas janelas normais de treino (RMS, pico, fator de crista,
-curtose e escore de BSF; $p < 0{,}05$), com assimetrias de até \num{1.4}. A
+curtose e \emph{score} de BSF; $p < 0{,}05$), com assimetrias de até \num{1.4}. A
 \autoref{tab:limiar-chi2} mostra a consequência: o limiar teórico de
 \num{4.48} deixaria \SI{6.2}{\percent} das janelas normais de treino acima dele,
 em vez do \SI{1}{\percent} nominal, e a FPR no teste subiria de \num{0.12} para
@@ -413,7 +416,7 @@ padronização e o limiar usam apenas normais de treino.
 
 A segunda hipótese foi que a separação viesse de uma única grandeza trivial. Ela
 se confirmou. Tomado isoladamente, o RMS das janelas tem AUC de \num{1.000} no
-teste, assim como o pico; a curtose, \num{0.833}; e o melhor escore de envelope,
+teste, assim como o pico; a curtose, \num{0.833}; e o melhor \emph{score} de envelope,
 o de BPFI, \num{0.836}. A \autoref{fig:rms} mostra a razão: todas as 36 gravações
 de falha do conjunto principal vibram mais que todas as quatro gravações normais.
 Isso vale inclusive para as gravações sem assinatura física do defeito, como a
@@ -503,6 +506,13 @@ selecionado.
   \texttt{results/metrics/classificacao\_selecao\_modelos.csv}.}
 \end{table}
 
+A acurácia na validação cruzada e a do teste final medem coisas diferentes e
+não devem ser somadas como evidência. A validação usa três partições, uma por
+carga de treino, e serve só para escolher o modelo e os hiperparâmetros; o teste
+em \SI{3}{\hp}, nunca usado nessas escolhas, é a única estimativa de desempenho
+reportada. Nenhuma das duas é mais robusta que a outra quanto à generalização:
+ambas avaliam as mesmas montagens em cargas diferentes.
+
 A validação embaralhada dá, para todos os modelos, uma acurácia de \num{1.5} a
 \num{2.8} pontos percentuais maior que a por carga: é o vazamento entre janelas da
 mesma gravação. A diferença é pequena porque nem a validação por carga separa as
@@ -559,7 +569,10 @@ Apêndice~\ref{ap:matrizes}.
 \end{table}
 
 O modelo selecionado, Random Forest com tempo+envelope, acerta
-\SI{95.7}{\percent} das janelas de teste, com $F_1$ macro de \num{0.964}. A
+\SI{95.7}{\percent} das janelas de teste, com $F_1$ macro de \num{0.964}. As 581
+janelas vêm de 10 gravações, e o intervalo de confiança por gravação vai de
+\num{0.89} a \num{1.00} (\autoref{sec:res-ic}); é uma estimativa sobre poucas
+condições experimentais, e não sobre máquinas independentes. A
 \autoref{tab:precisao-recall} mostra precisão, recall e $F_1$ por classe para ele
 e para o mesmo modelo só com envelope.
 
@@ -605,7 +618,7 @@ esfera do teste, \textcite{smith2015} só diagnosticam a 121, e apenas com o
 método mais elaborado; a 188 é parcial e a 225, não diagnosticável. Mesmo assim,
 a gravação 225 é classificada como esfera em todas as 58 janelas. No Random
 Forest, RMS e pico respondem por \SI{56.3}{\percent} da importância das
-features, e o escore de BSF por \SI{3.3}{\percent}. O classificador reconhece as
+features, e o \emph{score} de BSF por \SI{3.3}{\percent}. O classificador reconhece as
 gravações de esfera pelo nível de vibração --- intermediário entre o das pistas e
 o dos normais (\autoref{fig:rms}) ---, e não pela frequência do defeito.
 
@@ -616,7 +629,7 @@ A
 \autoref{tab:ganho-informacao} mostra o ganho de informação de cada feature no
 melhor corte único, no treino. A entropia das quatro classes é de
 \SI{1.868}{bits}. As duas features de amplitude lideram: o pico remove
-\SI{30}{\percent} da incerteza sozinho, e o RMS, \SI{26}{\percent}. O escore de
+\SI{30}{\percent} da incerteza sozinho, e o RMS, \SI{26}{\percent}. O \emph{score} de
 BSF, a única feature ligada à física da esfera, é o que menos informa
 (\SI{9}{\percent}).
 
@@ -634,11 +647,11 @@ BSF, a única feature ligada à física da esfera, é o que menos informa
     pico          & 0,561 & 0,300 & 1,27  & esfera & p. interna \\
     RMS           & 0,493 & 0,264 & 0,150 & esfera & p. interna \\
     curtose       & 0,397 & 0,213 & 4,88  & esfera & p. interna \\
-    escore BPFO   & 0,365 & 0,196 & 5,39  & esfera & p. externa \\
-    escore BPFI   & 0,360 & 0,192 & 3,26  & esfera & p. interna \\
+    \emph{Score} BPFO   & 0,365 & 0,196 & 5,39  & esfera & p. externa \\
+    \emph{Score} BPFI   & 0,360 & 0,192 & 3,26  & esfera & p. interna \\
     fator de crista & 0,325 & 0,174 & 4,37 & esfera & p. interna \\
     assimetria    & 0,297 & 0,159 & 0,078 & esfera & p. interna \\
-    escore BSF    & 0,170 & 0,091 & 2,48  & p. interna & p. externa \\
+    \emph{Score} BSF    & 0,170 & 0,091 & 2,48  & p. interna & p. externa \\
     \bottomrule
   \end{tabular}
   \fonte{Elaborado pelos autores a partir de
@@ -649,8 +662,8 @@ A árvore de profundidade 3 com critério de entropia
 (\autoref{fig:arvore}) torna o atalho explícito. O primeiro corte é no pico. A
 classe normal é definida por \emph{pico $\le$ 0,39 e RMS $\le$ 0,08}: vibração
 baixa. A esfera é uma \emph{faixa intermediária de amplitude} (pico entre 0,39 e
-1,27, RMS acima de 0,10), sem nenhum uso do escore de BSF, cuja importância na
-árvore é zero. As pistas só são separadas, acima do pico de 1,27, pelos escores
+1,27, RMS acima de 0,10), sem nenhum uso do \emph{score} de BSF, cuja importância na
+árvore é zero. As pistas só são separadas, acima do pico de 1,27, pelos \emph{scores}
 de BPFO e BPFI --- as únicas regras com sentido físico. Mesmo assim, a árvore
 acerta \SI{92.3}{\percent} do teste, e só \SI{28.0}{\percent} da pista externa em
 outra posição.
@@ -730,7 +743,7 @@ gravações de dois diâmetros, em todas as cargas, e testa nas do terceiro, que
 vêm de montagens nunca vistas. A classe normal fica de fora, porque não tem
 diâmetro, e o acaso corresponde a \SI{33}{\percent}. Como referência, entra uma
 regra física sem treino nenhum: cada janela é atribuída à classe da família de
-envelope de maior escore (BPFO para pista externa, BPFI para pista interna, BSF
+envelope de maior \emph{score} (BPFO para pista externa, BPFI para pista interna, BSF
 para esfera).
 
 \begin{table}[htb]
@@ -780,6 +793,44 @@ exatamente onde a validação física não encontrou a assinatura do defeito
 3~h e 12~h), acerta \SI{99.8}{\percent} das janelas, contra \SI{40.0}{\percent} do
 Random Forest selecionado. Nas falhas do teste em \SI{3}{\hp}, acerta
 \SI{64.2}{\percent}.
+
+Dois cuidados limitam a leitura desses números. Primeiro, a escolha da forma do
+\emph{score} foi feita com os dados à vista (\autoref{sec:met-regra-fisica}). A
+\autoref{tab:sensibilidade} mostra que isso não favoreceu a regra: a versão
+original, anterior ao ajuste, acerta \SI{70.7}{\percent}, e as variações de
+tolerância e de vizinhança ficam entre \num{0.64} e \num{0.66}. Segundo, o
+conjunto de generalização só contém pista externa, então o \SI{99.8}{\percent}
+mede quanto a regra \emph{reconhece} a pista externa em outra posição, e não
+quanto ela \emph{distingue} os três tipos: no conjunto principal, cerca de uma em
+cada quatro janelas que a regra chama de pista externa é de outra classe
+(precisão de \num{0.77}). A evidência de discriminação está no
+\SI{65.7}{\percent} entre três classes, e não no \SI{99.8}{\percent}.
+
+\begin{table}[htb]
+  \centering
+  \caption{Sensibilidade da regra física às escolhas do \emph{score} de envelope,
+  com um diâmetro (montagem) fora: acurácia e recall nas janelas de falha do
+  conjunto principal, precisão das previsões de pista externa e fração do conjunto
+  de generalização reconhecida como pista externa.}
+  \label{tab:sensibilidade}
+  \scriptsize
+  \begin{tabular}{lcccccc}
+    \toprule
+    \textbf{Variante} & \textbf{Acurácia} & \textbf{Rec. IR} & \textbf{Rec. B} &
+    \textbf{Rec. OR} & \textbf{Prec. OR} & \textbf{Generaliz.} \\
+    \midrule
+    Adotada ($\times$1,2; BSF $\times$2,4; fundo local; $\pm$2\%) & 0,657 & 1,000 & 0,240 & 0,731 & 0,768 & 0,998 \\
+    Original ($\times$1--3; BSF $\times$1--4; fundo global)       & 0,707 & 0,984 & 0,366 & 0,769 & 0,761 & 1,000 \\
+    Só o 1.º harmônico (BSF $\times$2)                           & 0,661 & 1,000 & 0,256 & 0,726 & 0,793 & 0,982 \\
+    Adotada, tolerância $\pm$1\%                                  & 0,649 & 1,000 & 0,216 & 0,731 & 0,734 & 0,999 \\
+    Adotada, tolerância $\pm$3\%                                  & 0,664 & 1,000 & 0,263 & 0,728 & 0,792 & 0,939 \\
+    Adotada, vizinhança $\pm$10\%                                 & 0,641 & 1,000 & 0,182 & 0,740 & 0,742 & 0,990 \\
+    Adotada, vizinhança $\pm$30\%                                 & 0,663 & 1,000 & 0,280 & 0,708 & 0,793 & 0,987 \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/regra\_fisica\_sensibilidade.csv}.}
+\end{table}
 
 O resultado inverte a leitura da \autoref{tab:resumo}: os modelos de maior
 acurácia no teste por carga são os que mais dependem da montagem, e o

@@ -235,21 +235,23 @@ e generaliza pior (64%): aprende a montagem, não o defeito.
 alarmar sempre já daria precisão 0,90 e F1 0,947, então TPR, FPR e AUC são as
 métricas que importam. No diagnóstico, a esfera tem recall 0,99 e precisão 0,88:
 vira uma classe-refúgio. Uma árvore de decisão com critério de entropia define a
-esfera como uma faixa de amplitude, sem usar o escore de BSF (o de menor ganho
+esfera como uma faixa de amplitude, sem usar o *score* de BSF (o de menor ganho
 de informação).
 
 **Teste decisivo — montagem nova.** Cada defeito do CWRU foi ensaiado numa única
 montagem, presente nas quatro cargas. Deixando um diâmetro (montagem) inteiro
 fora do treino, todos os modelos treinados caem para perto do acaso (26–55%,
 acaso = 33%), enquanto uma **regra física sem treino** — classe pela frequência
-de defeito dominante no envelope — acerta 65,7% do tipo de falha e 99,8% da
-pista externa em outra posição.
+de defeito dominante no envelope — acerta 65,7% do tipo de falha (estável entre
+0,64 e 0,71 quando as escolhas do *score* variam) e reconhece 99,8% da pista
+externa em outra posição (este conjunto só tem pista externa, então o número
+mede reconhecimento, não discriminação).
 
 **Estatística aplicada.** A unidade estatística é a gravação (as janelas de uma
 gravação são correlacionadas):
 
 - *Análise exploratória*: Kruskal–Wallis por gravação mostra diferença entre
-  classes em 7 de 8 features (ε² de 0,31 a 0,54); a exceção é o escore da esfera
+  classes em 7 de 8 features (ε² de 0,31 a 0,54); a exceção é o *score* da esfera
   (p = 0,07). RMS e pico são redundantes (ρ de Spearman = 0,95).
 - *Pressupostos*: as features normais não são normais (Shapiro–Wilk); o limiar
   qui-quadrado do Mahalanobis daria 6,2% de falsos alarmes no treino em vez de 1%.

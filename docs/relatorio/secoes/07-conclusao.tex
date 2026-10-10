@@ -20,7 +20,11 @@ diagnosticabilidade do defeito.
 
 \textbf{Diagnóstico do tipo de falha.} O Random Forest com features de tempo e de
 envelope, escolhido por validação cruzada por carga e ajustado por busca em grade,
-atingiu \SI{95.7}{\percent} de acurácia e $F_1$ macro de \num{0.964}, mas a
+atingiu \SI{95.7}{\percent} de acurácia (IC de 95\% de \numrange{0.89}{1.00}) e
+$F_1$ macro de \num{0.964}. Esse número vem de 10 gravações de teste --- uma por
+combinação de classe e diâmetro, mais uma normal ---, cujas janelas são
+correlacionadas, e não deve ser lido como a acurácia esperada em máquinas ou
+montagens independentes. Além disso, a
 esfera, com recall de \num{0.99} e precisão de \num{0.88}, funciona como
 classe-refúgio, e o modelo a acerta sem que o
 defeito apareça no envelope do sinal bruto de nenhuma gravação, e reconhece como
@@ -35,8 +39,11 @@ montagem --- inteiro fora do treino, todos os modelos treinados caem para perto
 do acaso (de \num{0.26} a \num{0.55}) e nenhum acerta significativamente mais
 montagens que um sorteio, enquanto uma regra física sem treino, que atribui a
 classe pela frequência de defeito dominante no envelope, acerta \num{0.66}
-(6 de 9 montagens, $p = \num{0.042}$ contra o acaso) e reconhece
-\SI{99.8}{\percent} da pista externa em outra posição. Com só 9 montagens, a
+(6 de 9 montagens, $p = \num{0.042}$ contra o acaso), resultado que se mantém
+quando as escolhas do \emph{score} variam (\numrange{0.64}{0.71}). A regra também
+reconhece \SI{99.8}{\percent} da pista externa em outra posição, mas esse número,
+sozinho, não mostra discriminação entre os três tipos, porque o conjunto só
+contém pista externa. Com só 9 montagens, a
 evidência é modesta, mas aponta numa única direção.
 
 A conclusão principal é metodológica. No CWRU, alta acurácia é fácil e diz pouco:

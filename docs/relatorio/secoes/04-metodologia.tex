@@ -157,6 +157,18 @@ uma única carga, o split por carga já mantém todas as janelas de uma gravaç�
 mesmo lado. Essa propriedade é verificada no código: a função de divisão falha se
 algum registro aparecer nos dois lados, e um teste automatizado cobre o caso.
 
+Tudo o que é \emph{ajustado} usa apenas o treino: a padronização das features, os
+hiperparâmetros (validação cruzada e busca em grade nas cargas de 0 a
+\SI{2}{\hp}), os limiares dos detectores (janelas normais de treino) e os pesos
+por classe. O teste em \SI{3}{\hp} é usado uma única vez, para a avaliação final.
+Três decisões de projeto, porém, foram tomadas olhando o conjunto inteiro, sem
+usar os rótulos de classe, e são declaradas aqui: o tamanho da janela usa a menor
+rotação do manifesto, que é metadado da aquisição; a banda comum foi decidida a
+partir do espectro de potência de normais e falhas (\autoref{sec:banda-comum}); e
+a forma do \emph{score} de envelope (harmônicos e fundo) foi ajustada uma vez depois
+de inspecionar os \emph{scores} de todas as gravações
+(\autoref{sec:met-regra-fisica}).
+
 O split por carga tem um limite, discutido no \autoref{cap:discussao}: a carga do
 CWRU é um torque que altera pouco a rotação (\autoref{sec:setup}), e cada
 combinação de defeito foi ensaiada numa mesma montagem nas quatro cargas. O
@@ -273,11 +285,11 @@ sinal bruto (\autoref{sec:tec-envelope}):
   (DRS).
 \end{itemize}
 
-Do SES extrai-se um escore por família de defeito (BPFO, BPFI e BSF). Para cada
+Do SES extrai-se um \emph{score} por família de defeito (BPFO, BPFI e BSF). Para cada
 harmônico considerado, toma-se o maior valor do SES dentro da tolerância de
 \SI{\pm 2}{\percent} em torno da frequência teórica, calculada com a rotação da
 própria gravação, e divide-se pela mediana do SES na vizinhança de
-\SI{\pm 20}{\percent}, excluída a banda de tolerância. O escore da família é a
+\SI{\pm 20}{\percent}, excluída a banda de tolerância. O \emph{score} da família é a
 média dessas razões, em decibéis. O fundo local compensa a queda do SES com a
 frequência.
 
@@ -290,7 +302,7 @@ $2 \times \text{BPFO} = \num{7.17}\,f_r$ e $3 \times \text{BSF} = \num{7.07}\,f_
 $2 \times$BPFI, e, para a esfera, só os harmônicos pares, $2 \times$BSF e
 $4 \times$BSF, que costumam dominar~\cite[p.~103]{smith2015}.
 
-Os três escores são usados de duas formas. Calculados por janela de 4096
+Os três \emph{scores} são usados de duas formas. Calculados por janela de 4096
 amostras, são features para os modelos. Calculados sobre a gravação inteira, com
 resolução de cerca de \SI{0.1}{\hertz}, servem à validação física
 (\autoref{sec:res-fisica}).
@@ -299,11 +311,11 @@ resolução de cerca de \SI{0.1}{\hertz}, servem à validação física
 \label{sec:modelos}
 
 Detecção e classificação usam as mesmas oito features por janela --- as cinco do
-domínio do tempo e os três escores de envelope --- organizadas em quatro
+domínio do tempo e os três \emph{scores} de envelope --- organizadas em quatro
 conjuntos, que funcionam como uma ablação:
 \begin{itemize}
   \item \textbf{tempo}: RMS, curtose, fator de crista, assimetria e pico;
-  \item \textbf{envelope}: os escores de BPFO, BPFI e BSF;
+  \item \textbf{envelope}: os \emph{scores} de BPFO, BPFI e BSF;
   \item \textbf{tempo+envelope}: as oito features;
   \item \textbf{forma}: as oito, menos RMS e pico.
 \end{itemize}
@@ -320,20 +332,20 @@ Os detectores são treinados \emph{somente} com as 144 janelas normais de
 \SIlist{0;1;2}{\hp}. A função de treino verifica isso e recusa qualquer conjunto
 que contenha uma janela de falha. A padronização das features (média e desvio)
 também é estimada só com esses normais. Os quatro detectores
-(\autoref{sec:tec-one-class}) produzem um escore em que valores maiores indicam
+(\autoref{sec:tec-one-class}) produzem um \emph{score} em que valores maiores indicam
 mais anomalia:
 \begin{itemize}
   \item \textbf{Mahalanobis}: distância à média dos normais, com a covariância
   empírica deles;
-  \item \textbf{Isolation Forest}: 300 árvores; escore igual ao simétrico do
-  escore de normalidade;
+  \item \textbf{Isolation Forest}: 300 árvores; \emph{score} igual ao simétrico do
+  \emph{score} de normalidade;
   \item \textbf{One-Class SVM}: \emph{kernel} RBF, $\nu = \num{0.05}$;
   \item \textbf{Autoencoder}: rede com camadas de 6, 3 e 6 neurônios
-  (tangente hiperbólica), treinada para reproduzir a entrada; o escore é o erro
+  (tangente hiperbólica), treinada para reproduzir a entrada; o \emph{score} é o erro
   quadrático médio de reconstrução.
 \end{itemize}
 
-O limiar de alarme é o percentil 99 dos escores das próprias janelas normais de
+O limiar de alarme é o percentil 99 dos \emph{scores} das próprias janelas normais de
 treino. É a única calibração possível sem exemplos de falha, e corresponde a uma
 taxa de falsos positivos esperada de cerca de \SI{1}{\percent} \emph{nos dados de
 treino}. A avaliação usa as 581 janelas de \SI{3}{\hp}: a área sob a curva ROC
@@ -403,6 +415,33 @@ classe, com a semente do projeto. A CNN entra também no teste de generalizaçã
 entre montagens (\autoref{sec:res-montagem}). Duas entradas são comparadas, mantendo a
 ablação de amplitude: o sinal como gravado e cada janela normalizada para média
 zero e desvio unitário. A rede é implementada em PyTorch.
+
+\subsection{Regra física e generalização entre montagens}
+\label{sec:met-regra-fisica}
+
+A regra física classifica cada janela de falha, sem nenhum treino, pela família
+de envelope de maior \emph{score}: BPFO indica pista externa; BPFI, pista
+interna; BSF, esfera. As frequências vêm da geometria do rolamento e da rotação
+medida, e a tolerância de \SI{\pm 2}{\percent}, da literatura~\cite{smith2015}:
+nenhum rótulo entra na sua definição. A regra decide só entre os três tipos de
+falha, e não prevê a classe normal; por isso, ela é comparada aos classificadores
+apenas no problema de três classes.
+
+A forma do \emph{score} --- quais harmônicos usar e como estimar o fundo --- foi
+ajustada uma vez. A primeira versão usava os harmônicos 1 a 3 (1 a 4 para a BSF)
+e um fundo global; ela foi trocada pela atual, com harmônicos que não colidem
+dentro da tolerância e fundo local (\autoref{sec:features-envelope}). A
+justificativa é cinemática, mas a troca foi feita depois de inspecionar os
+\emph{scores} de todas as gravações, incluindo as de teste. Para medir se essa
+escolha favoreceu a regra, ela é avaliada também com a versão original e com
+variações de tolerância (\SI{\pm 1}{\percent} e \SI{\pm 3}{\percent}) e de
+vizinhança do fundo (\SI{\pm 10}{\percent} e \SI{\pm 30}{\percent}).
+
+No teste entre montagens, os classificadores são avaliados por
+\texttt{LeaveOneGroupOut} com o grupo igual ao diâmetro, só com as gravações de
+falha: em cada rodada, treinam com dois diâmetros, em todas as cargas, e são
+testados no terceiro. Todas as janelas de uma gravação ficam do mesmo lado, o que
+é verificado no notebook.
 
 \subsection{Métricas}
 \label{sec:metricas}

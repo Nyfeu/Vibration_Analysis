@@ -26,7 +26,7 @@
 
 ## Pontos relevantes para o projeto
 
-- → Projeto: RMS × pico (ρ = 0,95) e curtose × fator de crista (ρ = 0,94) são redundantes; os escores de envelope são pouco correlacionados com as features de tempo.
+- → Projeto: RMS × pico (ρ = 0,95) e curtose × fator de crista (ρ = 0,94) são redundantes; os *scores* de envelope são pouco correlacionados com as features de tempo.
 
 ## Onde é usado no relatório
 

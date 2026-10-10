@@ -163,7 +163,7 @@
   esfera) e um protocolo sem vazamento, com treino nas cargas de 0 a 2~HP e teste
   em 3~HP. As gravações normais, feitas a 48~kHz, foram decimadas, e todas as
   gravações passaram pela mesma banda de 0 a 4,8~kHz. De cada janela de 4096
-  amostras extraíram-se features do domínio do tempo e escores do espectro de
+  amostras extraíram-se features do domínio do tempo e \emph{scores} do espectro de
   envelope nas frequências características do rolamento. Uma validação física,
   sem modelo treinado, confirmou o defeito declarado em todas as 12 gravações de
   pista interna, em 8 de 12 de pista externa e em nenhuma de esfera pelo envelope
@@ -172,7 +172,8 @@
   detectores treinados só com dados normais (Mahalanobis, Isolation Forest,
   One-Class SVM e autoencoder) atingiram AUC de até 1,00, e o Random Forest, escolhido por
   validação cruzada por carga e busca em grade, classificou 95,7\% das janelas
-  de teste corretamente. A investigação desses
+  de teste corretamente (IC de 95\% de 0,89 a 1,00, sobre apenas 10 gravações
+  de teste, cujas janelas não são independentes). A investigação desses
   resultados mostrou que eles não decorrem de vazamento, mas de um atalho de
   amplitude: o RMS sozinho separa normal de falha, inclusive nas gravações sem
   assinatura do defeito, e o classificador acerta 99\% da classe esfera sem que
@@ -210,7 +211,8 @@
     normal data only (Mahalanobis, Isolation Forest, One-Class SVM and
     autoencoder) reached an AUC of up to 1.00, and a Random Forest, selected by
     load-grouped cross-validation and grid search, classified 95.7\% of the
-    test windows correctly. Investigating these results showed
+    test windows correctly (95\% CI 0.89--1.00, over only 10 test recordings,
+    whose windows are not independent). Investigating these results showed
     that they do not come from data leakage but from an amplitude shortcut: the
     RMS alone separates normal from faulty records, including those without a
     fault signature, and the classifier gets 99\% of the ball class right

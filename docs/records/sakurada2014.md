@@ -21,12 +21,12 @@
 
 ## Ideias principais
 
-1. Treina autoencoders só com dados normais e usa o erro de reconstrução como escore de anomalia.
+1. Treina autoencoders só com dados normais e usa o erro de reconstrução como *score* de anomalia.
 2. Compara com PCA linear e kernel PCA em dados de sensores (incluindo telemetria de espaçonave).
 
 ## Pontos relevantes para o projeto
 
-- → Projeto: é exatamente o uso do nosso `Autoencoder` (escore = erro quadrático médio de reconstrução).
+- → Projeto: é exatamente o uso do nosso `Autoencoder` (*score* = erro quadrático médio de reconstrução).
 
 ## Onde é usado no relatório
 
