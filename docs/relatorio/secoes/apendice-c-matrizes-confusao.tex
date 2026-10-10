@@ -6,5 +6,9 @@ tabelas abaixo são geradas pelo código
 (\texttt{notebooks/projeto.ipynb}) e incluídas sem transcrição
 manual. Cada matriz conta janelas do conjunto de teste (\SI{3}{\hp}): 58 normais,
 175 de pista interna, 174 de esfera e 174 de pista externa.
+As duas últimas matrizes são da regra física, que não tem treino e decide só
+entre os três tipos de falha: a coluna ``Normal'' é sempre zero, e a linha
+``Normal'' mostra a que falha cada janela normal é atribuída. Por não depender de
+treino, ela é mostrada também no conjunto principal inteiro.
 
 \input{../../results/metrics/matrizes_confusao.tex}

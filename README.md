@@ -213,12 +213,27 @@ normal; acurácia por classe na ordem normal / pista interna / esfera / pista ex
 | CWRU | One-Class SVM (tempo+envelope) | não se aplica | 1,00 | 0,81 | — |
 | CWRU | Autoencoder (tempo+envelope) | não se aplica | 1,00 | 0,17 | — |
 | CWRU | Mahalanobis (envelope) | não se aplica | 0,58 | 0,14 | — |
+| CWRU | **Autoencoder (envelope) — detector recomendado** | não se aplica | 0,54 | 0,03 | — |
 | CWRU | Mahalanobis (forma, sem RMS/pico) | não se aplica | 0,83 | 0,24 | — |
 | CWRU | Random Forest (tempo+envelope) | normal, IR, B, OR | 1,00 | 0,00 | 1,00 / 0,98 / 0,99 / 0,89 |
 | CWRU | SVM (tempo+envelope) | normal, IR, B, OR | 0,99 | 0,00 | 1,00 / 0,99 / 0,97 / 0,87 |
 | CWRU | Random Forest (envelope) | normal, IR, B, OR | 0,96 | 1,00 | 0,00 / 0,94 / 0,65 / 0,67 |
 | CWRU | CNN 1D (sinal bruto) | normal, IR, B, OR | 1,00 | 0,00 | 1,00 / 0,90 / 1,00 / 1,00 |
 | CWRU | CNN 1D (sinal normalizado) | normal, IR, B, OR | 1,00 | 0,00 | 1,00 / 0,99 / 1,00 / 1,00 |
+| CWRU | Regra física, sem treino (envelope)¹ | IR, B, OR | n. a. | n. a. | — / 1,00 / 0,22 / 0,71 |
+| CWRU | Regra física — **montagem nova**² | IR, B, OR | n. a. | n. a. | — / 1,00 / 0,24 / 0,73 |
+| CWRU | Random Forest (tempo+envelope) — montagem nova² | IR, B, OR | n. a. | n. a. | — / 0,25 / 0,87 / 0,25 |
+
+¹ A regra física decide só entre os três tipos de falha (não prevê "normal");
+matrizes de confusão completas no Apêndice C do relatório.
+² Um diâmetro (montagem) inteiro fora do treino, só falhas, acaso = 0,33.
+Acurácia: regra física 0,657 (6/9 montagens, p = 0,042); Random Forest 0,457
+(4/9, p = 0,35).
+
+**Detector recomendado:** o autoencoder sobre os *scores* de envelope — menor
+FPR (0,034), quase o dobro da precisão projetada do Mahalanobis numa planta com
+1% de falhas (0,14 contra 0,08) e alarmes que seguem a física —, ao custo de um
+TPR de 0,54.
 
 **Leitura crítica (detalhes no relatório, cap. 5 e 6):** os valores próximos de
 100% não vêm de vazamento (verificado em código), mas de um atalho de amplitude:

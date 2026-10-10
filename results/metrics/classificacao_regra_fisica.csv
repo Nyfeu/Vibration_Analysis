@@ -1,2 +1,2 @@
-features,classificador,acuracia_falhas,generalizacao_OR
-envelope,Regra física (sem treino),0.6424,0.9978
+features,classificador,acuracia_falhas,recall_IR,recall_B,recall_OR,generalizacao_OR
+envelope,Regra física (sem treino),0.6424,1.0000,0.2184,0.7069,0.9978

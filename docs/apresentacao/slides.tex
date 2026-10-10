@@ -87,7 +87,7 @@
     \begin{column}{0.49\textwidth}
       \begin{itemize}
         \item Resíduo em 4,8--\SI{6}{\kilo\hertz} $\Rightarrow$ \textbf{mesma banda} para todos
-        \item Janela: 4096 amostras $=$ 3 períodos da gaiola
+        \item Janela: 4096 amostras $\approx$ 4 períodos da gaiola (mínimo: 3)
       \end{itemize}
     \end{column}
   \end{columns}
@@ -142,20 +142,21 @@
   \begin{columns}[T]
     \begin{column}{0.49\textwidth}
       \begin{itemize}
-        \item 4 detectores treinados \textbf{só com normais}: AUC \textbf{1,00}
+        \item 4 detectores treinados \textbf{só com normais}: AUC \textbf{até 1,00}
         \item Não é vazamento: o \destaque{RMS sozinho} dá AUC 1,00
+        \item Falhas \emph{sem} defeito visível (200, 225): alarme em 100\% (Mahalanobis)
       \end{itemize}
     \end{column}
     \begin{column}{0.49\textwidth}
       \begin{itemize}
-        \item Falhas \emph{sem} defeito visível (200, 225): alarme em 100\%
-        \item Precisão 0,99? 90\% do teste é falha:\\ \destaque{alarmar sempre} já dá 0,90
+        \item Só com envelope: AUC 0,69--0,83, mas os alarmes seguem a física
+        \item \textbf{Recomendado}: autoencoder no envelope (FPR 0,03; alarmes coerentes com a física)
       \end{itemize}
     \end{column}
   \end{columns}
-  \vspace{0.3em}
+  \vspace{0.1em}
   \centering
-  \includegraphics[width=0.85\textwidth]{rms_por_gravacao.png}\\
+  \includegraphics[width=0.66\textwidth]{rms_por_gravacao.png}\\
   \nota{Toda gravação de falha vibra mais que toda gravação normal.}
 \end{frame}
 

@@ -355,6 +355,10 @@ uma única gravação normal, a 100 (58 janelas). Os detectores são aplicados t
 define. Por fim, a taxa de alarme é calculada por gravação e agregada pelas
 categorias de diagnosticabilidade de \textcite{smith2015} (Y, P e N), para saber
 se o detector reage mais às gravações em que o defeito é fisicamente visível.
+O detector recomendado é escolhido por três critérios, e não pela AUC: a FPR, a
+coerência dos alarmes com essas categorias e a precisão projetada pela regra de
+Bayes para \SI{1}{\percent} e \SI{5}{\percent} de janelas de falha, mais
+próximas de uma planta que os \SI{90}{\percent} do teste.
 
 \subsection{Classificação}
 \label{sec:met-classificacao}
@@ -422,7 +426,8 @@ zero e desvio unitário. A rede é implementada em PyTorch.
 A regra física classifica cada janela de falha, sem nenhum treino, pela família
 de envelope de maior \emph{score}: BPFO indica pista externa; BPFI, pista
 interna; BSF, esfera. As frequências vêm da geometria do rolamento e da rotação
-medida, e a tolerância de \SI{\pm 2}{\percent}, da literatura~\cite{smith2015}:
+medida, e a tolerância de \SI{\pm 2}{\percent}, da
+literatura~\cite{randall2011tutorial,smith2015}:
 nenhum rótulo entra na sua definição. A regra decide só entre os três tipos de
 falha, e não prevê a classe normal; por isso, ela é comparada aos classificadores
 apenas no problema de três classes.

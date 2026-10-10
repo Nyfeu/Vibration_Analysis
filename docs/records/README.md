@@ -16,6 +16,7 @@ conferência no original (ver o aviso no topo de cada um).
 | [`breiman1984`](breiman1984.md) | Breiman et al. (1984) — Classification and Regression Trees (CART) |
 | [`breiman2001`](breiman2001.md) | Breiman (2001) — Random Forests |
 | [`chandola2009`](chandola2009.md) | Chandola, Banerjee & Kumar (2009) — Anomaly detection: a survey |
+| [`conover1999`](conover1999.md) | Conover (1999) — Practical Nonparametric Statistics |
 | [`cortes1995`](cortes1995.md) | Cortes & Vapnik (1995) — Support-vector networks |
 | [`cover1967`](cover1967.md) | Cover & Hart (1967) — Nearest neighbor |
 | [`crochiere1983`](crochiere1983.md) | Crochiere & Rabiner (1983) — Multirate Digital Signal Processing |
@@ -28,6 +29,7 @@ conferência no original (ver o aviso no topo de cada um).
 | [`hastie2009`](hastie2009.md) | Hastie, Tibshirani & Friedman (2009) — The Elements of Statistical Learning |
 | [`hinton2006`](hinton2006.md) | Hinton & Salakhutdinov (2006) — Autoencoders profundos |
 | [`hollander2014`](hollander2014.md) | Hollander, Wolfe & Chicken (2014) — Nonparametric Statistical Methods |
+| [`hosmer2013`](hosmer2013.md) | Hosmer, Lemeshow & Sturdivant (2013) — Applied Logistic Regression |
 | [`ince2016`](ince2016.md) | Ince et al. (2016) — CNN 1D para falhas de motor |
 | [`iso20816`](iso20816.md) | ISO 20816-1:2016 — Avaliação de vibração de máquinas |
 | [`kohavi1995`](kohavi1995.md) | Kohavi (1995) — Validação cruzada e bootstrap |
@@ -41,6 +43,7 @@ conferência no original (ver o aviso no topo de cada um).
 | [`quinlan1986`](quinlan1986.md) | Quinlan (1986) — Induction of decision trees (ID3) |
 | [`randall2011livro`](randall2011livro.md) | Randall (2011) — Vibration-based Condition Monitoring |
 | [`randall2011tutorial`](randall2011tutorial.md) | Randall & Antoni (2011) — Rolling element bearing diagnostics: a tutorial |
+| [`razali2011`](razali2011.md) | Razali & Wah (2011) — Poder de testes de normalidade |
 | [`roberts2017`](roberts2017.md) | Roberts et al. (2017) — Validação cruzada com dados estruturados |
 | [`sakurada2014`](sakurada2014.md) | Sakurada & Yairi (2014) — Autoencoders para detecção de anomalias |
 | [`sawalhi2011`](sawalhi2011.md) | Sawalhi & Randall (2011) — Pré-branqueamento por edição do cepstro |

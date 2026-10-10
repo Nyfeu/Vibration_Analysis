@@ -168,3 +168,37 @@
   \end{tabular}
   \fonte{Gerada pelo notebook \texttt{notebooks/projeto.ipynb}.}
 \end{table}
+
+\begin{table}[htb]
+  \centering
+  \caption{Matriz de confusão: Regra física (sem treino), teste em 3 HP (janelas).}
+  \label{tab:confusao-regra-fisica-sem-treino-teste-em-3-hp}
+  \begin{tabular}{lcccc}
+    \toprule
+    \textbf{Verdadeira $\backslash$ Predita} & \textbf{Normal} & \textbf{Pista interna} & \textbf{Esfera} & \textbf{Pista externa} \\
+    \midrule
+    Normal & 0 & 11 & 2 & 45 \\
+    Pista interna & 0 & 175 & 0 & 0 \\
+    Esfera & 0 & 109 & 38 & 27 \\
+    Pista externa & 0 & 40 & 11 & 123 \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Gerada pelo notebook \texttt{notebooks/projeto.ipynb}.}
+\end{table}
+
+\begin{table}[htb]
+  \centering
+  \caption{Matriz de confusão: Regra física (sem treino), conjunto principal (janelas).}
+  \label{tab:confusao-regra-fisica-sem-treino-conjunto-principal}
+  \begin{tabular}{lcccc}
+    \toprule
+    \textbf{Verdadeira $\backslash$ Predita} & \textbf{Normal} & \textbf{Pista interna} & \textbf{Esfera} & \textbf{Pista externa} \\
+    \midrule
+    Normal & 0 & 34 & 111 & 57 \\
+    Pista interna & 0 & 697 & 0 & 0 \\
+    Esfera & 0 & 375 & 167 & 154 \\
+    Pista externa & 0 & 171 & 16 & 509 \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Gerada pelo notebook \texttt{notebooks/projeto.ipynb}.}
+\end{table}

@@ -228,8 +228,8 @@ interna, pista externa ou esfera. Aqui há exemplos rotulados de todas as classe
 e o problema é de classificação supervisionada.
 
 Na seleção de modelos, cinco classificadores clássicos são comparados:
-Regressão Logística, $k$ vizinhos mais próximos (KNN)~\cite{cover1967}, Random
-Forest e SVM~\cite{hastie2009}. O classificador principal é o \textbf{Random
+Regressão Logística~\cite{hosmer2013,hastie2009}, $k$ vizinhos mais próximos
+(KNN)~\cite{cover1967,hastie2009}, Random Forest e SVM~\cite{hastie2009}. O classificador principal é o \textbf{Random
 Forest}~\cite{breiman2001,hastie2009}, um
 conjunto de árvores de decisão treinadas em amostras \emph{bootstrap} dos dados
 e em subconjuntos aleatórios das features, cuja previsão é o voto da maioria.
@@ -303,7 +303,10 @@ O tamanho do efeito é medido por $\varepsilon^2 = H/(n-1)$, entre 0 e
 postos de Spearman, robusta a relações monotônicas não
 lineares~\cite{spearman1904,hollander2014}. A normalidade, quando é pressuposto de
 um método --- como a distribuição qui-quadrado da distância de Mahalanobis ---, é
-verificada pelo teste de Shapiro--Wilk~\cite{shapiro1965}.
+verificada pelo teste de Shapiro--Wilk, um dos de maior poder entre os testes de
+normalidade usuais~\cite{shapiro1965,razali2011}. Para comparar uma proporção de
+acertos com o esperado ao acaso, usa-se o teste binomial exato, que não depende
+de aproximação normal e é adequado a amostras pequenas~\cite{conover1999,hollander2014}.
 
 Para a inferência, usa-se o bootstrap, que estima a distribuição amostral de
 uma estatística reamostrando os próprios dados com reposição, e dá intervalos de

@@ -1,0 +1,4 @@
+detector,auc,tpr,fpr,alarme_Y,alarme_P,alarme_N,precisao_1pct,precisao_5pct
+Mahalanobis (tempo+envelope),1.0000,1.0000,0.1207,1.0000,1.0000,1.0000,0.0772,0.3037
+Autoencoder (envelope),0.8278,0.5449,0.0345,0.6734,0.0172,0.4224,0.1377,0.4541
+Dois estágios (ambos alarmam),,0.5449,0.0345,0.6734,0.0172,0.4224,0.1377,0.4541

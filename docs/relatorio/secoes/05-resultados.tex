@@ -15,11 +15,15 @@ estimativas pontuais: as 581 janelas não são independentes, a FPR vem de uma
 classificadores, TPR e FPR tratam ``falha'' como qualquer classe diferente de
 normal. A acurácia por classe está na ordem normal / pista interna / esfera /
 pista externa. A tabela mostra só as configurações principais; as demais estão
-nas \autoref{tab:deteccao} e~\ref{tab:classificacao}.
+nas \autoref{tab:deteccao} e~\ref{tab:classificacao}. A regra física
+(\autoref{sec:met-regra-fisica}) aparece em duas linhas: no teste em \SI{3}{\hp}
+e no teste com uma montagem nova, que é o principal achado do trabalho
+(\autoref{sec:res-montagem}); o Random Forest selecionado aparece no mesmo teste,
+para comparação.
 
 \begin{table}[htb]
   \centering
-  \caption{Resumo dos resultados por técnica (teste em \SI{3}{\hp}).}
+  \caption{Resumo dos resultados por técnica (teste em \SI{3}{\hp}, salvo o bloco de montagem nova).}
   \label{tab:resumo}
   \footnotesize
   \begin{tabular}{p{0.06\textwidth}p{0.34\textwidth}p{0.12\textwidth}ccp{0.21\textwidth}}
@@ -32,15 +36,26 @@ nas \autoref{tab:deteccao} e~\ref{tab:classificacao}.
     CWRU & One-Class SVM (tempo+envelope)    & não se aplica & 1,00 & 0,81 & --- \\
     CWRU & Autoencoder (tempo+envelope)      & não se aplica & 1,00 & 0,17 & --- \\
     CWRU & Mahalanobis (envelope)            & não se aplica & 0,58 & 0,14 & --- \\
+    CWRU & Autoencoder (envelope) --- \textbf{recomendado} & não se aplica & 0,54 & 0,03 & --- \\
     CWRU & Mahalanobis (forma)               & não se aplica & 0,83 & 0,24 & --- \\
     CWRU & Random Forest (tempo+envelope)    & N, IR, B, OR  & 1,00 & 0,00 & 1,00 / 0,98 / 0,99 / 0,89 \\
     CWRU & SVM (tempo+envelope)              & N, IR, B, OR  & 0,99 & 0,00 & 1,00 / 0,99 / 0,97 / 0,87 \\
     CWRU & Random Forest (envelope)          & N, IR, B, OR  & 0,96 & 1,00 & 0,00 / 0,94 / 0,65 / 0,67 \\
     CWRU & CNN 1D (sinal bruto)              & N, IR, B, OR  & 1,00 & 0,00 & 1,00 / 0,90 / 1,00 / 1,00 \\
     CWRU & CNN 1D (sinal normalizado)        & N, IR, B, OR  & 1,00 & 0,00 & 1,00 / 0,99 / 1,00 / 1,00 \\
+    CWRU & Regra física, sem treino (envelope)$^{a}$ & IR, B, OR & n.\,a. & n.\,a. & --- / 1,00 / 0,22 / 0,71 \\
+    \midrule
+    \multicolumn{6}{l}{\emph{Montagem nova: um diâmetro inteiro fora do treino; só falhas; acaso = 0,33}$^{b}$} \\
+    CWRU & Regra física, sem treino (envelope)$^{a}$ & IR, B, OR & n.\,a. & n.\,a. & --- / 1,00 / 0,24 / 0,73 \\
+    CWRU & Random Forest (tempo+envelope)    & IR, B, OR     & n.\,a. & n.\,a. & --- / 0,25 / 0,87 / 0,25 \\
     \bottomrule
   \end{tabular}
-  \fonte{Elaborado pelos autores a partir de \texttt{results/metrics/}.}
+  \fonte{Elaborado pelos autores a partir de \texttt{results/metrics/}. (a) A regra
+  física decide só entre os três tipos de falha e não prevê a classe normal; TPR e
+  FPR não se aplicam, e as matrizes completas estão no Apêndice~\ref{ap:matrizes}.
+  (b) Acurácia nas janelas de falha: regra física \num{0.657} (6 de 9 montagens,
+  $p = \num{0.042}$ contra o acaso); Random Forest \num{0.457} (4 de 9,
+  $p = \num{0.35}$).}
 \end{table}
 
 Os números altos da \autoref{tab:resumo} precisam ser lidos junto com a
@@ -472,6 +487,61 @@ que as gravações normais deste conjunto vibram pouco. Essa diferença existe
 nos dados e é compatível com um defeito, mas também com qualquer outra mudança
 entre a montagem das gravações normais e a das de falha, que no CWRU foram
 ensaiadas em montagens distintas~\cite{smith2015}.
+
+\subsection{Detector recomendado}
+\label{sec:res-detector-recomendado}
+
+Qual detector usar numa planta? O de maior AUC (Mahalanobis com tempo+envelope)
+reage à amplitude, e não ao defeito (\autoref{sec:investigacao-amplitude}). A
+\autoref{tab:detector-recomendado} compara três candidatos pelos critérios que
+importam em operação: a FPR, a coerência dos alarmes com a física (taxa de
+alarme por categoria de diagnosticabilidade) e a precisão projetada pela regra de
+Bayes para uma proporção realista de janelas de falha. O terceiro candidato é uma
+combinação em dois estágios --- alarme só quando o detector de amplitude
+\emph{e} o de envelope disparam juntos.
+
+\begin{table}[htb]
+  \centering
+  \caption{Candidatos a detector recomendado, no teste (\SI{3}{\hp}): AUC, TPR e
+  FPR medidas; taxa de alarme por categoria de Smith e Randall (2015); precisão
+  projetada para \SI{1}{\percent} e \SI{5}{\percent} de janelas de falha.}
+  \label{tab:detector-recomendado}
+  \scriptsize
+  \begin{tabular}{lcccccccc}
+    \toprule
+    & & & & \multicolumn{3}{c}{\textbf{Alarme por categoria}} & \multicolumn{2}{c}{\textbf{Precisão projetada}} \\
+    \cmidrule(lr){5-7}\cmidrule(lr){8-9}
+    \textbf{Detector} & \textbf{AUC} & \textbf{TPR} & \textbf{FPR} & \textbf{Y} & \textbf{P} & \textbf{N} & \textbf{1\%} & \textbf{5\%} \\
+    \midrule
+    Mahalanobis (tempo+envelope)   & 1,000 & 1,000 & 0,121 & 1,00 & 1,00 & 1,00 & 0,077 & 0,304 \\
+    Autoencoder (envelope)         & 0,828 & 0,545 & 0,034 & 0,67 & 0,02 & 0,42 & 0,138 & 0,454 \\
+    Dois estágios (ambos alarmam)  & ---   & 0,545 & 0,034 & 0,67 & 0,02 & 0,42 & 0,138 & 0,454 \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/deteccao\_recomendado.csv}.}
+\end{table}
+
+O detector recomendado é o \textbf{autoencoder sobre os \emph{scores} de
+envelope}, por três razões. Tem a menor FPR entre os candidatos (\num{0.034},
+contra \num{0.121}), que é o que decide a utilidade numa planta, onde quase todo
+o tempo a máquina está normal: com \SI{1}{\percent} de janelas de falha, sua
+precisão projetada é quase o dobro da do Mahalanobis (\num{0.138} contra
+\num{0.077}). Seus alarmes seguem a física --- disparam em \SI{67}{\percent} das
+janelas das gravações com defeito diagnosticável e em \SI{42}{\percent} das sem
+evidência física ---, enquanto o Mahalanobis alarma igualmente em todas. E, por
+depender só das frequências de defeito, não reage a mudanças de amplitude
+causadas por montagem, sensor ou carga. A combinação em dois estágios não
+acrescenta nada: como o detector de amplitude alarma em todas as falhas e nos
+mesmos falsos positivos, o resultado coincide com o do autoencoder sozinho.
+
+O custo da recomendação é explícito: um TPR de \num{0.54}, com intervalo largo,
+deixa passar quase metade das janelas de falha. Em monitoramento contínuo, isso é
+menos grave do que parece, porque a decisão é tomada sobre muitas janelas
+seguidas, e não sobre uma só; mas a precisão projetada de \num{0.14} mostra que,
+mesmo assim, a maioria dos alarmes seria falsa com falhas raras. Nenhum detector
+deste trabalho está pronto para operar sozinho; o recomendado é o que erra pelos
+motivos certos.
 
 \section{Classificação}
 \label{sec:res-classificacao}

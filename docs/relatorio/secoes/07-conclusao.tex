@@ -16,7 +16,10 @@ porém, é explicado pelo nível de vibração: todas as gravações de falha vi
 mais que as normais, inclusive as que não mostram o defeito, e o RMS sozinho
 atinge o mesmo AUC. Usando só o espectro de envelope, que carrega a assinatura
 física, o AUC cai para \numrange{0.69}{0.83}, mas os alarmes passam a seguir a
-diagnosticabilidade do defeito.
+diagnosticabilidade do defeito. Por isso, o detector que recomendamos é o
+autoencoder sobre os \emph{scores} de envelope: FPR de \num{0.034}, a menor entre
+os candidatos, e alarmes que acompanham a física, ao custo de um TPR de
+\num{0.54}.
 
 \textbf{Diagnóstico do tipo de falha.} O Random Forest com features de tempo e de
 envelope, escolhido por validação cruzada por carga e ajustado por busca em grade,

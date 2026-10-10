@@ -102,6 +102,12 @@ calibrado em três gravações normais e testado numa quarta, com \emph{scores} 
 envelope fora da faixa vista no treino. Três gravações não representam a
 variabilidade normal de uma máquina.
 
+Diante disso, o detector que recomendamos é o autoencoder sobre os \emph{scores}
+de envelope (\autoref{sec:res-detector-recomendado}): tem a menor FPR
+(\num{0.034}), quase o dobro da precisão projetada do Mahalanobis numa planta, e
+alarmes que acompanham a visibilidade física do defeito. Seu TPR de \num{0.54} é
+baixo, e a recomendação é a de um ponto de partida, não a de um detector pronto.
+
 \subsection{No diagnóstico}
 \label{sec:nao-funcionou-diagnostico}
 
