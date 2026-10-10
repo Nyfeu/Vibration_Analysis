@@ -29,7 +29,7 @@ classificação); relatório em revisão pelo grupo.
 | Dados empregados | [`data/raw/`](data/raw/) |
 | Relatório técnico (LaTeX/ABNT) | fonte em [`docs/relatorio/`](docs/relatorio/) · PDF: [https://nyfeu.github.io/Vibration_Analysis/](https://nyfeu.github.io/Vibration_Analysis/) |
 | Apresentação (vídeo, máx. 5 min) | _TODO: link do YouTube_ |
-| Slides | _TODO_ |
+| Slides | fonte em [`docs/apresentacao/slides.tex`](docs/apresentacao/slides.tex) · PDF: [https://nyfeu.github.io/Vibration_Analysis/slides.pdf](https://nyfeu.github.io/Vibration_Analysis/slides.pdf) · roteiro de fala em [`docs/apresentacao/roteiro.md`](docs/apresentacao/roteiro.md) |
 | Declaração de uso de IA | [`docs/uso_de_ia.md`](docs/uso_de_ia.md) |
 | Auditoria de arquivos descartados | [`docs/arquivos_excluidos.md`](docs/arquivos_excluidos.md) |
 

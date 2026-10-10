@@ -40,6 +40,7 @@ env/
 # ---- LaTeX (relatório ABNT) ----
 # Tudo que o latexmk gera vai para docs/relatorio/build/.
 docs/relatorio/build/
+docs/apresentacao/build/
 # O PDF final é produzido por `make entrega` e versionado de propósito
 # (docs/relatorio/relatorio.pdf), para o professor abrir sem compilar nada.
 *.aux

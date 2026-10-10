@@ -192,6 +192,7 @@ Técnicas que só detectam deixam a coluna de tipo de falha como "não se aplica
 │   ├── enunciado.pdf
 │   ├── arquivos_excluidos.md  # auditoria Smith & Randall
 │   ├── uso_de_ia.md           # declaração exigida pelo enunciado
+│   ├── apresentacao/          # slides Beamer (≤ 5 min) e roteiro de fala por integrante
 │   └── relatorio/             # LaTeX, classe abntex2
 │       ├── relatorio.tex      # documento principal — não escreva seção aqui
 │       ├── referencias.bib    # biblatex, backend biber
@@ -361,6 +362,8 @@ Próximos passos:
 - [x] `docs/articles/` fora do Git (PDFs com direitos autorais; `.gitignore`) e
       removido do histórico com `git filter-repo` (backup em
       `../Vibration_Analysis_backup_2026-10-10.bundle`)
+- [x] Slides Beamer (9 slides) e roteiro por integrante (~4 min 35 s) em
+      `docs/apresentacao/`; CI publica `slides.pdf` no Pages. Falta gravar o vídeo (#34)
 - [x] Fichamento de cada referência do `.bib` em `docs/records/` (índice em
       `docs/records/README.md`); os feitos com IA têm aviso e pendências de conferência
 - [ ] Extras possíveis: features só de razões entre famílias de envelope,
