@@ -67,7 +67,7 @@ Configuração fixada pelo grupo — **não altere sem discussão**:
 - **Pista externa:** **decidido — @6 (centrada na zona de carga) é a posição
   principal**; é a única com os três diâmetros e equilibra as classes (12 IR,
   12 B, 12 OR). @3 e @12 formam um conjunto de generalização (treinar em @6,
-  testar em @3/@12). A zona de carga fica em 6 h (Smith & Randall, 2015, p. 5).
+  testar em @3/@12). A zona de carga fica em 6 h (Smith & Randall, 2015, p. 104).
 - **Auditoria (decidido):** nenhum registro é excluído por qualidade. Os registros
   sem evidência física do defeito no DE (118–120, 224, 225, 200) ficam **com
   ressalva**, e as métricas são reportadas também estratificadas por categoria
@@ -231,6 +231,8 @@ vale 1 ponto.
   de seção em `relatorio.tex`; isso serializa o grupo em conflitos de merge.
 - Figuras vêm de `results/figures/` via `\graphicspath` — não copie figura para
   dentro de `docs/relatorio/`.
+  Exceção: imagens externas ao pipeline (ex.: foto da bancada do CWRU) ficam em
+  `docs/relatorio/assets/`, também no `\graphicspath`.
 - Toda referência nova entra em `referencias.bib` com chave `autor+ano`.
 - `make check` falha enquanto houver `TODO(grupo)` no texto. Rode antes da entrega.
 - Formatação ABNT já ajustada no preâmbulo: corpo 12 pt em Times (`mathptmx`),
@@ -304,12 +306,19 @@ Próximos passos:
       experimento complementar
 - [ ] Implementar o parser dos `.mat` e a segmentação (incluindo a decimação
       48→12 kHz dos normais)
+      — filtro já declarado em `sec:decimacao-normais`: `scipy.signal.decimate`
+      padrão (Chebyshev I ordem 8, corte 4,8 kHz, fase zero)
+- [ ] **Discutir no grupo:** a faixa de 4,8–6 kHz fica atenuada só nos normais;
+      comparar espectros e decidir se a mesma banda vale para todas as gravações
 - [x] Features de tempo (issue #10) e frequências características do
       rolamento (issue #12) em `src/features.py`, com testes em `tests/`;
       BSF na convenção de Smith & Randall
 - [x] `sec:features` (metodologia) declara a curtose de Pearson, a remoção da
       média por janela, a convenção de BSF, a rotação medida (nominal em 98/99)
       e a tolerância de ±2%; envelope ainda `TODO(grupo)`
+- [x] Relatório: foto da bancada (cap. 2), frequências características e
+      decimação na fundamentação (cap. 3), pré-processamento na metodologia
+      (cap. 4)
 - [ ] Baseline: features de tempo + Random Forest
 
 Divisão de frentes (4–5 pessoas):

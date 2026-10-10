@@ -108,7 +108,7 @@ def features_tempo(
 # Rolamento: SKF 6205-2RS JEM, drive end. Declarado no relatório em
 # sec:features-frequencias.
 #
-# Fórmulas cinemáticas (Smith & Randall, 2015, p. 3), com f_r a rotação do eixo
+# Fórmulas cinemáticas (Smith & Randall, 2015, p. 102), com f_r a rotação do eixo
 # em Hz, n o número de esferas, d o diâmetro da esfera, D o diâmetro primitivo
 # e phi o ângulo de contato:
 #
@@ -119,10 +119,10 @@ def features_tempo(
 #
 # Atenção: as fórmulas supõem ausência de escorregamento. Na prática, desvios
 # de 1% a 2% em relação ao valor calculado são comuns (Smith & Randall, 2015,
-# p. 3), por isso use `banda_tolerancia` ao procurar picos no espectro.
+# p. 102), por isso use `banda_tolerancia` ao procurar picos no espectro.
 #
 # Convenção da frequência da esfera: BSF é a da literatura (Smith & Randall,
-# 2015, Tab. 2, p. 4): 2,357 x f_r no DE. O valor que a página do CWRU chama de
+# 2015, Tab. 2, p. 103): 2,357 x f_r no DE. O valor que a página do CWRU chama de
 # "Rolling Element" (4,7135 x f_r) é 2 x BSF, exposto em `bsf_2x` só para
 # conferência e para a busca do harmônico par.
 
@@ -140,7 +140,7 @@ class GeometriaRolamento:
 # Fontes:
 #  - d e D: CWRU Bearing Data Center, página "Bearing Specifications"
 #    (drive end: ball diameter 0.3126 in, pitch diameter 1.537 in).
-#  - n = 9: Smith & Randall (2015), p. 10. Essa página do CWRU não informa n.
+#  - n = 9: Smith & Randall (2015), p. 109. Essa página do CWRU não informa n.
 SKF_6205_DE = GeometriaRolamento(
     n_esferas=9, diametro_esfera=0.3126, diametro_primitivo=1.537
 )
@@ -162,7 +162,7 @@ class FrequenciasCaracteristicas:
         Não é a frequência de referência do projeto (ver BSF acima). Fisicamente,
         a esfera com defeito bate nas duas pistas a cada giro, e por isso os
         harmônicos pares de BSF costumam dominar o espectro de envelope (Smith &
-        Randall, 2015, Tab. 1, p. 4). Use este valor para procurar esse
+        Randall, 2015, Tab. 1, p. 103). Use este valor para procurar esse
         harmônico, sem trocar a convenção.
         """
         return 2.0 * self.bsf
@@ -197,6 +197,6 @@ def frequencias_caracteristicas(
 def banda_tolerancia(freq_hz: float, tol: float = 0.02) -> tuple[float, float]:
     """Janela de busca em torno de uma frequência teórica (padrão: +-2%).
 
-    Os 2% vêm do escorregamento típico de 1% a 2% (Smith & Randall, 2015, p. 3).
+    Os 2% vêm do escorregamento típico de 1% a 2% (Smith & Randall, 2015, p. 102).
     """
     return freq_hz * (1.0 - tol), freq_hz * (1.0 + tol)

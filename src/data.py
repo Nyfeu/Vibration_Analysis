@@ -21,7 +21,7 @@ RAIZ = Path(__file__).resolve().parent.parent
 MANIFESTO = RAIZ / "data" / "raw" / "manifesto.csv"
 
 # Posição do defeito em pista externa, em horas, com a zona de carga em 6 h
-# (Smith & Randall, 2015, p. 5). @6 é a única posição com os três diâmetros
+# (Smith & Randall, 2015, p. 104). @6 é a única posição com os três diâmetros
 # (0.007", 0.014", 0.021") e deixa as classes equilibradas (12 IR, 12 B, 12 OR).
 # @3 (ortogonal) e @12 (oposta) mudam a amplitude e a modulação do sinal, por isso
 # ficam fora do experimento principal: servem para testar se um modelo treinado

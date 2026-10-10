@@ -4,6 +4,48 @@
 \chapter{Metodologia}
 \label{cap:metodologia}
 
+\section{Pré-processamento}
+\label{sec:preprocessamento}
+
+\subsection{Leitura dos registros}
+
+De cada arquivo \texttt{.mat} é lido apenas o canal do DE, pela variável com o
+número do próprio arquivo (por exemplo, \texttt{X099\_DE\_time}). A regra
+importa porque o arquivo \texttt{99.mat} também traz, idênticas, as variáveis do
+registro 98; ler ``a primeira variável do DE'' do arquivo duplicaria o registro 98
+e perderia o 99.
+
+\subsection{Decimação das gravações normais}
+\label{sec:decimacao-normais}
+
+As quatro gravações normais (97 a 100) estão a \SI{48}{\kilo\hertz}, enquanto
+todas as gravações de falha estão a \SI{12}{\kilo\hertz}
+(\autoref{sec:fs-normais}). Antes de qualquer outra etapa, as normais são
+decimadas por $M = 4$ (\autoref{sec:decimacao}), e todo o processamento seguinte
+ocorre a \SI{12}{\kilo\hertz}.
+
+Sem essa etapa, uma janela normal com o mesmo número de amostras de uma janela de
+falha cobriria um quarto do tempo, e todo o seu conteúdo espectral ficaria
+deslocado por um fator 4. Um detector separaria normal de falha por essa
+diferença de taxa de amostragem, e não pelo defeito, e a métrica resultante não
+teria significado físico.
+
+A decimação usa a função \texttt{scipy.signal.decimate}~\cite{virtanen2020} com
+sua configuração padrão: filtro anti-\emph{aliasing} IIR Chebyshev do tipo~I, de
+ordem 8 e ondulação de \SI{0.05}{\decibel} na banda de passagem, com corte em
+$0{,}8$ vezes a nova frequência de Nyquist, isto é, \SI{4.8}{\kilo\hertz}. O
+filtro é aplicado nos dois sentidos do tempo, o que dá fase zero e preserva a
+forma dos impulsos.
+
+Essa escolha cria uma diferença que precisa ser controlada. Nas gravações
+normais, a faixa de \SIrange{4.8}{6}{\kilo\hertz} fica atenuada pelo nosso
+filtro; nas de falha, essa faixa depende do filtro de aquisição do próprio CWRU,
+que não é documentado. Um modelo que use energia nessa faixa poderia, de novo,
+separar as classes pelo pré-processamento. Por isso o espectro de uma gravação
+normal decimada é comparado ao de uma gravação de falha antes do uso.
+% TODO(grupo): incluir a figura dessa comparação (gerada por src/data.py) e
+% decidir se a mesma banda de 0 a 4,8 kHz deve ser aplicada a todas as gravações.
+
 \section{Segmentação em janelas}
 \label{sec:janelas}
 
@@ -59,7 +101,7 @@ Duas escolhas de implementação afetam os valores e por isso são declaradas:
 \label{sec:features-frequencias}
 
 As frequências de defeito do rolamento do DE (\autoref{sec:frequencias-caracteristicas})
-são calculadas pelas fórmulas cinemáticas de \textcite[p.~3]{smith2015}, com
+são calculadas pelas fórmulas cinemáticas de \textcite[p.~102]{smith2015}, com
 $f_r$ a rotação do eixo, $n$ o número de esferas, $d$ o diâmetro da esfera, $D$
 o diâmetro primitivo e $\phi$ o ângulo de contato:
 \begin{align}
@@ -70,8 +112,8 @@ o diâmetro primitivo e $\phi$ o ângulo de contato:
 \end{align}
 Os diâmetros $d = \SI{0.3126}{\inch}$ e $D = \SI{1.537}{\inch}$ vêm da
 documentação do CWRU~\cite{cwru}, que não informa o número de esferas; usa-se
-$n = 9$~\cite[p.~10]{smith2015}, com $\phi = 0$. Em múltiplos de $f_r$, o
-resultado coincide com a Tabela~2 de \textcite[p.~4]{smith2015}: BPFI
+$n = 9$~\cite[p.~109]{smith2015}, com $\phi = 0$. Em múltiplos de $f_r$, o
+resultado coincide com a Tabela~2 de \textcite[p.~103]{smith2015}: BPFI
 $= \num{5.415}\,f_r$, BPFO $= \num{3.585}\,f_r$, FTF $= \num{0.3983}\,f_r$ e
 BSF $= \num{2.357}\,f_r$.
 
@@ -83,7 +125,7 @@ Três decisões condicionam o uso dessas frequências:
   a esfera com defeito bate nas duas pistas a cada giro. As duas convenções
   descrevem o mesmo fenômeno, mas misturá-las faz procurar o pico na frequência
   errada. Como os harmônicos pares da BSF costumam dominar o espectro de envelope
-  de um defeito de esfera~\cite[p.~4]{smith2015}, o pico em $2 \times \text{BSF}$
+  de um defeito de esfera~\cite[p.~103]{smith2015}, o pico em $2 \times \text{BSF}$
   também é procurado, sem mudar a convenção.
   \item \textbf{Rotação medida, não nominal.} $f_r$ é tirada da rotação
   registrada em cada arquivo, e não da nominal, porque a rotação cai com a carga
@@ -91,7 +133,7 @@ Três decisões condicionam o uso dessas frequências:
   neles vale a rotação nominal da carga correspondente, \SIlist{1772;1750}{rpm}.
   \item \textbf{Tolerância de \SI{\pm 2}{\percent}.} As fórmulas supõem que não há
   escorregamento, e na prática o desvio em relação ao valor calculado costuma ser
-  de 1 a \SI{2}{\percent}~\cite[p.~3]{smith2015}. Um pico do espectro é associado
+  de 1 a \SI{2}{\percent}~\cite[p.~102]{smith2015}. Um pico do espectro é associado
   a uma frequência característica quando cai dentro de \SI{\pm 2}{\percent} dela.
 \end{itemize}
 

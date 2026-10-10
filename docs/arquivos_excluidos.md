@@ -24,7 +24,7 @@
 | Classes | normal, pista interna (IR), pista externa (OR), esfera (B) |
 | Cargas | 0–3 HP. Treino em 0, 1 e 2 HP; teste em 3 HP |
 | Diâmetros de defeito | 0.007", 0.014", 0.021" |
-| Posição do defeito em OR | **@6, centrada na zona de carga.** É a única posição com os três diâmetros, e com ela as classes ficam equilibradas (12 IR, 12 B, 12 OR). A zona de carga fica em 6 h segundo Smith & Randall (2015, p. 5), que corrigem uma seção do site do CWRU. Os registros @3 e @12 formam um conjunto separado de generalização (seção 3.2). |
+| Posição do defeito em OR | **@6, centrada na zona de carga.** É a única posição com os três diâmetros, e com ela as classes ficam equilibradas (12 IR, 12 B, 12 OR). A zona de carga fica em 6 h segundo Smith & Randall (2015, p. 104), que corrigem uma seção do site do CWRU. Os registros @3 e @12 formam um conjunto separado de generalização (seção 3.2). |
 
 Todos os valores foram conferidos contra as páginas oficiais do CWRU (ver
 `data/raw/README.md`) e contra as Tabelas A1 e A2 de Smith & Randall (2015).
@@ -57,7 +57,7 @@ assinatura física esperada. Excluí-los teria três efeitos ruins:
    sem teste.
 3. **Esconderia o caso mais informativo.** Se o modelo "acertar" um registro C1,
    ele está usando algo que não é o defeito (a montagem ou a EMI do dinamômetro;
-   ver Smith & Randall, 2015, p. 6–8).
+   ver Smith & Randall, 2015, p. 105–107).
 
 Por isso as métricas serão reportadas **também estratificadas** por categoria de
 diagnóstico (Y, P, N).
@@ -79,7 +79,7 @@ Estes registros não são exclusões por qualidade. Ficam fora por decisão de e
 | Arquivos | Classe | Motivo | Destino |
 |---|---|---|---|
 | 144–147, 246–249 | OR @3 (ortogonal) | Posição @6 adotada como principal | **Conjunto de generalização**: treinar em @6 e testar em @3. Todos têm diagnóstico Y2 no DE (Tab. B2). |
-| 156, 158–160, 258–261 | OR @12 (oposta) | Posição @6 adotada como principal | **Conjunto de generalização**: treinar em @6 e testar em @12. Em teoria, fora da zona de carga não deveria haver resposta; o artigo atribui a resposta observada a folga mecânica (p. 14–15). |
+| 156, 158–160, 258–261 | OR @12 (oposta) | Posição @6 adotada como principal | **Conjunto de generalização**: treinar em @6 e testar em @12. Em teoria, fora da zona de carga não deveria haver resposta; o artigo atribui a resposta observada a folga mecânica (p. 113–114). |
 | 3001–3008 | IR e B 0,028" | Rolamento NTN, não SKF; sem gravação de OR. IR 3001–3004 não diagnosticável (Tab. 6). | Não baixados |
 | Canais FE e BA | — | O sensor adotado é o DE | Ignorados pelo carregador |
 
@@ -95,20 +95,20 @@ não aplicou o método, porque M2 e M3 só foram usados quando M1 ficou em P1 ou
 
 | Arquivo (.mat) | Classe | Diâm. | Carga (HP) | Critério | Ressalva | Impacto esperado na análise |
 |---|---|---|---|---|---|---|
-| 118 | B | 0,007" | 0 | C1 | N1 / N1 / N1. O envelope mostra só harmônicos de 0,2 f_r; a FTF parece travada em 0,4 f_r (p. 10, Fig. 8) | Sem assinatura de BSF: acerto do classificador indica atalho |
+| 118 | B | 0,007" | 0 | C1 | N1 / N1 / N1. O envelope mostra só harmônicos de 0,2 f_r; a FTF parece travada em 0,4 f_r (p. 109, Fig. 8) | Sem assinatura de BSF: acerto do classificador indica atalho |
 | 119 | B | 0,007" | 1 | C1 | N1 / N2 / N1 | Idem |
 | 120 | B | 0,007" | 2 | C1 | N1 / N2 / N1 | Idem |
 | 224 | B | 0,021" | 2 | C1 | N1 / N1 / N1 | Idem |
 | 225 | B | 0,021" | **3 (teste)** | C1 | N1 / N1 / N1 | Idem; afeta diretamente o TPR e a acurácia de B no teste |
-| 200 | OR @6 | 0,014" | **3 (teste)** | C1 | N1 / N1 / N1. Pulsos aleatórios atribuídos a folga mecânica (p. 11, Fig. 12) | Sem assinatura de BPFO: erro esperado e explicável |
-| 185 | B | 0,014" | 0 | C2 | P2 / P2 / N1. BSF "borrada" por modulação de amplitude aleatória e impulsiva (p. 11) | Features em BSF fracas; confusão B ↔ outras classes plausível |
+| 200 | OR @6 | 0,014" | **3 (teste)** | C1 | N1 / N1 / N1. Pulsos aleatórios atribuídos a folga mecânica (p. 110, Fig. 12) | Sem assinatura de BPFO: erro esperado e explicável |
+| 185 | B | 0,014" | 0 | C2 | P2 / P2 / N1. BSF "borrada" por modulação de amplitude aleatória e impulsiva (p. 110) | Features em BSF fracas; confusão B ↔ outras classes plausível |
 | 186 | B | 0,014" | 1 | C2 | P2 / P2 / P2 | Idem |
 | 187 | B | 0,014" | 2 | C2 | N1 / P2 / N1 | Idem |
 | 188 | B | 0,014" | **3 (teste)** | C2 | P2 / P2 / P2 | Idem, no conjunto de teste |
-| 198 | OR @6 | 0,014" | 1 | C2 | P2 / N2 / N2 | Montagem do 0,014" com folga (p. 11) |
+| 198 | OR @6 | 0,014" | 1 | C2 | P2 / N2 / N2 | Montagem do 0,014" com folga (p. 110) |
 | 199 | OR @6 | 0,014" | 2 | C2 | P1 / N2 / N1 | Idem |
 | 121 | B | 0,007" | **3 (teste)** | C3 | N1 / N1 / Y2. Só o M3 (DRS + kurtograma) diagnostica | O envelope simples (nosso baseline) não deve encontrar a BSF |
-| 197 | OR @6 | 0,014" | 0 | C3 | N1 / N1 / Y2. Só o M3 diagnostica (p. 11, Fig. 13) | Idem, para BPFO |
+| 197 | OR @6 | 0,014" | 0 | C3 | N1 / N1 / Y2. Só o M3 diagnostica (p. 110, Fig. 13) | Idem, para BPFO |
 | 236 | OR @6 | 0,021" | 2 | C4 | Saturação: 7 amostras no teto de ±6,65 (Tab. 3). Diagnóstico Y2 | Pode distorcer pico e fator de crista; impacto pequeno |
 | 237 | OR @6 | 0,021" | **3 (teste)** | C4 | Saturação: 5 amostras no teto de ±6,65 (Tab. 3). Diagnóstico Y2 | Idem, no conjunto de teste |
 | 97 | normal | — | 0 | C6 | Gravado a 48 kHz (Tab. A1); só 5,1 s | Decimar para 12 kHz; sem isso, o detector separa as classes pela taxa de amostragem |

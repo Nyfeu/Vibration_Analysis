@@ -13,14 +13,126 @@ espectro bruto costuma não revelar a falha.
 \section{Frequências características do rolamento}
 \label{sec:frequencias-caracteristicas}
 
-TODO(grupo): BPFO, BPFI, BSF e FTF a partir da geometria do 6205 e da rotação do
-eixo. Este é o argumento físico mais forte disponível para o relatório --- mostrar
-que o pico do envelope cai na frequência prevista pela teoria.
+Um defeito localizado em um rolamento gera um impacto cada vez que um elemento
+rolante passa sobre ele. Como a geometria do rolamento é fixa, a taxa desses
+impactos é uma frequência bem definida, proporcional à rotação do eixo $f_r$, e
+diferente para cada componente~\cites{randall2011tutorial}[p.~102]{smith2015}:
+\begin{itemize}
+  \item \textbf{BPFO} (\emph{ball pass frequency, outer race}): taxa de passagem
+  das esferas sobre um ponto da pista externa, que é estacionária;
+  \item \textbf{BPFI} (\emph{ball pass frequency, inner race}): taxa de passagem
+  das esferas sobre um ponto da pista interna, que gira com o eixo;
+  \item \textbf{BSF} (\emph{ball spin frequency}): rotação de cada esfera em
+  torno do próprio eixo;
+  \item \textbf{FTF} (\emph{fundamental train frequency}): rotação da gaiola, que
+  carrega o conjunto de esferas.
+\end{itemize}
+
+As expressões dessas frequências dependem do número de esferas, dos diâmetros da
+esfera e primitivo e do ângulo de contato. Elas são cinemáticas: supõem que as
+esferas rolam sem escorregar. Na prática há algum escorregamento, e o valor
+observado costuma desviar de 1 a \SI{2}{\percent} do calculado~\cite[p.~102]{smith2015}.
+As expressões e os valores para o rolamento do DE estão na
+\autoref{sec:features-frequencias}.
+
+O impacto não aparece diretamente no espectro, porque é curto e excita as
+ressonâncias da estrutura em alta frequência. O que se repete na frequência do
+defeito é a \emph{modulação} dessa resposta, e por isso a assinatura é procurada
+no espectro do envelope do sinal, que costuma conter a informação do defeito de
+forma mais clara que o sinal bruto~\cites{randall2011tutorial}[p.~101]{smith2015}. A
+\autoref{fig:sinais-defeito} mostra, para cada tipo de defeito, a série de
+impactos e o envelope correspondente, com os períodos associados às frequências
+características e os diâmetros $d$ e $D$ que entram nas fórmulas.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Sinais típicos e seus envelopes para defeitos localizados na pista
+  externa (\emph{outer race}), na pista interna (\emph{inner race}) e no
+  elemento rolante (\emph{rolling element}).}
+  \label{fig:sinais-defeito}
+  \includegraphics[width=0.6\textwidth]{bearing_faults.png}
+  \fonte{\textcite[Fig.~1, p.~102]{smith2015}, a partir de
+  \textcite{randall2011tutorial}.}
+\end{figure}
+
+ A \autoref{tab:assinaturas} resume o que cada
+tipo de defeito deve produzir nesse espectro.
+
+\begin{table}[htb]
+  \centering
+  \caption{Componentes esperados no espectro de envelope, por tipo de defeito.}
+  \label{tab:assinaturas}
+  \begin{tabular}{lp{0.62\textwidth}}
+    \toprule
+    \textbf{Defeito} & \textbf{Componentes esperados} \\
+    \midrule
+    Pista externa & BPFO e harmônicos, sem bandas laterais \\
+    Pista interna & BPFI e harmônicos, com bandas laterais espaçadas de $f_r$;
+                    harmônicos de $f_r$ \\
+    Esfera        & BSF e harmônicos (os pares costumam dominar), com bandas
+                    laterais espaçadas de FTF; harmônicos de FTF \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Adaptado de \textcite[Tab.~1, p.~103]{smith2015}.}
+\end{table}
+
+A diferença entre as linhas da \autoref{tab:assinaturas} decorre do movimento
+relativo do defeito. Na pista externa, o defeito fica parado na zona de carga, e
+todos os impactos têm a mesma intensidade. Na pista interna, o defeito gira com o
+eixo e entra e sai da zona de carga uma vez por volta, o que modula a amplitude
+em $f_r$. Uma esfera com defeito acompanha a gaiola, e a modulação ocorre em FTF.
+Na figura, a série de impactos de um defeito na pista externa tem amplitude
+constante; na pista interna, a amplitude varia com período $1/f_r$; no elemento
+rolante, com período $1/\text{FTF}$. Mostrar que o pico do envelope cai na
+frequência prevista é o argumento físico mais forte disponível neste trabalho
+(\autoref{sec:res-fisica}).
 
 \section{Técnicas selecionadas}
 \label{sec:tecnicas}
 
 % Uma subseção por técnica. Cada uma precisa de 2 referências próprias.
+\subsection{Decimação (redução da taxa de amostragem)}
+\label{sec:decimacao}
+
+Decimar um sinal discreto por um fator inteiro $M$ é reduzir sua taxa de
+amostragem de $f_s$ para $f_s/M$, mantendo uma a cada $M$
+amostras~\cite[seç.~4.6]{oppenheim2010}. A operação é necessária quando sinais
+gravados a taxas diferentes precisam ser comparados na mesma base, que é o caso
+das gravações normais do CWRU (\autoref{sec:fs-normais}).
+
+\paragraph{Subamostragem e \emph{aliasing}.} A operação elementar é a
+subamostragem $y[n] = x[nM]$. Pelo teorema da amostragem, um sinal discreto à
+taxa $f_s$ só representa sem ambiguidade frequências até $f_s/2$, a frequência de
+Nyquist. Após a subamostragem, esse limite cai para $f_s/(2M)$, e o espectro de
+$y$ passa a ser a soma de $M$ cópias deslocadas e dilatadas do espectro de
+$x$~\cite[seç.~4.6.1]{oppenheim2010}:
+\begin{equation}
+  Y(e^{j\omega}) = \frac{1}{M}\sum_{k=0}^{M-1} X\!\left(e^{j(\omega - 2\pi k)/M}\right).
+\end{equation}
+Se $x$ tiver conteúdo acima de $f_s/(2M)$, as cópias se sobrepõem: componentes de
+alta frequência são rebatidos para dentro da banda útil e aparecem em frequências
+que não existem no sinal original. É o \emph{aliasing}, ou rebatimento. No caso
+deste trabalho ($f_s = \SI{48}{\kilo\hertz}$, $M = 4$), a nova frequência de
+Nyquist é \SI{6}{\kilo\hertz}, e uma componente de \SI{9}{\kilo\hertz}, por
+exemplo, reapareceria em $\SI{12}{\kilo\hertz} - \SI{9}{\kilo\hertz} =
+\SI{3}{\kilo\hertz}$. Depois de rebatida, ela não pode mais ser separada do
+conteúdo legítimo nessa frequência.
+
+\paragraph{Filtro anti-\emph{aliasing}.} Por isso a decimação é feita em duas
+etapas~\cite{crochiere1983,oppenheim2010}: primeiro, um filtro passa-baixas
+digital remove o conteúdo acima da nova frequência de Nyquist; depois, o sinal
+filtrado é subamostrado. O custo é perder a faixa acima do corte do filtro, que
+de todo modo não seria representável à nova taxa. Como nenhum filtro real tem
+transição abrupta, o corte é posto um pouco abaixo de $f_s/(2M)$, e a faixa entre
+o corte e a nova frequência de Nyquist fica atenuada.
+
+\paragraph{Fase do filtro.} Um filtro causal atrasa o sinal e, se não tiver fase
+linear, atrasa cada frequência de forma diferente, o que deforma impulsos como os
+gerados por um defeito de rolamento. Aplicar o mesmo filtro duas vezes, uma em
+cada sentido do tempo, cancela a fase e produz resposta de fase
+zero~\cite{gustafsson1996}. Isso só é possível porque o sinal está todo gravado:
+não se trata de processamento em tempo real.
+
 \subsection{Análise de envelope (demodulação por Hilbert)}
 TODO(grupo). Referências: TODO, TODO.
 

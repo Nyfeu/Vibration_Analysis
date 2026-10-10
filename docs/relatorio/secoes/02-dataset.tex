@@ -14,11 +14,20 @@
 
 Os dados vêm do \emph{Bearing Data Center} da \emph{Case Western Reserve University} (CWRU)~\cite{cwru}. Esse conjunto tornou-se uma referência padrão para testar algoritmos de diagnóstico de rolamentos: de forma que, só na revista \emph{Mechanical Systems and Signal Processing}, 41 artigos o utilizaram entre 2004 e o início de 2015~\cite{smith2015}.
 
-A bancada é formada por um motor de \SI{2}{\hp}, um transdutor de torque com encoder, um dinamômetro e a eletrônica de controle~\cite{cwru}. Os rolamentos ensaiados apoiam o eixo do motor: um SKF 6205-2RS JEM no lado do acionamento (\emph{drive end}, DE) e um SKF 6203-2RS JEM no lado do rolamento do ventilador do motor (\emph{fan-end bearing}, FE)~\cite{smith2015}. Defeitos pontuais foram introduzidos por eletroerosão (\emph{electro-discharge machining}, EDM) na pista interna, na pista externa e nas esferas, com diâmetros de \SIrange{0.007}{0.040}{\inch}. Cada
+A bancada (\autoref{fig:bancada}) é formada por um motor de \SI{2}{\hp}, um transdutor de torque com encoder, um dinamômetro e a eletrônica de controle~\cite{cwru}. Os rolamentos ensaiados apoiam o eixo do motor: um SKF 6205-2RS JEM no lado do acionamento (\emph{drive end}, DE) e um SKF 6203-2RS JEM no lado do rolamento do ventilador do motor (\emph{fan-end bearing}, FE)~\cite{smith2015}. Defeitos pontuais foram introduzidos por eletroerosão (\emph{electro-discharge machining}, EDM) na pista interna, na pista externa e nas esferas, com diâmetros de \SIrange{0.007}{0.040}{\inch}. Cada
 rolamento danificado foi remontado na bancada e ensaiado em regime de rotação constante~\cite{cwru,smith2015}.
 
 A vibração foi medida por acelerômetros fixados com base magnética na posição de 12~horas das carcaças do DE e do FE e, em alguns ensaios, também na base do motor~\cite{cwru}. Os sinais foram gravados por um gravador DAT de 16 canais e disponibilizados em arquivos do Matlab (\texttt{.mat}), a \SI{12}{\kilo\hertz} e, para parte dos defeitos no DE, também a \SI{48}{\kilo\hertz}. A rotação e a potência foram medidas pelo transdutor de
 torque e anotadas manualmente~\cite{cwru}.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Bancada de ensaios do CWRU: motor de \SI{2}{\hp} (à esquerda),
+  transdutor de torque com encoder (ao centro) e dinamômetro (à direita).}
+  \label{fig:bancada}
+  \includegraphics[width=0.7\textwidth]{CWRU_teststand.jpeg}
+  \fonte{\textcite{cwru}.}
+\end{figure}
 
 O dinamômetro aplica quatro níveis de carga, de \SIrange{0}{3}{\hp}, com rotação nominal de \num{1797}, \num{1772}, \num{1750} e \SI{1730}{rpm},
 respectivamente~\cite{cwru}. Essa ``carga'', porém, é um torque no eixo: como não há mecanismo que o converta em força radial, a única carga radial sobre os rolamentos é, em teoria, o peso do próprio eixo, que atua na posição de 6~horas. O efeito prático da carga é reduzir a rotação em até cerca de 4\%~\cite{smith2015}. Essa ressalva condiciona a interpretação do protocolo de avaliação por carga (\autoref{cap:metodologia}).

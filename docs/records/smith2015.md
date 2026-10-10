@@ -17,7 +17,8 @@
 - Texto corrido: **paráfrase/resumo** do grupo.
 - **→ Projeto:** implicação para o nosso trabalho (decisão, risco, item de discussão).
 - **Paginação:** as páginas citadas são as do PDF *in press* (1–32). A versão final ocupa
-  as p. 100–131. Antes de citar no relatório, conferir a página na versão publicada.
+  as p. 100–131. **Conversão conferida (2026-10-10): página publicada = página do PDF
+  + 99** (ex.: p. 3 → p. 102). O relatório e o código usam a numeração publicada.
 
 ---
 

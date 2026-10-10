@@ -41,7 +41,7 @@ def test_identidades_independem_da_rotacao(rpm):
     f = frequencias_caracteristicas(rpm)
     f_r = rpm / 60.0
     n = SKF_6205_DE.n_esferas
-    assert f.bpfo + f.bpfi == pytest.approx(n * f_r)  # Smith & Randall, p. 10
+    assert f.bpfo + f.bpfi == pytest.approx(n * f_r)  # Smith & Randall, p. 109
     assert f.bpfo == pytest.approx(n * f.ftf)
 
 
