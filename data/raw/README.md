@@ -83,7 +83,7 @@ baseline data; fs = 48 kHz"*. Ver [`docs/records/smith2015.md`](../../docs/recor
 ser **decimados de 48 kHz para 12 kHz (fator 4, com filtro anti-aliasing)**. Se
 forem misturados sem isso, todo o conteúdo espectral do normal fica comprimido 4×,
 e um detector separa normal de falha pela taxa de amostragem, não pela falha. A
-correção é tarefa de `src/data.py`. É também material para a discussão crítica e
+correção é feita na leitura dos dados, no notebook. É também material para a discussão crítica e
 deve ser conferida contra a auditoria de Smith & Randall (2015).
 
 ### 2. `99.mat` contém as variáveis de `98.mat`

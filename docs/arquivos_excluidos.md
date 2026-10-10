@@ -44,7 +44,7 @@ categorias vão de Y1 a N2, conforme a Tabela 4 do artigo.
 | C2 | O melhor diagnóstico no DE é só parcial (P1/P2) | Smith & Randall (2015), Tab. B2 e Tab. 4 | Mantido com ressalva |
 | C3 | O envelope do sinal bruto (M1) não detecta o defeito; ele só aparece com pré-processamento (M2/M3) | Smith & Randall (2015), Tab. B2 | Mantido com ressalva |
 | C4 | O sinal tem trechos saturados (*clipping*) | Smith & Randall (2015), Tab. 3; conferido nos arquivos | Mantido com ressalva |
-| C5 | Fora do escopo do experimento principal | Decisão do grupo (`CLAUDE.md`, seção 2) | Fora do experimento principal |
+| C5 | Fora do escopo do experimento principal | Decisão do grupo | Fora do experimento principal |
 | C6 | Taxa de amostragem diferente das falhas, ou variáveis inconsistentes no `.mat` | Smith & Randall (2015), Tab. A1; `data/raw/README.md` | Mantido; corrigido no carregador |
 
 **Por que C1 não exclui.** No nosso subconjunto não há arquivo corrompido. Os

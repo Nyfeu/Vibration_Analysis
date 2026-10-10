@@ -89,15 +89,14 @@ sudo apt install texlive-latex-recommended texlive-latex-extra texlive-publisher
 git clone https://github.com/Nyfeu/Vibration_Analysis.git
 cd Vibration_Analysis
 pip install -r requirements.txt
-python -m pytest tests                          # testes: dados, features, detecção, classificação
-python -m scripts.gerar_artefatos_dados         # contagens, banda comum
-python -m scripts.gerar_artefatos_envelope      # validação física
-python -m scripts.gerar_artefatos_deteccao      # detecção one-class
-python -m scripts.gerar_artefatos_classificacao # classificação e matrizes
+jupyter nbconvert --to notebook --execute --inplace notebooks/projeto.ipynb
 ```
 
-Os scripts escrevem em `results/metrics/` e `results/figures/`, de onde o
-relatório lê as figuras e as matrizes de confusão.
+**Todo o código está no notebook** (`notebooks/projeto.ipynb`). Ele grava em
+`results/metrics/` e `results/figures/` as tabelas, figuras e matrizes de confusão
+que o relatório lê, e termina com uma seção de verificações automáticas
+(frequências do rolamento, decimação, ausência de vazamento) que interrompe a
+execução se algo falhar.
 
 O notebook segue o roteiro das aulas (*Clean Data* → *Pre-Processing* →
 *Select Models* → *GridSearch* → *Melhor modelo* → *Predição*) e está salvo
@@ -108,7 +107,7 @@ Colab; localmente, `pip install torch`); sem ele, é ignorada.
 (os `.mat` estão versionados nele) e instala as dependências; não há download
 manual.
 
-**Seeds:** `SEED = 42` em `src/data.py`, usada por todos os modelos. A etapa de
+**Seeds:** `SEED = 42`, declarada no início do notebook e usada por todos os modelos. A etapa de
 dados é determinística.
 
 ---
@@ -257,11 +256,9 @@ Apêndice C do relatório.
 .github/       CI: geração automática do PDF do relatório
 data/          dados brutos (raw) e derivados (processed, não versionado)
 docs/          enunciado, relatório LaTeX/ABNT, declarações
-notebooks/     notebook principal, executável no Colab
-src/           código do pipeline (dados, features, detecção, classificação)
-scripts/       download dos dados e geração dos artefatos de results/
-tests/         testes automatizados (pytest)
-results/       figuras e métricas
+notebooks/     notebook com todo o código do projeto, executável no Colab
+scripts/       download e verificação dos dados (SHA-256) e backlog do GitHub
+results/       figuras e métricas gravadas pelo notebook
 ```
 
 ---

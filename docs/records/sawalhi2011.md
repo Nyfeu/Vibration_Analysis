@@ -27,7 +27,7 @@
 
 ## Pontos relevantes para o projeto
 
-- → Projeto: é exatamente `prebranquear` em `src/features.py`. Recuperou o BSF nas gravações 222 e 223, como no método 2 do artigo.
+- → Projeto: é exatamente `prebranquear` em o notebook. Recuperou o BSF nas gravações 222 e 223, como no método 2 do artigo.
 
 ## Onde é usado no relatório
 

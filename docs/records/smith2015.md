@@ -106,7 +106,7 @@ BPFO ≈ 107,4 Hz, BSF ≈ 70,6 Hz, FTF ≈ 11,9 Hz.
 | Pista interna | BPFI e harmônicos, bandas laterais espaçadas de $f_r$; harmônicos de $f_r$ |
 | Esfera | BSF e harmônicos (pares costumam dominar), bandas laterais espaçadas de FTF; harmônicos de FTF |
 
-**→ Projeto:** a Tabela 2 vai direto para `src/features.py`, sem recalcular a geometria.
+**→ Projeto:** a Tabela 2 vai direto para o notebook, sem recalcular a geometria.
 A tolerância de 1–2% define a largura da janela de busca em torno de cada frequência
 teórica. Já a Tabela 1 é o critério para dizer se um pico de envelope "confirma" a
 classe, e é o argumento físico para priorizar.
@@ -370,15 +370,15 @@ Executadas em 2026-10-06 sobre `data/raw/`, com scripts descartáveis (não vers
 
 | # | Achado do artigo | Implicação | Onde agir |
 |---|---|---|---|
-| 1 | A montagem domina; cada (tipo × diâmetro) foi **uma** montagem, usada nas quatro cargas (p. 8, 25) | **O split por carga não separa montagens.** O registro de teste em 3 HP é a mesma montagem física dos de treino em 0–2 HP, então o modelo pode reconhecer a assinatura da montagem em vez do defeito. É vazamento de outro tipo, que a regra 2 do `CLAUDE.md` não cobre. | Discussão do grupo; ver pendência 1 |
+| 1 | A montagem domina; cada (tipo × diâmetro) foi **uma** montagem, usada nas quatro cargas (p. 8, 25) | **O split por carga não separa montagens.** O registro de teste em 3 HP é a mesma montagem física dos de treino em 0–2 HP, então o modelo pode reconhecer a assinatura da montagem em vez do defeito. É vazamento de outro tipo, que a regra de split por carga não cobre. | Discussão do grupo; ver pendência 1 |
 | 2 | A "carga" só reduz a rotação em ~4% (p. 5) | O split por carga mede robustez a uma pequena variação de velocidade, não a uma condição de carga nova. O relatório deve dizer isso explicitamente. | `docs/relatorio/secoes/04-metodologia.tex`, `06-discussao.tex` |
-| 3 | Os normais estão a 48 kHz (Tab. A1) | Decimar para 12 kHz no carregador | `src/data.py` |
+| 3 | Os normais estão a 48 kHz (Tab. A1) | Decimar para 12 kHz no carregador | o notebook |
 | 4 | Zona de carga em 6 h; o site erra em uma seção (p. 5) | @6 = centrada, @3 = ortogonal, @12 = oposta. Usar isso na decisão sobre a pista externa. | `data/raw/README.md`, issue da posição OR |
 | 5 | Registros N/P no DE (seção 6.3 acima); 236/237 saturados | Insumo direto da auditoria | `docs/arquivos_excluidos.md` |
 | 6 | Esfera de 0,007" (118–120) e de 0,021" (224–225) não são diagnosticáveis | Se o classificador acertar esses registros, **desconfiar**: ele pode estar usando algo que não é o defeito (montagem, EMI). Se errar, a explicação física já está aqui. | Análise de erros (regra 8) |
 | 7 | Defeitos não intencionais nas pistas em registros de esfera (p. 10–11) | Confusão B → OR/IR pode ser fisicamente justificada, não erro do modelo | Discussão da matriz de confusão |
 | 8 | Não estacionariedade: o defeito aparece em trechos (p. 25) | Janelas curtas podem não conter evidência do defeito, o que vira ruído de rótulo no nível da janela | Escolha da janela (regra 6), análise de erros |
-| 9 | Tabelas 1 e 2 e tolerância de 1–2% | Features físicas: amplitude do envelope em BPFO/BPFI/BSF ± 2% | `src/features.py` |
+| 9 | Tabelas 1 e 2 e tolerância de 1–2% | Features físicas: amplitude do envelope em BPFO/BPFI/BSF ± 2% | o notebook |
 | 10 | EMI em ~4,2 kHz dependente da carga (p. 6–7) | Possível atalho espúrio no teste em 3 HP | Análise de erros, importância de features |
 | 11 | CPW foi o melhor método; a curtose espectral sofre com ruído impulsivo (p. 23–24) | Candidato para a etapa de envelope, com referências já disponíveis | Fundamentação |
 

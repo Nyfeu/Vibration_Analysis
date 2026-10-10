@@ -5,7 +5,7 @@
     "",
     "Os itens saíram do inventário real de TODOs do repositório (make check,",
     "docs/*.md, README) cruzado com o pipeline da seção 4 e a rubrica da seção 1",
-    "do CLAUDE.md. Ao acrescentar item novo, acrescente aqui e rode o seeder de",
+    "das regras do projeto. Ao acrescentar item novo, acrescente aqui e rode o seeder de",
     "novo: ele é idempotente e só cria o que ainda não existe."
   ],
 
@@ -52,7 +52,7 @@
       "titulo": "Preencher os metadados do grupo (README e capa do relatório)",
       "milestone": "M0 — Cadastro do dataset",
       "labels": ["frente:relatorio"],
-      "corpo": "Hoje são placeholders explícitos.\n\n- `README.md`: tabela do grupo (nome + RA).\n- `docs/relatorio/relatorio.tex`: `\\autor`, `\\instituicao`, `\\orientador`, `\\local`.\n\n**Critério de aceite:** nenhum `TODO(grupo)` restante no preâmbulo de `relatorio.tex`.\n\nO enunciado permite grupo de até 6 alunos (o CLAUDE.md diz 4–5; se forem 6, vale o enunciado — corrigir o CLAUDE.md junto)."
+      "corpo": "Hoje são placeholders explícitos.\n\n- `README.md`: tabela do grupo (nome + RA).\n- `docs/relatorio/relatorio.tex`: `\\autor`, `\\instituicao`, `\\orientador`, `\\local`.\n\n**Critério de aceite:** nenhum `TODO(grupo)` restante no preâmbulo de `relatorio.tex`.\n\nO enunciado permite grupo de até 6 alunos."
     },
     {
       "titulo": "Baixar o CWRU e versionar os .mat em data/raw/",
@@ -64,7 +64,7 @@
       "titulo": "Ler Smith & Randall (2015) e preencher docs/arquivos_excluidos.md",
       "milestone": "M1 — Dados e protocolo",
       "labels": ["frente:dados", "bloqueante"],
-      "corpo": "Leitura obrigatória antes de usar o CWRU. O artigo audita gravação por gravação e separa os arquivos em utilizáveis, parcialmente utilizáveis e problemáticos (ruído elétrico dominante, falha não visível nem sob envelope).\n\n**Critério de aceite:** `docs/arquivos_excluidos.md` com critérios numerados, tabela de excluídos com justificativa e referência, tabela de parcialmente utilizáveis, e o resumo quantitativo preenchido.\n\nExclusão não documentada não vale (CLAUDE.md, regra 4)."
+      "corpo": "Leitura obrigatória antes de usar o CWRU. O artigo audita gravação por gravação e separa os arquivos em utilizáveis, parcialmente utilizáveis e problemáticos (ruído elétrico dominante, falha não visível nem sob envelope).\n\n**Critério de aceite:** `docs/arquivos_excluidos.md` com critérios numerados, tabela de excluídos com justificativa e referência, tabela de parcialmente utilizáveis, e o resumo quantitativo preenchido.\n\nExclusão não documentada não vale."
     },
     {
       "titulo": "Decidir e declarar a posição do defeito em pista externa (3, 6 ou 12 horas)",
@@ -82,13 +82,13 @@
       "titulo": "src/data.py: segmentação em janelas derivada da rotação e da taxa de amostragem",
       "milestone": "M1 — Dados e protocolo",
       "labels": ["frente:dados"],
-      "corpo": "O tamanho da janela **não é escolhido por conveniência**: é derivado da rotação do eixo e de fs, de modo a cobrir várias revoluções (CLAUDE.md, regra 6).\n\n**Critério de aceite:** a conta aparece na docstring da função e vai para a seção 4.1 do relatório."
+      "corpo": "O tamanho da janela **não é escolhido por conveniência**: é derivado da rotação do eixo e de fs, de modo a cobrir várias revoluções.\n\n**Critério de aceite:** a conta aparece na docstring da função e vai para a seção 4.1 do relatório."
     },
     {
       "titulo": "src/data.py: split por carga e seeds fixas",
       "milestone": "M1 — Dados e protocolo",
       "labels": ["frente:dados", "peso-2"],
-      "corpo": "Treino com 0/1/2 HP, teste com 3 HP. **Nunca** dividir em nível de janela: janelas vizinhas da mesma gravação são quase idênticas, e espalhá-las entre treino e teste faz o modelo memorizar a gravação (CLAUDE.md, regras 1 e 2).\n\n**Critério de aceite:**\n- nenhuma gravação aparece em treino e teste ao mesmo tempo;\n- seeds fixas e declaradas;\n- teste automatizado que falha se houver sobreposição de gravação entre os splits."
+      "corpo": "Treino com 0/1/2 HP, teste com 3 HP. **Nunca** dividir em nível de janela: janelas vizinhas da mesma gravação são quase idênticas, e espalhá-las entre treino e teste faz o modelo memorizar a gravação.\n\n**Critério de aceite:**\n- nenhuma gravação aparece em treino e teste ao mesmo tempo;\n- seeds fixas e declaradas;\n- teste automatizado que falha se houver sobreposição de gravação entre os splits."
     },
     {
       "titulo": "Contagem de amostras por classe e por carga",
@@ -118,7 +118,7 @@
       "titulo": "Validação física: pico do envelope × frequência teórica prevista",
       "milestone": "M2 — Features e envelope",
       "labels": ["frente:features", "frente:relatorio", "peso-2"],
-      "corpo": "Mostrar que o pico do espectro de envelope cai na frequência prevista pela teoria é **o argumento mais forte disponível para o relatório** (CLAUDE.md, seção 4.2).\n\n**Critério de aceite:** figura por tipo de defeito com a frequência teórica marcada sobre o espectro medido, em `results/figures/`, e a discussão na seção 5.4."
+      "corpo": "Mostrar que o pico do espectro de envelope cai na frequência prevista pela teoria é **o argumento mais forte disponível para o relatório**.\n\n**Critério de aceite:** figura por tipo de defeito com a frequência teórica marcada sobre o espectro medido, em `results/figures/`, e a discussão na seção 5.4."
     },
     {
       "titulo": "Tempo-frequência: STFT, wavelet ou kurtograma para escolher a banda de demodulação",
@@ -130,7 +130,7 @@
       "titulo": "src/detection.py: baseline one-class (Isolation Forest + Mahalanobis)",
       "milestone": "M3 — Detecção",
       "labels": ["frente:deteccao", "peso-2"],
-      "corpo": "**Treinado somente com dados normais**, sem ver nenhuma falha. É o cenário real de manutenção preditiva: na fábrica não existem exemplos rotulados de falha antes da falha acontecer (CLAUDE.md, regra 3).\n\n**Critério de aceite:**\n- o conjunto de treino do detector contém apenas a classe normal, verificado em código;\n- baseline rodando **antes** de qualquer modelo mais pesado (regra 5)."
+      "corpo": "**Treinado somente com dados normais**, sem ver nenhuma falha. É o cenário real de manutenção preditiva: na fábrica não existem exemplos rotulados de falha antes da falha acontecer.\n\n**Critério de aceite:**\n- o conjunto de treino do detector contém apenas a classe normal, verificado em código;\n- baseline rodando **antes** de qualquer modelo mais pesado (regra 5)."
     },
     {
       "titulo": "src/detection.py: One-Class SVM e autoencoder, comparados ao baseline",
@@ -142,13 +142,13 @@
       "titulo": "src/evaluation.py: métricas de detecção (ROC, TPR, FPR)",
       "milestone": "M3 — Detecção",
       "labels": ["frente:deteccao", "peso-2"],
-      "corpo": "**Critério de aceite:**\n- curvas ROC em `results/figures/` com nome descritivo;\n- TPR e FPR em `results/metrics/`;\n- se alguma métrica vier ≥ 98%, a primeira hipótese é vazamento de dados: investigar o split antes de comemorar (CLAUDE.md, seção 7)."
+      "corpo": "**Critério de aceite:**\n- curvas ROC em `results/figures/` com nome descritivo;\n- TPR e FPR em `results/metrics/`;\n- se alguma métrica vier ≥ 98%, a primeira hipótese é vazamento de dados: investigar o split antes de comemorar."
     },
     {
       "titulo": "Guardar os casos classificados errado desde o primeiro experimento",
       "milestone": "M3 — Detecção",
       "labels": ["frente:deteccao", "frente:relatorio", "peso-2"],
-      "corpo": "Erros são artefato de entrega, não subproduto (CLAUDE.md, regra 8). São eles que sustentam os 2 pontos de discussão crítica.\n\n**Critério de aceite:** para cada experimento, persistir em `results/metrics/` quais janelas erraram, com carga, classe verdadeira, classe predita e severidade do defeito."
+      "corpo": "Erros são artefato de entrega, não subproduto. São eles que sustentam os 2 pontos de discussão crítica.\n\n**Critério de aceite:** para cada experimento, persistir em `results/metrics/` quais janelas erraram, com carga, classe verdadeira, classe predita e severidade do defeito."
     },
     {
       "titulo": "src/classification.py: Random Forest / SVM sobre as features",
@@ -172,13 +172,13 @@
       "titulo": "Severidade do defeito (0.007\" / 0.014\" / 0.021\") como eixo secundário",
       "milestone": "M4 — Classificação",
       "labels": ["frente:classificacao", "opcional"],
-      "corpo": "Tratar como eixo de severidade, análise secundária. **Não explodir em 10+ classes na primeira volta** (CLAUDE.md, seção 2)."
+      "corpo": "Tratar como eixo de severidade, análise secundária. **Não explodir em 10+ classes na primeira volta**."
     },
     {
       "titulo": "Generalização entre datasets: treinar no CWRU, testar no MFPT",
       "milestone": "M4 — Classificação",
       "labels": ["opcional"],
-      "corpo": "Extra de discussão crítica. Se o cronograma apertar, cortar sem dó — o projeto está completo sem isto (CLAUDE.md, seção 2)."
+      "corpo": "Extra de discussão crítica. Se o cronograma apertar, cortar sem dó — o projeto está completo sem isto."
     },
     {
       "titulo": "notebooks/projeto.ipynb: pipeline ponta a ponta executável no Colab",

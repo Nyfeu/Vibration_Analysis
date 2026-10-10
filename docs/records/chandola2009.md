@@ -27,7 +27,7 @@
 
 ## Pontos relevantes para o projeto
 
-- → Projeto: nosso cenário é exatamente o semi-supervisionado com só normais (regra 3 do CLAUDE.md); a saída é um escore com limiar no percentil 99 dos normais.
+- → Projeto: nosso cenário é exatamente o semi-supervisionado com só normais (regra metodológica do projeto); a saída é um escore com limiar no percentil 99 dos normais.
 
 ## Onde é usado no relatório
 

@@ -29,7 +29,7 @@
 ## Pontos relevantes para o projeto
 
 - O escorregamento das esferas borra os harmônicos de alta ordem no espectro bruto, mas o envelope preserva a taxa de repetição.
-- Smith e Randall (2015) observam que a equação da BSF neste tutorial omite o fator f_r — usar a forma corrigida (como fizemos em `src/features.py`).
+- Smith e Randall (2015) observam que a equação da BSF neste tutorial omite o fator f_r — usar a forma corrigida (como fizemos em o notebook).
 - → Projeto: o 'método de referência' de Smith e Randall deriva deste tutorial; nossa ausência de DRS explica por que o kurtograma não recuperou as gravações 121 e 197.
 
 ## Onde é usado no relatório

@@ -20,10 +20,7 @@ matplotlib>=3.8
 jupyter>=1.0
 ipykernel>=6.29
 
-# ---- Testes ----
-pytest>=8.0
-
 # ---- Opcionais (descomentar quando a técnica entrar no pipeline) ----
 # PyWavelets>=1.5    # análise wavelet / kurtograma
-# torch>=2.2         # CNN 1D (src/cnn.py); já vem no Colab. O autoencoder usa scikit-learn.
+# torch>=2.2         # CNN 1D do notebook; já vem no Colab. O autoencoder usa scikit-learn.
 # seaborn>=0.13      # matrizes de confusão

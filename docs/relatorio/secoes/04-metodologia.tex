@@ -173,8 +173,8 @@ usado no treino (\autoref{sec:config-adotada}).
 
 As features são calculadas por janela, e cada janela gera uma linha da matriz
 de features, na mesma ordem da segmentação. Assim cada linha continua ligada ao
-rótulo e ao lado do split (treino ou teste) da janela de origem. A implementação
-está em \texttt{src/features.py}.
+rótulo e ao lado do split (treino ou teste) da janela de origem. Todo o código
+está no notebook \texttt{notebooks/projeto.ipynb}.
 
 \subsection{Domínio do tempo}
 \label{sec:features-tempo}
@@ -435,7 +435,7 @@ enunciado. O $F_1$ macro é a média simples dos $F_1$ das quatro classes, o que
 \label{sec:reprodutibilidade}
 
 Toda aleatoriedade do projeto parte de uma semente única, \texttt{SEED = 42},
-declarada em \texttt{src/data.py} e aplicada por uma função que fixa as sementes
+declarada no início do notebook e aplicada por uma função que fixa as sementes
 do \texttt{random} e do \texttt{numpy}. A etapa de dados é determinística:
 leitura, decimação, filtragem e segmentação produzem sempre as mesmas janelas.
 
@@ -445,23 +445,17 @@ usem exatamente os mesmos dados. As versões mínimas das bibliotecas estão em
 \texttt{requirements.txt} (Python 3.11, NumPy, SciPy, pandas, scikit-learn,
 Matplotlib). O ambiente de desenvolvimento é um contêiner
 (\texttt{.devcontainer/}) com Python e \LaTeX; o caminho de execução exigido pelo
-enunciado é o notebook \texttt{notebooks/projeto.ipynb} no Google Colab, que
-clona o repositório e chama as funções de \texttt{src/}.
+enunciado é o notebook \texttt{notebooks/projeto.ipynb} no Google Colab, cuja
+primeira célula clona o repositório e instala as dependências.
 
-As tabelas, figuras e matrizes deste relatório são geradas por quatro scripts,
-que gravam em \texttt{results/} e são chamados também pelo notebook:
-\begin{itemize}
-  \item \texttt{scripts/gerar\_artefatos\_dados.py}: contagens e banda comum;
-  \item \texttt{scripts/gerar\_artefatos\_envelope.py}: validação física;
-  \item \texttt{scripts/gerar\_artefatos\_deteccao.py}: detecção one-class;
-  \item \texttt{scripts/gerar\_artefatos\_classificacao.py}: classificação, CNN e
-  generalização entre montagens.
-\end{itemize}
-O notebook segue o roteiro da disciplina (limpeza dos dados, pré-processamento,
-seleção de modelos, busca em grade, avaliação do melhor modelo e predição) e é
-versionado com as saídas da última execução. A CNN usa a mesma semente e
-algoritmos determinísticos do PyTorch; duas execuções seguidas produziram os
-mesmos números. A suíte de testes (\texttt{python -m pytest tests}) confere,
-entre outros pontos, as frequências características contra o CWRU e Smith e
-Randall, a posição da linha de \SI{120}{\hertz} nos normais decimados, a banda
-comum e a ausência de gravações compartilhadas entre treino e teste.
+Todo o código do projeto está nesse notebook, que segue o roteiro da disciplina
+(limpeza dos dados, pré-processamento, seleção de modelos, busca em grade,
+avaliação do melhor modelo e predição) e é versionado com as saídas da última
+execução. Ele também grava em \texttt{results/} todas as tabelas, figuras e
+matrizes de confusão usadas neste relatório, que as lê de lá sem transcrição
+manual. A CNN usa a mesma semente e algoritmos determinísticos do PyTorch; duas
+execuções seguidas produziram os mesmos números. Uma seção final de verificações
+confere, entre outros pontos, as frequências características contra o CWRU, a
+posição da linha de \SI{120}{\hertz} nos normais decimados e a ausência de
+gravações compartilhadas entre treino e teste, e interrompe a execução se alguma
+falhar.

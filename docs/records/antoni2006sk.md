@@ -27,7 +27,7 @@
 
 ## Pontos relevantes para o projeto
 
-- → Projeto: usamos o estimador por STFT, SK(f) = ⟨|X|⁴⟩/⟨|X|²⟩² − 2 (`curtose_espectral` em `src/features.py`). O valor ~0,1 na gravação 197 indica ausência de banda impulsiva.
+- → Projeto: usamos o estimador por STFT, SK(f) = ⟨|X|⁴⟩/⟨|X|²⟩² − 2 (`curtose_espectral` em o notebook). O valor ~0,1 na gravação 197 indica ausência de banda impulsiva.
 
 ## Onde é usado no relatório
 

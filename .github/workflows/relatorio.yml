@@ -11,7 +11,7 @@
 # job "deploy" falha e o PDF continua saindo pelo artifact.
 name: Relatório
 
-# O filtro de paths evita rebuild a cada commit em src/ ou nos dados.
+# O filtro de paths evita rebuild a cada commit no notebook ou nos dados.
 # ATENÇÃO antes de mexer aqui: o GitHub NÃO avalia filtros de path em push de
 # tag ("Path filters are not evaluated for pushes of tags"), então a tag v* da
 # entrega compila sempre, mesmo que o commit taggeado não toque em docs/.
