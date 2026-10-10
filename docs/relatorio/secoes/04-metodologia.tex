@@ -22,7 +22,84 @@ passa a memorizar a gravação, não a falha.
 \section{Extração de features}
 \label{sec:features}
 
-TODO(grupo): domínio do tempo, domínio da frequência, envelope.
+As features são calculadas por janela, e cada janela gera uma linha da matriz
+de features, na mesma ordem da segmentação. Assim cada linha continua ligada ao
+rótulo e ao lado do split (treino ou teste) da janela de origem. A implementação
+está em \texttt{src/features.py}.
+
+\subsection{Domínio do tempo}
+\label{sec:features-tempo}
+
+Para cada janela $x$, com média $\mu$ e desvio padrão $\sigma$, são calculados
+cinco indicadores:
+\begin{align}
+  \text{RMS} &= \sqrt{\tfrac{1}{N}\textstyle\sum_{i=1}^{N} x_i^2}, &
+  \text{pico} &= \max_i |x_i|, &
+  \text{fator de crista} &= \frac{\text{pico}}{\text{RMS}}, \\
+  \text{assimetria} &= \frac{\mathrm{E}[(x-\mu)^3]}{\sigma^3}, &
+  \text{curtose} &= \frac{\mathrm{E}[(x-\mu)^4]}{\sigma^4}. & &
+\end{align}
+
+Duas escolhas de implementação afetam os valores e por isso são declaradas:
+\begin{itemize}
+  \item \textbf{Curtose de Pearson.} A curtose usada é a de Pearson, que vale 3
+  para um sinal gaussiano, e não a curtose em excesso, que vale 0 nesse caso.
+  Impactos periódicos de um defeito deixam o sinal mais impulsivo e elevam a
+  curtose acima de 3. Valores das duas convenções não podem ser comparados
+  diretamente.
+  \item \textbf{Remoção da média por janela.} A média de cada janela é
+  subtraída antes do cálculo de RMS, pico e fator de crista. O nível contínuo
+  (DC) do acelerômetro é uma característica da gravação, não do defeito. Mantido,
+  ele permitiria ao modelo reconhecer a gravação em vez da falha, que é a mesma
+  forma de vazamento discutida na \autoref{sec:split}. Assimetria e curtose já
+  são calculadas em torno da média e não dependem dessa escolha.
+\end{itemize}
+
+\subsection{Frequências características do rolamento}
+\label{sec:features-frequencias}
+
+As frequências de defeito do rolamento do DE (\autoref{sec:frequencias-caracteristicas})
+são calculadas pelas fórmulas cinemáticas de \textcite[p.~3]{smith2015}, com
+$f_r$ a rotação do eixo, $n$ o número de esferas, $d$ o diâmetro da esfera, $D$
+o diâmetro primitivo e $\phi$ o ângulo de contato:
+\begin{align}
+  \text{BPFO} &= \frac{n f_r}{2}\left(1 - \frac{d}{D}\cos\phi\right), &
+  \text{BPFI} &= \frac{n f_r}{2}\left(1 + \frac{d}{D}\cos\phi\right), \\
+  \text{FTF}  &= \frac{f_r}{2}\left(1 - \frac{d}{D}\cos\phi\right), &
+  \text{BSF}  &= \frac{D f_r}{2d}\left[1 - \left(\frac{d}{D}\cos\phi\right)^2\right].
+\end{align}
+Os diâmetros $d = \SI{0.3126}{\inch}$ e $D = \SI{1.537}{\inch}$ vêm da
+documentação do CWRU~\cite{cwru}, que não informa o número de esferas; usa-se
+$n = 9$~\cite[p.~10]{smith2015}, com $\phi = 0$. Em múltiplos de $f_r$, o
+resultado coincide com a Tabela~2 de \textcite[p.~4]{smith2015}: BPFI
+$= \num{5.415}\,f_r$, BPFO $= \num{3.585}\,f_r$, FTF $= \num{0.3983}\,f_r$ e
+BSF $= \num{2.357}\,f_r$.
+
+Três decisões condicionam o uso dessas frequências:
+\begin{itemize}
+  \item \textbf{Convenção da BSF.} Adota-se a BSF de \textcite{smith2015},
+  $\num{2.357}\,f_r$. A documentação do CWRU lista como frequência do elemento
+  rolante o valor $\num{4.7135}\,f_r$~\cite{cwru}, que é $2 \times \text{BSF}$:
+  a esfera com defeito bate nas duas pistas a cada giro. As duas convenções
+  descrevem o mesmo fenômeno, mas misturá-las faz procurar o pico na frequência
+  errada. Como os harmônicos pares da BSF costumam dominar o espectro de envelope
+  de um defeito de esfera~\cite[p.~4]{smith2015}, o pico em $2 \times \text{BSF}$
+  também é procurado, sem mudar a convenção.
+  \item \textbf{Rotação medida, não nominal.} $f_r$ é tirada da rotação
+  registrada em cada arquivo, e não da nominal, porque a rotação cai com a carga
+  (\autoref{sec:setup}). Os registros normais 98 e 99 não trazem essa medida;
+  neles vale a rotação nominal da carga correspondente, \SIlist{1772;1750}{rpm}.
+  \item \textbf{Tolerância de \SI{\pm 2}{\percent}.} As fórmulas supõem que não há
+  escorregamento, e na prática o desvio em relação ao valor calculado costuma ser
+  de 1 a \SI{2}{\percent}~\cite[p.~3]{smith2015}. Um pico do espectro é associado
+  a uma frequência característica quando cai dentro de \SI{\pm 2}{\percent} dela.
+\end{itemize}
+
+\subsection{Domínio da frequência e envelope}
+\label{sec:features-envelope}
+
+TODO(grupo): FFT e espectro de envelope (Hilbert), com a banda de demodulação
+justificada. Ainda não implementado em \texttt{src/features.py}.
 
 \section{Modelos}
 \label{sec:modelos}

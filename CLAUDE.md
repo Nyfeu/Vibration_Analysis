@@ -141,6 +141,8 @@ silenciosamente**.
      calculadas a partir da geometria do 6205 e da rotação do eixo. Mostrar que o
      pico do envelope cai na frequência prevista pela teoria é o argumento mais
      forte disponível para o relatório — priorize isso.
+     **Convenção decidida:** BSF como em Smith & Randall (2,357 × f_r no DE); o
+     "Rolling Element" da página do CWRU (4,7135 × f_r) é 2 × BSF (`bsf_2x`).
    - Tempo-frequência (se houver tempo): STFT, wavelet, kurtograma/spectral
      kurtosis para escolher a banda de demodulação.
 3. **Detecção** — baseline com Isolation Forest e distância de Mahalanobis;
@@ -192,10 +194,11 @@ Técnicas que só detectam deixam a coluna de tipo de falha como "não se aplica
 │   └── projeto.ipynb          # executável no Colab, ponta a ponta
 ├── src/
 │   ├── data.py                # carregamento, segmentação, splits
-│   ├── features.py            # tempo, frequência, envelope
+│   ├── features.py            # tempo, frequência, envelope, frequências do rolamento
 │   ├── detection.py           # one-class
 │   ├── classification.py
 │   └── evaluation.py          # métricas e matrizes de confusão
+├── tests/                     # pytest; rodar da raiz: python -m pytest tests
 └── results/
     ├── figures/
     └── metrics/
@@ -216,6 +219,8 @@ vale 1 ponto.
 - Funções com docstring curta explicando **o parâmetro físico** quando houver
   (por que essa janela, por que essa banda).
 - Figuras salvas em `results/figures/` com nome descritivo, não `fig1.png`.
+- Identificadores em português (`features_tempo`, `catalogo`); siglas físicas
+  ficam como na literatura (`bpfo`, `rms`).
 - Commits em português, no imperativo: "adiciona parser dos arquivos .mat".
 
 ### Relatório
@@ -299,6 +304,12 @@ Próximos passos:
       experimento complementar
 - [ ] Implementar o parser dos `.mat` e a segmentação (incluindo a decimação
       48→12 kHz dos normais)
+- [x] Features de tempo (issue #10) e frequências características do
+      rolamento (issue #12) em `src/features.py`, com testes em `tests/`;
+      BSF na convenção de Smith & Randall
+- [x] `sec:features` (metodologia) declara a curtose de Pearson, a remoção da
+      média por janela, a convenção de BSF, a rotação medida (nominal em 98/99)
+      e a tolerância de ±2%; envelope ainda `TODO(grupo)`
 - [ ] Baseline: features de tempo + Random Forest
 
 Divisão de frentes (4–5 pessoas):
