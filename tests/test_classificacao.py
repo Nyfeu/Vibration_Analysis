@@ -63,3 +63,13 @@ def test_regra_fisica_e_validacao_por_montagem():
     assert set(por_d["diametro_fora"]) == {"0.007", "0.014", "0.021"}
     regra = m[m["modelo"] == "Regra física (sem treino)"]["acuracia"].item()
     assert regra == pytest.approx(0.657, abs=0.01)
+
+
+def test_ganho_de_informacao_em_caso_conhecido():
+    from src.classification import entropia, ganho_informacao_raiz
+
+    assert entropia(np.array([5.0, 5.0])) == pytest.approx(1.0)
+    x = pd.DataFrame({"separa": [0, 0, 1, 1], "ruido": [0, 1, 0, 1]})
+    g = ganho_informacao_raiz(x, ["a", "a", "b", "b"]).set_index("feature")
+    assert g.loc["separa", "ganho_bits"] == pytest.approx(1.0)
+    assert g.loc["ruido", "ganho_bits"] == pytest.approx(0.0)

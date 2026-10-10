@@ -5,6 +5,14 @@
 \chapter{Discussão crítica}
 \label{cap:discussao}
 
+O enunciado separa detectar que algo mudou de identificar o que
+mudou~\cite{enunciado2026}. Os resultados confirmam essa distinção, mas de um modo
+que não estava previsto: neste conjunto de dados, \emph{detectar} é trivialmente
+fácil --- basta o nível de vibração ---, e \emph{diagnosticar} é muito mais difícil
+do que a acurácia de \SI{95.7}{\percent} sugere, porque o diagnóstico aprendido não
+sobrevive a uma montagem nova. A discussão a seguir se organiza em torno dessas
+duas tarefas.
+
 \section{O que funcionou}
 \label{sec:funcionou}
 
@@ -60,8 +68,11 @@ e não diria nada sobre o rolamento.
 \SI{99.4}{\percent} das janelas de esfera no teste, inclusive todas as da
 gravação 225, que não tem assinatura do defeito. A validação física não confirmou
 o BSF em nenhuma gravação de esfera, e o escore de BSF tem a menor importância
-entre as oito features (\SI{3.3}{\percent}). O classificador aprendeu a
-reconhecer a montagem e o nível de vibração das gravações de esfera. A seleção de
+entre as oito features (\SI{3.3}{\percent}) e o menor ganho de informação
+(\SI{0.17}{bits}). Uma árvore com critério de entropia define a esfera como uma
+faixa de amplitude, sem usar o escore de BSF (\autoref{fig:arvore}). O
+classificador aprendeu a reconhecer a montagem e o nível de vibração das
+gravações de esfera. A seleção de
 modelos não protegeu contra isso: a validação cruzada por carga também mantém a
 mesma montagem dos dois lados, e por isso premiou o mesmo atalho
 (\num{0.984} na validação, \SI{40.0}{\percent} na generalização).
@@ -87,6 +98,15 @@ do acaso de \SI{33}{\percent} (\autoref{tab:montagem}). O desempenho de 93 a
 montagens já vistas. Com 12 montagens de falha, uma por combinação de defeito e
 diâmetro, não há variedade suficiente para um modelo aprender o que o defeito tem
 em comum entre montagens.
+
+\paragraph{As métricas de detecção enganam com esta prevalência.} Com
+\SI{90}{\percent} de janelas de falha no teste, alarmar sempre já daria precisão
+de \num{0.90} e $F_1$ de \num{0.947}. A precisão alta dos detectores
+(\numrange{0.91}{1.00}) não mede, portanto, a qualidade dos alarmes. Numa planta,
+com falhas raras, a mesma FPR de \num{0.12} faria a maioria dos alarmes ser falsa
+(\autoref{sec:res-deteccao}). Avaliar um detector exige um conjunto de teste com a
+proporção de normais da operação real, que o CWRU, com quatro gravações normais,
+não oferece.
 
 \paragraph{O limiar não se transfere.} A FPR no limiar variou de 0 a
 \SI{81}{\percent} entre detectores com AUC semelhante, porque o limiar foi

@@ -1,0 +1,9 @@
+feature,ganho_bits,ganho_relativo,limiar,maioria_abaixo,maioria_acima
+pico,0.5608,0.3002,1.2665,B,IR
+rms,0.4929,0.2638,0.1503,B,IR
+curtose,0.3972,0.2126,4.8837,B,IR
+env_bpfo,0.3654,0.1955,5.3908,B,OR
+env_bpfi,0.3595,0.1924,3.2611,B,IR
+fator_crista,0.3249,0.1739,4.3687,B,IR
+assimetria,0.2973,0.1591,0.0777,B,IR
+env_bsf,0.1696,0.0908,2.4759,IR,OR

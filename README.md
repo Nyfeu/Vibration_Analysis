@@ -29,7 +29,7 @@ classificação); relatório em revisão pelo grupo.
 | Dados empregados | [`data/raw/`](data/raw/) |
 | Relatório técnico (LaTeX/ABNT) | fonte em [`docs/relatorio/`](docs/relatorio/) · PDF: [https://nyfeu.github.io/Vibration_Analysis/](https://nyfeu.github.io/Vibration_Analysis/) |
 | Apresentação (vídeo, máx. 5 min) | _TODO: link do YouTube_ |
-| Slides | fonte em [`docs/apresentacao/slides.tex`](docs/apresentacao/slides.tex) · PDF: [https://nyfeu.github.io/Vibration_Analysis/slides.pdf](https://nyfeu.github.io/Vibration_Analysis/slides.pdf) · roteiro de fala em [`docs/apresentacao/roteiro.md`](docs/apresentacao/roteiro.md) |
+| Slides | fonte em [`docs/apresentacao/slides.tex`](docs/apresentacao/slides.tex) · PDF: [https://nyfeu.github.io/Vibration_Analysis/slides.pdf](https://nyfeu.github.io/Vibration_Analysis/slides.pdf) |
 | Declaração de uso de IA | [`docs/uso_de_ia.md`](docs/uso_de_ia.md) |
 | Auditoria de arquivos descartados | [`docs/arquivos_excluidos.md`](docs/arquivos_excluidos.md) |
 
@@ -230,6 +230,13 @@ confirma o defeito em 12/12 gravações de pista interna e 8/12 de pista externa
 menos no teste (68%) e generaliza melhor para o defeito em outra posição (76%
 contra 40%). A CNN 1D chega a 99,7%, mas acerta até as gravações sem assinatura
 e generaliza pior (64%): aprende a montagem, não o defeito.
+
+**Precisão e recall.** Na detecção, 90% das janelas de teste são de falha:
+alarmar sempre já daria precisão 0,90 e F1 0,947, então TPR, FPR e AUC são as
+métricas que importam. No diagnóstico, a esfera tem recall 0,99 e precisão 0,88:
+vira uma classe-refúgio. Uma árvore de decisão com critério de entropia define a
+esfera como uma faixa de amplitude, sem usar o escore de BSF (o de menor ganho
+de informação).
 
 **Teste decisivo — montagem nova.** Cada defeito do CWRU foi ensaiado numa única
 montagem, presente nas quatro cargas. Deixando um diâmetro (montagem) inteiro

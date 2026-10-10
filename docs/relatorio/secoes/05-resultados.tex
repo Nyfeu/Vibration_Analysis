@@ -217,30 +217,32 @@ features, e a \autoref{fig:roc} mostra as curvas ROC correspondentes.
   generalização (pista externa a 3~h e 12~h).}
   \label{tab:deteccao}
   \footnotesize
-  \begin{tabular}{llcccc}
+  \begin{tabular}{llcccccc}
     \toprule
     \textbf{Features} & \textbf{Detector} & \textbf{AUC} & \textbf{TPR} &
-    \textbf{FPR} & \textbf{TPR generalização} \\
+    \textbf{FPR} & \textbf{Precisão} & \textbf{$F_1$} & \textbf{TPR gen.} \\
     \midrule
-    tempo          & Mahalanobis      & 1,000 & 1,000 & 0,034 & 1,000 \\
-                   & Isolation Forest & 0,995 & 0,776 & 0,000 & 1,000 \\
-                   & One-Class SVM    & 1,000 & 1,000 & 0,293 & 1,000 \\
-                   & Autoencoder      & 1,000 & 1,000 & 0,000 & 1,000 \\
+    tempo          & Mahalanobis      & 1,000 & 1,000 & 0,034 & 0,996 & 0,998 & 1,000 \\
+                   & Isolation Forest & 0,995 & 0,776 & 0,000 & 1,000 & 0,874 & 1,000 \\
+                   & One-Class SVM    & 1,000 & 1,000 & 0,293 & 0,968 & 0,984 & 1,000 \\
+                   & Autoencoder      & 1,000 & 1,000 & 0,000 & 1,000 & 1,000 & 1,000 \\
     \midrule
-    envelope       & Mahalanobis      & 0,718 & 0,576 & 0,138 & 0,762 \\
-                   & Isolation Forest & 0,688 & 0,434 & 0,086 & 0,455 \\
-                   & One-Class SVM    & 0,771 & 0,759 & 0,500 & 0,856 \\
-                   & Autoencoder      & 0,828 & 0,545 & 0,034 & 0,689 \\
+    envelope       & Mahalanobis      & 0,718 & 0,576 & 0,138 & 0,974 & 0,724 & 0,762 \\
+                   & Isolation Forest & 0,688 & 0,434 & 0,086 & 0,978 & 0,601 & 0,455 \\
+                   & One-Class SVM    & 0,771 & 0,759 & 0,500 & 0,932 & 0,837 & 0,856 \\
+                   & Autoencoder      & 0,828 & 0,545 & 0,034 & 0,993 & 0,704 & 0,689 \\
     \midrule
-    tempo+envelope & Mahalanobis      & 1,000 & 1,000 & 0,121 & 1,000 \\
-                   & Isolation Forest & 0,985 & 0,902 & 0,069 & 1,000 \\
-                   & One-Class SVM    & 1,000 & 1,000 & 0,810 & 1,000 \\
-                   & Autoencoder      & 1,000 & 1,000 & 0,172 & 1,000 \\
+    tempo+envelope & Mahalanobis      & 1,000 & 1,000 & 0,121 & 0,987 & 0,993 & 1,000 \\
+                   & Isolation Forest & 0,985 & 0,902 & 0,069 & 0,992 & 0,945 & 1,000 \\
+                   & One-Class SVM    & 1,000 & 1,000 & 0,810 & 0,918 & 0,957 & 1,000 \\
+                   & Autoencoder      & 1,000 & 1,000 & 0,172 & 0,981 & 0,990 & 1,000 \\
     \midrule
-    forma          & Mahalanobis      & 0,866 & 0,828 & 0,241 & 1,000 \\
-                   & Isolation Forest & 0,875 & 0,763 & 0,155 & 0,874 \\
-                   & One-Class SVM    & 0,873 & 0,910 & 0,759 & 1,000 \\
-                   & Autoencoder      & 0,832 & 0,807 & 0,397 & 1,000 \\
+    forma          & Mahalanobis      & 0,866 & 0,828 & 0,241 & 0,969 & 0,893 & 1,000 \\
+                   & Isolation Forest & 0,875 & 0,763 & 0,155 & 0,978 & 0,857 & 0,874 \\
+                   & One-Class SVM    & 0,873 & 0,910 & 0,759 & 0,915 & 0,913 & 1,000 \\
+                   & Autoencoder      & 0,832 & 0,807 & 0,397 & 0,948 & 0,872 & 1,000 \\
+    \midrule
+    \multicolumn{2}{l}{\emph{Referência: alarmar sempre}} & 0,500 & 1,000 & 1,000 & 0,900 & 0,947 & 1,000 \\
     \bottomrule
   \end{tabular}
   \fonte{Elaborado pelos autores a partir de
@@ -273,6 +275,18 @@ na validação física (\autoref{sec:res-fisica}). Com só três gravações nor
 treino, a variabilidade normal entre montagens e condições não é coberta, e o
 One-Class SVM, cuja fronteira é a mais justa, trata a quarta gravação como
 anômala.
+
+\paragraph{Precisão e prevalência.} Todos os detectores têm precisão acima de
+\num{0.91}, inclusive os que deixam passar metade das falhas. Isso é efeito da
+prevalência: \SI{90}{\percent} das janelas de teste são de falha, e mesmo um
+detector que alarmasse sempre teria precisão de \num{0.90} e $F_1$ de
+\num{0.947}, acima do $F_1$ de todos os detectores só de envelope. Numa planta, a
+proporção se inverte: quase todo o tempo a máquina está normal. Aplicando a regra
+de Bayes à TPR e à FPR medidas, com \SI{1}{\percent} de janelas de falha a
+precisão do Mahalanobis com tempo+envelope cairia de \num{0.987} para
+\num{0.077} --- de cada 13 alarmes, 12 seriam falsos ---, e a do Isolation Forest,
+para \num{0.117}. Nesse cenário, a FPR é a métrica que decide se o detector é
+utilizável, e não a acurácia nem a precisão medidas aqui.
 
 \subsection{Investigação dos resultados próximos de 100\%}
 \label{sec:investigacao-amplitude}
@@ -421,11 +435,44 @@ Apêndice~\ref{ap:matrizes}.
 \end{table}
 
 O modelo selecionado, Random Forest com tempo+envelope, acerta
-\SI{95.7}{\percent} das janelas de teste, com \SI{99.4}{\percent} na esfera. No
-\emph{classification report}, a esfera tem precisão de \num{0.88} e
-\emph{recall} de \num{0.99}: quase todas as janelas de esfera são reconhecidas,
-mas 20 janelas de pista externa (todas da gravação 200) e 4 de pista interna são
-tomadas por esfera. Três observações relativizam esse número.
+\SI{95.7}{\percent} das janelas de teste, com $F_1$ macro de \num{0.964}. A
+\autoref{tab:precisao-recall} mostra precisão, recall e $F_1$ por classe para ele
+e para o mesmo modelo só com envelope.
+
+\begin{table}[htb]
+  \centering
+  \caption{Precisão, recall e $F_1$ por classe no teste (\SI{3}{\hp}), Random
+  Forest com dois conjuntos de features.}
+  \label{tab:precisao-recall}
+  \footnotesize
+  \begin{tabular}{lcccccc}
+    \toprule
+    & \multicolumn{3}{c}{\textbf{tempo+envelope}} & \multicolumn{3}{c}{\textbf{envelope}} \\
+    \cmidrule(lr){2-4}\cmidrule(lr){5-7}
+    \textbf{Classe} & \textbf{Precisão} & \textbf{Recall} & \textbf{$F_1$} &
+    \textbf{Precisão} & \textbf{Recall} & \textbf{$F_1$} \\
+    \midrule
+    Normal        & 1,000 & 1,000 & 1,000 & 0,000 & 0,000 & 0,000 \\
+    Pista interna & 1,000 & 0,977 & 0,988 & 0,886 & 0,937 & 0,911 \\
+    Esfera        & 0,878 & 0,994 & 0,933 & 0,543 & 0,649 & 0,592 \\
+    Pista externa & 0,994 & 0,885 & 0,936 & 0,690 & 0,667 & 0,678 \\
+    \midrule
+    $F_1$ macro   & \multicolumn{3}{c}{0,964} & \multicolumn{3}{c}{0,545} \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/classificacao\_relatorio\_random\_forest\_*.csv}.}
+\end{table}
+
+A combinação de precisão e recall diz mais que a acurácia. A esfera tem recall de
+\num{0.99}, mas precisão de \num{0.88}: ela funciona como classe-refúgio, para
+onde vão as janelas que o modelo não reconhece --- 20 de pista externa, todas da
+gravação 200, e 4 de pista interna. A pista externa tem o padrão oposto,
+precisão \num{0.99} e recall \num{0.89}: quando o modelo diz ``pista externa'',
+acerta, mas perde a gravação sem assinatura. Só com envelope, a pista interna
+mantém $F_1$ de \num{0.91} --- é a classe com assinatura física mais clara
+(\autoref{sec:res-fisica}) ---, enquanto a classe normal vai a zero. Três
+observações relativizam o número global.
 
 \paragraph{A esfera é acertada sem assinatura física.} A validação física pelo
 envelope do sinal bruto --- o mesmo usado nas features --- não confirmou o defeito
@@ -437,6 +484,63 @@ Forest, RMS e pico respondem por \SI{56.3}{\percent} da importância das
 features, e o escore de BSF por \SI{3.3}{\percent}. O classificador reconhece as
 gravações de esfera pelo nível de vibração --- intermediário entre o das pistas e
 o dos normais (\autoref{fig:rms}) ---, e não pela frequência do defeito.
+
+\paragraph{O que o ganho de informação mostra.} A
+\autoref{tab:ganho-informacao} mostra o ganho de informação de cada feature no
+melhor corte único, no treino. A entropia das quatro classes é de
+\SI{1.868}{bits}. As duas features de amplitude lideram: o pico remove
+\SI{30}{\percent} da incerteza sozinho, e o RMS, \SI{26}{\percent}. O escore de
+BSF, a única feature ligada à física da esfera, é o que menos informa
+(\SI{9}{\percent}).
+
+\begin{table}[htb]
+  \centering
+  \caption{Ganho de informação de cada feature no melhor corte binário único,
+  no treino (0 a \SI{2}{\hp}, 1710 janelas, $H(Y) = \SI{1.868}{bits}$).}
+  \label{tab:ganho-informacao}
+  \footnotesize
+  \begin{tabular}{lccccc}
+    \toprule
+    \textbf{Feature} & \textbf{Ganho (bits)} & \textbf{Fração de $H(Y)$} &
+    \textbf{Limiar} & \textbf{Maioria abaixo} & \textbf{Maioria acima} \\
+    \midrule
+    pico          & 0,561 & 0,300 & 1,27  & esfera & p. interna \\
+    RMS           & 0,493 & 0,264 & 0,150 & esfera & p. interna \\
+    curtose       & 0,397 & 0,213 & 4,88  & esfera & p. interna \\
+    escore BPFO   & 0,365 & 0,196 & 5,39  & esfera & p. externa \\
+    escore BPFI   & 0,360 & 0,192 & 3,26  & esfera & p. interna \\
+    fator de crista & 0,325 & 0,174 & 4,37 & esfera & p. interna \\
+    assimetria    & 0,297 & 0,159 & 0,078 & esfera & p. interna \\
+    escore BSF    & 0,170 & 0,091 & 2,48  & p. interna & p. externa \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/classificacao\_ganho\_informacao.csv}.}
+\end{table}
+
+A árvore de profundidade 3 com critério de entropia
+(\autoref{fig:arvore}) torna o atalho explícito. O primeiro corte é no pico. A
+classe normal é definida por \emph{pico $\le$ 0,39 e RMS $\le$ 0,08}: vibração
+baixa. A esfera é uma \emph{faixa intermediária de amplitude} (pico entre 0,39 e
+1,27, RMS acima de 0,10), sem nenhum uso do escore de BSF, cuja importância na
+árvore é zero. As pistas só são separadas, acima do pico de 1,27, pelos escores
+de BPFO e BPFI --- as únicas regras com sentido físico. Mesmo assim, a árvore
+acerta \SI{92.3}{\percent} do teste, e só \SI{28.0}{\percent} da pista externa em
+outra posição.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Árvore de decisão de profundidade 3 com critério de entropia,
+  treinada em 0 a \SI{2}{\hp}. Em cada folha, contagem de janelas de treino na
+  ordem esfera (B), pista interna (IR), pista externa (OR) e normal.}
+  \label{fig:arvore}
+  \begin{minipage}{0.75\textwidth}
+    \footnotesize
+    \verbatiminput{../../results/metrics/arvore_entropia.txt}
+  \end{minipage}
+  \fonte{Gerada por \texttt{scripts/gerar\_artefatos\_classificacao.py}
+  (\texttt{sklearn.tree.export\_text}).}
+\end{figure}
 
 \paragraph{O desempenho no teste não se transfere para outra posição do
 defeito.} No conjunto de generalização, o mesmo modelo classifica como pista

@@ -9,7 +9,9 @@
 - results/metrics/matrizes_confusao.tex: matrizes em LaTeX para o Apêndice C;
 - CNN 1D (se o PyTorch estiver instalado): linhas extras nas métricas e matrizes;
 - results/metrics/classificacao_por_montagem*.csv: tipo de falha com um
-  diâmetro (montagem) inteiro fora, e a regra física sem treino.
+  diâmetro (montagem) inteiro fora, e a regra física sem treino;
+- results/metrics/classificacao_ganho_informacao.csv e arvore_entropia.txt:
+  ganho de informação no nó raiz e árvore rasa (critério de entropia).
 
 Uso (da raiz do repositório):  python -m scripts.gerar_artefatos_classificacao
 """
@@ -95,6 +97,31 @@ def main() -> None:
         "generalizacao_OR": (prever_regra_fisica(Fg) == "OR").mean(),
     }
     pd.DataFrame([regra]).to_csv(DIR_METRICS / "classificacao_regra_fisica.csv", index=False, float_format="%.4f")
+
+    # Ganho de informação no nó raiz e árvore rasa com critério de entropia,
+    # só no treino (0/1/2 HP), com as oito features.
+    from sklearn.tree import DecisionTreeClassifier, export_text
+
+    from src.classification import ganho_informacao_raiz
+    from src.data import SEED
+    from src.features import NOMES_FEATURES
+
+    treino = (meta["carga_hp"] != 3).to_numpy()
+    ganho_informacao_raiz(F.loc[treino, NOMES_FEATURES], meta.loc[treino, "classe"]).to_csv(
+        DIR_METRICS / "classificacao_ganho_informacao.csv", index=False, float_format="%.4f"
+    )
+    arvore = DecisionTreeClassifier(criterion="entropy", max_depth=3, random_state=SEED).fit(
+        F.loc[treino, NOMES_FEATURES], meta.loc[treino, "classe"]
+    )
+    (DIR_METRICS / "arvore_entropia.txt").write_text(
+        export_text(arvore, feature_names=NOMES_FEATURES, show_weights=True, decimals=2), encoding="utf-8"
+    )
+    teste = ~treino
+    pd.DataFrame([{
+        "acuracia_teste": (arvore.predict(F.loc[teste, NOMES_FEATURES]) == meta.loc[teste, "classe"]).mean(),
+        "generalizacao_OR": (arvore.predict(Fg[NOMES_FEATURES]) == "OR").mean(),
+        **{f"importancia_{c}": v for c, v in zip(NOMES_FEATURES, arvore.feature_importances_)},
+    }]).to_csv(DIR_METRICS / "arvore_entropia_metricas.csv", index=False, float_format="%.4f")
 
     m_mont, d_mont = classificacao_por_montagem(F, meta)
     m_mont.to_csv(DIR_METRICS / "classificacao_por_montagem.csv", index=False, float_format="%.4f")

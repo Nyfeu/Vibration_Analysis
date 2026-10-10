@@ -13,7 +13,10 @@ um defeito localizado gera impactos periódicos, cuja taxa depende da geometria 
 rolamento e da rotação, e que deixam no sinal uma assinatura reconhecível
 ~\cite{randall2011livro,randall2011tutorial}.
 
-Duas perguntas diferentes podem ser feitas a esse sinal. A primeira é de
+O enunciado deste projeto parte de uma distinção: \enquote{detectar que algo
+mudou é um problema; identificar o que mudou é outro, mais
+difícil}~\cite{enunciado2026}. Duas perguntas diferentes podem, de fato, ser
+feitas a esse sinal. A primeira é de
 \emph{detecção}: o comportamento da máquina mudou em relação ao normal? A
 segunda é de \emph{diagnóstico}: se mudou, qual é o defeito? As duas exigem
 dados diferentes. Para detectar, basta conhecer o comportamento normal, que é o
@@ -48,5 +51,9 @@ separadamente:
   normal, defeito na pista interna, na pista externa ou na esfera, também numa
   carga não vista no treino.
 \end{enumerate}
-Em ambas, o interesse está tanto no desempenho quanto em onde e por que os
-modelos erram, e em se as decisões se apoiam na física do defeito.
+As duas tarefas são avaliadas com métricas próprias. Na detecção, o que importa é
+quantas falhas disparam alarme (taxa de verdadeiros positivos, ou recall) e
+quantos alarmes são falsos (taxa de falsos positivos e precisão). No diagnóstico,
+importa a precisão e o recall de cada classe, e não só a acurácia global. Em
+ambas, o interesse está tanto no desempenho quanto em onde e por que os modelos
+erram, e em se as decisões se apoiam na física do defeito.

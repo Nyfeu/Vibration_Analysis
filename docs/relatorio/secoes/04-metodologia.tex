@@ -376,7 +376,13 @@ classes, e segue o roteiro usual de seleção de modelos:
   \emph{classification report} e matriz de confusão completa
   (Apêndice~\ref{ap:matrizes}).
 \end{enumerate}
-Os passos 2 a 5 são repetidos para cada conjunto de features. A severidade entra como recorte secundário: a
+Os passos 2 a 5 são repetidos para cada conjunto de features.
+
+Para interpretar em que as decisões se apoiam, calcula-se, só no treino, o ganho
+de informação de cada uma das oito features no melhor corte binário único --- a
+conta que uma árvore com critério de entropia faz no nó raiz ---, e ajusta-se uma
+árvore de decisão de profundidade 3 com critério de entropia, cujas regras podem
+ser lidas diretamente. A severidade entra como recorte secundário: a
 acurácia é desagregada por diâmetro do defeito, sem transformar os diâmetros em
 classes. O classificador é aplicado também ao conjunto de generalização, em que
 o resultado correto é sempre ``pista externa''. Esse conjunto faz o papel de
@@ -397,6 +403,33 @@ classe, com a semente do projeto. A CNN entra também no teste de generalizaçã
 entre montagens (\autoref{sec:res-montagem}). Duas entradas são comparadas, mantendo a
 ablação de amplitude: o sinal como gravado e cada janela normalizada para média
 zero e desvio unitário. A rede é implementada em PyTorch.
+
+\subsection{Métricas}
+\label{sec:metricas}
+
+As métricas seguem a separação entre as duas tarefas.
+
+\paragraph{Detecção.} A classe positiva é ``falha''. Com VP, FP, VN e FN as
+contagens de verdadeiros e falsos positivos e negativos, no limiar de alarme:
+\begin{equation}
+  \text{TPR} = \text{recall} = \frac{\text{VP}}{\text{VP}+\text{FN}}, \qquad
+  \text{FPR} = \frac{\text{FP}}{\text{FP}+\text{VN}}, \qquad
+  \text{precisão} = \frac{\text{VP}}{\text{VP}+\text{FP}}, \qquad
+  F_1 = \frac{2\,\text{precisão}\cdot\text{recall}}{\text{precisão}+\text{recall}}.
+\end{equation}
+A AUC resume a curva ROC (TPR em função da FPR) para todos os limiares. TPR e FPR
+não dependem da proporção de falhas no conjunto; precisão e $F_1$ dependem. No
+teste, \SI{90}{\percent} das janelas são de falha (523 de 581), e um detector que
+alarmasse sempre teria precisão \num{0.90}, recall 1 e $F_1 = \num{0.947}$. Por
+isso a precisão é sempre lida contra essa prevalência, e a comparação principal
+entre detectores usa AUC, TPR e FPR~\cite{hastie2009}.
+
+\paragraph{Diagnóstico.} Para cada classe $c$, a precisão é a fração das janelas
+previstas como $c$ que são de fato $c$, e o recall é a fração das janelas de $c$
+reconhecidas como $c$ --- o mesmo que a acurácia por classe pedida pelo
+enunciado. O $F_1$ macro é a média simples dos $F_1$ das quatro classes, o que dá
+à classe normal, com 58 janelas, o mesmo peso das classes de falha, com cerca de
+175 cada.
 
 \section{Reprodutibilidade}
 \label{sec:reprodutibilidade}

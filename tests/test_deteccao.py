@@ -35,6 +35,13 @@ def test_metricas_deteccao():
     m = metricas_deteccao([1, 1, 0, 0], [0.9, 0.2, 0.1, 0.8], [True, False, False, True])
     assert m["auc"] == pytest.approx(0.75)
     assert m["tpr"] == 0.5 and m["fpr"] == 0.5
+    assert m["precisao"] == 0.5 and m["prevalencia"] == 0.5
+
+
+def test_detector_que_sempre_alarma_tem_precisao_igual_a_prevalencia():
+    eh_falha = [1] * 9 + [0]
+    m = metricas_deteccao(eh_falha, [1.0] * 10, [True] * 10)
+    assert m["tpr"] == 1.0 and m["precisao"] == pytest.approx(m["prevalencia"]) == pytest.approx(0.9)
 
 
 def test_erros_guardam_fn_e_fp_com_metadados():

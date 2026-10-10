@@ -148,3 +148,49 @@ def erros_classificacao(meta: pd.DataFrame, y_pred) -> pd.DataFrame:
     e = e.rename(columns={"classe": "verdadeira"})
     e["predita"] = y_pred[errou]
     return e
+
+
+# =============================================================================
+# Ganho de informação (árvores de decisão)
+# =============================================================================
+
+
+def entropia(contagens: np.ndarray) -> float:
+    """Entropia de Shannon (bits) de uma distribuição de classes."""
+    p = contagens[contagens > 0] / contagens.sum()
+    return float(-(p * np.log2(p)).sum())
+
+
+def ganho_informacao_raiz(x: pd.DataFrame, y) -> pd.DataFrame:
+    """Melhor ganho de informação de cada feature num corte binário único.
+
+    É a conta que uma árvore de decisão com critério de entropia (ID3/C4.5;
+    Quinlan, 1986) faz no nó raiz: para cada limiar t, ganho =
+    H(Y) - [n_esq H(Y|x<=t) + n_dir H(Y|x>t)] / n. Devolve, por feature, o
+    maior ganho, o limiar e as classes majoritárias de cada lado.
+    """
+    y = np.asarray(y)
+    classes, yi = np.unique(y, return_inverse=True)
+    k, n = len(classes), len(y)
+    h_total = entropia(np.bincount(yi, minlength=k).astype(float))
+    linhas = []
+    for col in x.columns:
+        v = x[col].to_numpy()
+        ordem = np.argsort(v, kind="stable")
+        vs, ys = v[ordem], yi[ordem]
+        cum = np.zeros((n, k))
+        cum[np.arange(n), ys] = 1
+        cum = cum.cumsum(axis=0)
+        total = cum[-1]
+        melhor = (-1.0, np.nan, None, None)
+        for i in np.nonzero(np.diff(vs) > 0)[0]:
+            esq, dir_ = cum[i], total - cum[i]
+            h = ((i + 1) * entropia(esq) + (n - i - 1) * entropia(dir_)) / n
+            g = h_total - h
+            if g > melhor[0]:
+                melhor = (g, (vs[i] + vs[i + 1]) / 2, classes[esq.argmax()], classes[dir_.argmax()])
+        linhas.append(
+            {"feature": col, "ganho_bits": melhor[0], "ganho_relativo": melhor[0] / h_total,
+             "limiar": melhor[1], "maioria_abaixo": melhor[2], "maioria_acima": melhor[3]}
+        )
+    return pd.DataFrame(linhas).sort_values("ganho_bits", ascending=False).reset_index(drop=True)

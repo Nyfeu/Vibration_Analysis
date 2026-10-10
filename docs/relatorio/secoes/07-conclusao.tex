@@ -2,12 +2,15 @@
 \chapter{Conclusão}
 \label{cap:conclusao}
 
-O trabalho avaliou duas tarefas sobre os dados de rolamentos do CWRU, sempre
-com treino em \SIlist{0;1;2}{\hp} e teste em \SI{3}{\hp}.
+O trabalho avaliou separadamente as duas tarefas do enunciado --- detectar que
+algo mudou e identificar o que mudou ---, sobre os dados de rolamentos do CWRU,
+sempre com treino em \SIlist{0;1;2}{\hp} e teste em \SI{3}{\hp}.
 
 \textbf{Detecção sem exemplos de falha.} Os detectores one-class treinados só com
 sinais normais separaram normal de falha com AUC de até \num{1.000} e TPR de
-\num{1.000}, com FPR de \num{0.12} no baseline de Mahalanobis. Esse resultado,
+\num{1.000}, com FPR de \num{0.12} e precisão de \num{0.99} no baseline de
+Mahalanobis --- precisão que, com \SI{90}{\percent} de falhas no teste, pouco
+informa. Esse resultado,
 porém, é explicado pelo nível de vibração: todas as gravações de falha vibram
 mais que as normais, inclusive as que não mostram o defeito, e o RMS sozinho
 atinge o mesmo AUC. Usando só o espectro de envelope, que carrega a assinatura
@@ -16,7 +19,9 @@ diagnosticabilidade do defeito.
 
 \textbf{Diagnóstico do tipo de falha.} O Random Forest com features de tempo e de
 envelope, escolhido por validação cruzada por carga e ajustado por busca em grade,
-atingiu \SI{95.7}{\percent} de acurácia, mas acerta a classe esfera sem que o
+atingiu \SI{95.7}{\percent} de acurácia e $F_1$ macro de \num{0.964}, mas a
+esfera, com recall de \num{0.99} e precisão de \num{0.88}, funciona como
+classe-refúgio, e o modelo a acerta sem que o
 defeito apareça no envelope do sinal bruto de nenhuma gravação, e reconhece como
 pista externa só \SI{40.0}{\percent} das janelas com o defeito em outra posição.
 Só com o envelope, a acurácia cai para \SI{67.6}{\percent} e a generalização sobe

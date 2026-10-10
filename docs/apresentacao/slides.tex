@@ -1,7 +1,7 @@
 % =============================================================================
 % Apresentação (máx. 5 min) — ECM514 Projeto Desafio
 % Compilação:  cd docs/apresentacao && make     (gera build/slides.pdf)
-% Roteiro de fala por integrante: roteiro.md (mesma pasta).
+% Roteiro de fala: roteiro.md (mesma pasta), só local — fora do Git.
 % Figuras lidas de results/figures/ e docs/relatorio/assets/, sem cópia.
 % Todos os números vêm de results/metrics/ (os mesmos do relatório).
 % =============================================================================
@@ -50,6 +50,11 @@
 
 % ---------------------------------------------------------------- 2 (André)
 \begin{frame}{O problema e os dados}
+  \begin{center}
+    \emph{``Detectar que algo mudou é um problema; identificar o que mudou é outro, mais difícil.''}\\
+    \nota{--- enunciado do projeto}
+  \end{center}
+  \vspace{-0.4em}
   \begin{columns}[T]
     \begin{column}{0.52\textwidth}
       \begin{itemize}
@@ -64,7 +69,7 @@
     \end{column}
     \begin{column}{0.45\textwidth}
       \centering
-      \includegraphics[width=\linewidth]{CWRU_teststand.jpeg}\\
+      \includegraphics[width=0.85\linewidth]{CWRU_teststand.jpeg}\\
       \nota{Bancada do CWRU (Case Western Reserve University)}
     \end{column}
   \end{columns}
@@ -144,7 +149,7 @@
     \begin{column}{0.49\textwidth}
       \begin{itemize}
         \item Falhas \emph{sem} defeito visível (200, 225): alarme em 100\%
-        \item Só com envelope: AUC 0,69--0,83, mas segue a física
+        \item Precisão 0,99? 90\% do teste é falha:\\ \destaque{alarmar sempre} já dá 0,90
       \end{itemize}
     \end{column}
   \end{columns}
@@ -167,14 +172,14 @@
     \toprule
     & \textbf{Random Forest} & \textbf{CNN 1D} \\
     \midrule
-    Acurácia no teste (\SI{3}{\hp}) & \textbf{95,7\%} & \textbf{99,7\%} \\
-    Esfera                          & 99,4\% & 100\% \\
-    Defeito em outra posição        & \destaque{40,0\%} & \destaque{64,1\%} \\
+    Acurácia no teste (\SI{3}{\hp})   & \textbf{95,7\%} & \textbf{99,7\%} \\
+    Esfera: precisão / recall         & 0,88 / 0,99 & 0,99 / 1,00 \\
+    Defeito em outra posição          & \destaque{40,0\%} & \destaque{64,1\%} \\
     \bottomrule
   \end{tabular}
 
   \vspace{0.6em}
-  \nota{RMS + pico = 56\% da importância no Random Forest; o escore da esfera, 3\%.}
+  \nota{Esfera vira ``classe-refúgio'' (recall alto, precisão baixa). RMS + pico = 56\% da importância; escore da esfera, 3\%.}
 \end{frame}
 
 % ---------------------------------------------------------------- 8 (Estevan)
@@ -203,6 +208,7 @@
 % ---------------------------------------------------------------- 9 (Estevan)
 \begin{frame}{Conclusões}
   \begin{itemize}
+    \item \textbf{Detectar} foi fácil demais (amplitude); \textbf{diagnosticar} não sobrevive a uma montagem nova
     \item No CWRU, \textbf{alta acurácia é fácil e diz pouco}: os modelos aprendem amplitude e montagem
     \item A \textbf{física generaliza} onde o aprendizado não generaliza
     \item O que funcionou: protocolo sem vazamento, ablações, validação física

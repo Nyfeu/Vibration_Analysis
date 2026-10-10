@@ -121,20 +121,31 @@ def resumo_validacao(v: pd.DataFrame) -> pd.DataFrame:
 
 
 def metricas_deteccao(eh_falha, escore, alarme) -> dict:
-    """AUC da curva ROC e TPR/FPR no limiar de alarme do detector.
+    """AUC da curva ROC e, no limiar de alarme, TPR, FPR, precisão e F1.
 
-    `eh_falha`: verdadeiro para janelas de falha (positivas). TPR = fração das
-    falhas com alarme; FPR = fração das normais com alarme.
+    `eh_falha`: verdadeiro para janelas de falha (positivas).
+    - TPR (recall) = fração das falhas com alarme;
+    - FPR = fração das normais com alarme;
+    - precisão = fração dos alarmes que são falhas;
+    - prevalência = fração de falhas no conjunto. A precisão só tem sentido
+      comparada a ela: um detector que alarma sempre tem precisão igual à
+      prevalência e recall 1.
     """
     from sklearn.metrics import roc_auc_score
 
     eh_falha = np.asarray(eh_falha, dtype=bool)
     alarme = np.asarray(alarme, dtype=bool)
     tem_as_duas = eh_falha.any() and (~eh_falha).any()
+    tp = int((alarme & eh_falha).sum())
+    precisao = tp / alarme.sum() if alarme.any() else np.nan
+    tpr = alarme[eh_falha].mean() if eh_falha.any() else np.nan
     return {
         "auc": roc_auc_score(eh_falha, escore) if tem_as_duas else np.nan,
-        "tpr": alarme[eh_falha].mean() if eh_falha.any() else np.nan,
+        "tpr": tpr,
         "fpr": alarme[~eh_falha].mean() if (~eh_falha).any() else np.nan,
+        "precisao": precisao,
+        "f1": 2 * precisao * tpr / (precisao + tpr) if (precisao + tpr) > 0 else np.nan,
+        "prevalencia": eh_falha.mean(),
         "n_falha": int(eh_falha.sum()),
         "n_normal": int((~eh_falha).sum()),
     }

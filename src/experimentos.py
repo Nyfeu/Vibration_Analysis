@@ -90,6 +90,19 @@ def tpr_por_grupo_smith(por_registro: pd.DataFrame) -> pd.DataFrame:
 # =============================================================================
 
 
+def _precisao_f1(y, p) -> dict:
+    """Precisão por classe e F1 macro. A acurácia por classe já é o recall."""
+    from sklearn.metrics import f1_score, precision_score
+
+    from src.data import ORDEM_CLASSES
+
+    prec = precision_score(y, p, labels=ORDEM_CLASSES, average=None, zero_division=0)
+    return {
+        **{f"prec_{c}": v for c, v in zip(ORDEM_CLASSES, prec)},
+        "f1_macro": f1_score(y, p, labels=ORDEM_CLASSES, average="macro", zero_division=0),
+    }
+
+
 def rodar_classificacao(F, meta, Fg, meta_g, conjuntos=None, modelos=("Random Forest", "SVM (RBF)")):
     """Roteiro das aulas, para cada conjunto de features:
 
@@ -139,7 +152,8 @@ def rodar_classificacao(F, meta, Fg, meta_g, conjuntos=None, modelos=("Random Fo
             acc = acuracia_por_classe(y, p)
             metricas.append(
                 {**tag, "cv_por_carga": busca.best_score_, "acuracia": (p == y).mean(),
-                 **{f"acc_{c}": v for c, v in acc.items()}, "generalizacao_OR": (pg == "OR").mean()}
+                 **{f"acc_{c}": v for c, v in acc.items()}, **_precisao_f1(y, p),
+                 "generalizacao_OR": (pg == "OR").mean()}
             )
             matrizes[(conj, nome)] = matriz_confusao(y, p)
             relatorios[(conj, nome)] = pd.DataFrame(
@@ -206,7 +220,7 @@ def rodar_cnn(meta=None, entradas=None):
         acc = acuracia_por_classe(y, p)
         metricas.append(
             {**tag, "acuracia": (p == y).mean(), **{f"acc_{c}": v for c, v in acc.items()},
-             "generalizacao_OR": (pg == "OR").mean()}
+             **_precisao_f1(y, p), "generalizacao_OR": (pg == "OR").mean()}
         )
         matrizes[(f"sinal {entrada}", "CNN 1D")] = matriz_confusao(y, p)
         d = meta_te.assign(acerto=p == y, predita=p)

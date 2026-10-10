@@ -242,6 +242,22 @@ fronteira de margem máxima entre as classes, com \emph{kernel} para fronteiras
 não lineares. As implementações são as do
 \texttt{scikit-learn}~\cite{pedregosa2011}.
 
+\paragraph{Árvores de decisão e ganho de informação.} Cada árvore do Random
+Forest divide os dados recursivamente, escolhendo em cada nó a feature e o limiar
+que mais reduzem a impureza das classes. Com a entropia de Shannon como medida de
+impureza, $H(Y) = -\sum_c p_c \log_2 p_c$, a redução obtida por um corte é o
+\emph{ganho de informação}~\cite{quinlan1986}:
+\begin{equation}
+  \text{GI}(Y; x \le t) = H(Y) - \frac{n_{\le}}{n} H(Y \mid x \le t) - \frac{n_{>}}{n} H(Y \mid x > t),
+\end{equation}
+em que $n_{\le}$ e $n_{>}$ são os números de amostras de cada lado do limiar $t$.
+O índice de Gini, $1 - \sum_c p_c^2$, é a alternativa usada pelo CART e o padrão
+do \texttt{scikit-learn}~\cite{breiman1984}. A importância de uma feature no Random
+Forest é a redução de impureza que ela proporciona, somada em todos os nós e
+árvores~\cite{breiman2001}. O ganho de informação tem, portanto, uma leitura
+direta: diz quanto da incerteza sobre a classe uma feature remove sozinha --- e,
+neste trabalho, serve para ver \emph{em que} o classificador se apoia.
+
 \paragraph{Seleção de modelos com validação cruzada agrupada.} Os modelos e seus
 hiperparâmetros são escolhidos por validação cruzada no conjunto de treino. A
 validação cruzada estima o desempenho em dados não vistos treinando em parte dos
