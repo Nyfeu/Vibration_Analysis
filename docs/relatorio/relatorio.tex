@@ -151,10 +151,29 @@
 \imprimirfolhaderosto
 
 \begin{resumo}
-  TODO(grupo): resumo em português, 150--500 palavras, parágrafo único.
-  Escrever \emph{por último}, quando os resultados existirem. Deve conter:
-  problema, dataset, técnicas aplicadas, principal resultado numérico e a
-  principal limitação encontrada.
+  Este trabalho avalia a detecção de anomalias e o diagnóstico do tipo de
+  defeito em rolamentos a partir de sinais de vibração do conjunto da Case
+  Western Reserve University (CWRU), usando o acelerômetro do lado do
+  acionamento a 12~kHz, quatro classes (normal, pista interna, pista externa e
+  esfera) e um protocolo sem vazamento, com treino nas cargas de 0 a 2~HP e teste
+  em 3~HP. As gravações normais, feitas a 48~kHz, foram decimadas, e todas as
+  gravações passaram pela mesma banda de 0 a 4,8~kHz. De cada janela de 4096
+  amostras extraíram-se features do domínio do tempo e escores do espectro de
+  envelope nas frequências características do rolamento. Uma validação física,
+  sem modelo treinado, confirmou o defeito declarado em todas as 12 gravações de
+  pista interna, em 8 de 12 de pista externa e em nenhuma de esfera, concordando
+  com a auditoria de Smith e Randall (2015) em 50 de 52 gravações de falha. Quatro
+  detectores treinados só com dados normais (Mahalanobis, Isolation Forest,
+  One-Class SVM e autoencoder) atingiram AUC de até 1,00, e o Random Forest
+  classificou 95,7\% das janelas de teste corretamente. A investigação desses
+  resultados mostrou que eles não decorrem de vazamento, mas de um atalho de
+  amplitude: o RMS sozinho separa normal de falha, inclusive nas gravações sem
+  assinatura do defeito, e o classificador acerta 99\% da classe esfera sem que
+  o defeito apareça no envelope. Com features só de envelope, a acurácia no teste
+  cai para 67,6\%, mas a generalização para o defeito em outra posição sobe de
+  45,6\% para 76,0\%. A principal limitação é do próprio conjunto de dados: com
+  quatro gravações normais e cada defeito ensaiado numa única montagem, alta
+  acurácia no CWRU é fácil e diz pouco sobre o diagnóstico do defeito.
 
   \textbf{Palavras-chave}: manutenção preditiva; detecção de anomalias;
   rolamentos; análise de envelope; CWRU.
@@ -162,7 +181,30 @@
 
 \begin{resumo}[Abstract]
   \begin{otherlanguage*}{english}
-    TODO(grupo): versão em inglês do resumo.
+    This work evaluates anomaly detection and fault-type diagnosis in rolling
+    element bearings from vibration signals of the Case Western Reserve
+    University (CWRU) data set, using the drive-end accelerometer at 12~kHz,
+    four classes (normal, inner race, outer race and ball) and a leakage-free
+    protocol, training on loads of 0 to 2~HP and testing on 3~HP. The normal
+    records, sampled at 48~kHz, were decimated, and all records were limited to
+    the same 0--4.8~kHz band. Time-domain features and envelope-spectrum scores
+    at the bearing characteristic frequencies were extracted from each
+    4096-sample window. A physical validation, with no trained model, confirmed
+    the declared fault in all 12 inner race records, in 8 of 12 outer race
+    records and in none of the ball records, agreeing with the audit by Smith
+    and Randall (2015) in 50 of 52 fault records. Four detectors trained on
+    normal data only (Mahalanobis, Isolation Forest, One-Class SVM and
+    autoencoder) reached an AUC of up to 1.00, and a Random Forest classified
+    95.7\% of the test windows correctly. Investigating these results showed
+    that they do not come from data leakage but from an amplitude shortcut: the
+    RMS alone separates normal from faulty records, including those without a
+    fault signature, and the classifier gets 99\% of the ball class right
+    although the fault does not appear in the envelope. With envelope features
+    only, test accuracy drops to 67.6\%, but generalization to a fault at a
+    different position rises from 45.6\% to 76.0\%. The main limitation lies
+    in the data set itself: with four normal records and each fault tested on a
+    single assembly, high accuracy on CWRU is easy and says little about fault
+    diagnosis.
 
     \textbf{Keywords}: predictive maintenance; anomaly detection; rolling
     element bearings; envelope analysis; CWRU.

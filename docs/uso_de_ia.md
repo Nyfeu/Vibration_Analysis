@@ -15,7 +15,7 @@
 
 | Ferramenta | Versão / modelo | Usada para |
 |---|---|---|
-| Claude Code | Claude Opus 5.5 (`claude-opus-5-5`) | Download e verificação dos dados, scripts, documentação |
+| Claude Code | Claude Opus 5.5 (`claude-opus-5-5`) | Download e verificação dos dados, scripts, documentação, depuração de bugs e escrita de código |
 
 ---
 
@@ -29,6 +29,7 @@
 | 4 | 2026-10-06 | Claude Code | Refletir a decisão da posição do defeito em pista externa (issue #5) no carregamento e na Tabela 1 do relatório | `src/data.py`: constantes `POSICAO_OR_PRINCIPAL` (@6) e `POSICOES_OR_GENERALIZACAO` (@3, @12) e função `catalogo()`, que seleciona os registros dos conjuntos principal (40) e de generalização (16) a partir do manifesto; linha de @3/@12 na Tabela 1 de `02-dataset.tex` | _a preencher pelo grupo_ | _pendente_ | `src/data.py`, `docs/relatorio/secoes/02-dataset.tex` |
 | 5 | 2026-10-06 | Claude Code | Ajudar a redigir o capítulo de descrição do dataset | Rascunho completo de `02-dataset.tex` (origem e setup, justificativa da configuração, registros utilizados, taxa de 48 kHz dos normais, gravações e duração por classe, resumo da auditoria), a partir de fontes já conferidas; data de acesso do CWRU no `.bib`. Contagem de janelas mantida como `TODO(grupo)` | _a preencher pelo grupo_ | _pendente_ | `docs/relatorio/secoes/02-dataset.tex`, `docs/relatorio/referencias.bib` |
 | 6 | 2026-10-10 | Claude Code | Revisar os módulos de features dos PRs #36 e #37 e alinhá-los à estrutura do CLAUDE.md e à referência bibliográfica | Revisão (fórmulas conferidas contra o CWRU e Smith & Randall, testes de casos-limite); código de `src/bearing_frequencies.py` e `src/time_features.py` movido sem mudança de lógica para `src/features.py`; convenção de BSF (Smith & Randall) declarada nos comentários e no CLAUDE.md; imports dos testes atualizados | _a preencher pelo grupo_ | _pendente_ | `src/features.py`, `tests/`, `CLAUDE.md` |
+| 7 | 2026-10-10 | Claude Code | Assistência para depuração de bugs e assistência na escrita de código | _a preencher pelo grupo_ | _a preencher pelo grupo_ | _pendente_ | `src/`, `scripts/`, `tests/`, `notebooks/projeto.ipynb` |
 
 ---
 
