@@ -19,9 +19,11 @@ from dataclasses import dataclass
 
 import numpy as np
 import pandas as pd
+from sklearn.base import BaseEstimator, OutlierMixin
 from sklearn.covariance import EmpiricalCovariance
 from sklearn.ensemble import IsolationForest
 from sklearn.neural_network import MLPRegressor
+from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import OneClassSVM
 
@@ -35,83 +37,62 @@ BASELINES = ("mahalanobis", "isolation_forest")
 DETECTORES = BASELINES + ("ocsvm", "autoencoder")
 
 
-class _Mahalanobis:
-    """Distância de Mahalanobis à média dos normais (Mahalanobis, 1936)."""
+class Mahalanobis(OutlierMixin, BaseEstimator):
+    """Distância de Mahalanobis à média dos normais (Mahalanobis, 1936).
+    `score_samples` segue a convenção do scikit-learn: maior = mais normal."""
 
-    def fit(self, x):
+    def fit(self, x, y=None):
         self.cov_ = EmpiricalCovariance().fit(x)
         return self
 
-    def score(self, x):
-        return np.sqrt(self.cov_.mahalanobis(x))
+    def score_samples(self, x):
+        return -np.sqrt(self.cov_.mahalanobis(x))
 
 
-class _IsolationForest:
-    """Isolation Forest (Liu; Ting; Zhou, 2008): menos cortes = mais anômalo."""
-
-    def fit(self, x):
-        self.m_ = IsolationForest(n_estimators=300, random_state=SEED).fit(x)
-        return self
-
-    def score(self, x):
-        return -self.m_.score_samples(x)
-
-
-class _OCSVM:
-    """One-Class SVM com kernel RBF (Schölkopf et al., 2001).
-
-    nu = 0,05: fração máxima de normais de treino fora da fronteira.
-    """
-
-    def fit(self, x):
-        self.m_ = OneClassSVM(kernel="rbf", gamma="scale", nu=0.05).fit(x)
-        return self
-
-    def score(self, x):
-        return -self.m_.score_samples(x)
-
-
-class _Autoencoder:
+class Autoencoder(OutlierMixin, BaseEstimator):
     """Autoencoder raso (Hinton; Salakhutdinov, 2006): MLP treinada para
     reconstruir a própria entrada por um gargalo de 3 neurônios; o escore é o
     erro quadrático médio de reconstrução. Implementado com o MLPRegressor do
-    scikit-learn, suficiente para 8 features e sem exigir PyTorch no Colab.
-    """
+    scikit-learn, suficiente para 8 features e sem exigir PyTorch."""
 
-    def fit(self, x):
-        self.m_ = MLPRegressor(
-            hidden_layer_sizes=(6, 3, 6),
-            activation="tanh",
-            alpha=1e-3,
-            max_iter=5000,
-            random_state=SEED,
+    def fit(self, x, y=None):
+        self.mlp_ = MLPRegressor(
+            hidden_layer_sizes=(6, 3, 6), activation="tanh", alpha=1e-3,
+            max_iter=5000, random_state=SEED,
         ).fit(x, x)
         return self
 
-    def score(self, x):
-        return np.mean((self.m_.predict(x) - x) ** 2, axis=1)
+    def score_samples(self, x):
+        return -np.mean((self.mlp_.predict(x) - x) ** 2, axis=1)
 
 
-_FABRICA = {
-    "mahalanobis": _Mahalanobis,
-    "isolation_forest": _IsolationForest,
-    "ocsvm": _OCSVM,
-    "autoencoder": _Autoencoder,
-}
+def novo_detector(nome: str):
+    """Modelo one-class não treinado (último passo do pipeline)."""
+    if nome == "mahalanobis":
+        return Mahalanobis()
+    if nome == "isolation_forest":
+        # Liu; Ting; Zhou (2008): menos cortes até isolar = mais anômalo.
+        return IsolationForest(n_estimators=300, random_state=SEED)
+    if nome == "ocsvm":
+        # Schölkopf et al. (2001); nu = fração máxima de normais fora da fronteira.
+        return OneClassSVM(kernel="rbf", gamma="scale", nu=0.05)
+    if nome == "autoencoder":
+        return Autoencoder()
+    raise ValueError(f"detector desconhecido: {nome}")
 
 
 @dataclass
 class Detector:
-    """Detector treinado: padronização + modelo + limiar de alarme."""
+    """Pipeline treinado (scaler + modelo one-class) e limiar de alarme."""
 
     nome: str
     features: list[str]
-    escalador: StandardScaler
-    modelo: object
+    pipeline: Pipeline
     limiar: float
 
     def escore(self, f: pd.DataFrame) -> np.ndarray:
-        return self.modelo.score(self.escalador.transform(f[self.features].to_numpy()))
+        """Escore de anomalia: maior = mais anômalo."""
+        return -self.pipeline.score_samples(f[self.features])
 
     def alarme(self, f: pd.DataFrame) -> np.ndarray:
         return self.escore(f) > self.limiar
@@ -122,7 +103,8 @@ def treinar_detector(
 ) -> Detector:
     """Treina um detector one-class. Falha se houver janela não normal no treino.
 
-    A padronização (média e desvio) também é estimada só com os normais.
+    O pipeline padroniza as features com o StandardScaler ajustado só nos
+    normais de treino.
     """
     classes = pd.Series(np.asarray(classes_treino))
     if len(classes) != len(f_treino):
@@ -131,8 +113,8 @@ def treinar_detector(
         outras = sorted(set(classes) - {"normal"})
         raise ValueError(f"treino one-class com classes não normais: {outras}")
 
-    x = f_treino[features].to_numpy()
-    esc = StandardScaler().fit(x)
-    modelo = _FABRICA[nome]().fit(esc.transform(x))
-    limiar = float(np.percentile(modelo.score(esc.transform(x)), PERCENTIL_LIMIAR))
-    return Detector(nome, list(features), esc, modelo, limiar)
+    x = f_treino[list(features)]
+    pipe = Pipeline([("scaler", StandardScaler()), ("modelo", novo_detector(nome))]).fit(x)
+    det = Detector(nome, list(features), pipe, np.nan)
+    det.limiar = float(np.percentile(det.escore(f_treino), PERCENTIL_LIMIAR))
+    return det

@@ -251,8 +251,23 @@ O espectro de envelope segue o ``método 1'' de \textcite[p.~104]{smith2015}:
 envelope ao quadrado do sinal analítico, sem filtro de banda adicional, e
 espectro desse envelope (SES), com a média removida e janela de Hann. O sinal já
 chega limitado à banda comum de \SIrange{0}{4.8}{\kilo\hertz}
-(\autoref{sec:banda-comum}), que faz o papel de banda de demodulação. A escolha
-de uma banda ótima por curtose espectral~\cite{antoni2007} fica como extensão.
+(\autoref{sec:banda-comum}), que faz o papel de banda de demodulação.
+
+Na validação física, dois pré-processamentos adicionais são comparados com o
+sinal bruto (\autoref{sec:tec-envelope}):
+\begin{itemize}
+  \item \textbf{pré-branqueamento cepstral}: o espectro do sinal tem a magnitude
+  igualada a 1 e a fase mantida, e o sinal volta ao tempo antes do envelope
+  (equivalente ao ``método 2'' de \textcite[p.~104]{smith2015});
+  \item \textbf{kurtograma}: a curtose espectral é estimada pela STFT, com janelas
+  de Hann de 8, 16 e 32 amostras (larguras de banda de 1500, 750 e
+  \SI{375}{\hertz}), e o sinal é filtrado (Butterworth de ordem 4, fase zero) na
+  banda de maior curtose espectral dentro de \SIrange{0}{4.8}{\kilo\hertz}.
+  Bandas mais estreitas que três vezes a maior BPFI (\SI{487}{\hertz}) são
+  descartadas, para que a banda contenha a modulação do defeito. Diferentemente
+  do ``método 3'' do artigo, não há separação prévia de componentes discretos
+  (DRS).
+\end{itemize}
 
 Do SES extrai-se um escore por família de defeito (BPFO, BPFI e BSF). Para cada
 harmônico considerado, toma-se o maior valor do SES dentro da tolerância de
@@ -329,20 +344,54 @@ se o detector reage mais às gravações em que o defeito é fisicamente visíve
 \label{sec:met-classificacao}
 
 A classificação usa todas as janelas de treino (\num{1710}), com as quatro
-classes, e é avaliada nas 581 janelas de \SI{3}{\hp}. Dois classificadores são
-comparados (\autoref{sec:tec-classificacao}): Random Forest com 500 árvores e
-SVM com \emph{kernel} RBF ($C = 10$) sobre features padronizadas. Ambos usam
-pesos inversamente proporcionais à frequência de cada classe, porque o treino
-tem 144 janelas normais contra cerca de 520 de cada falha. Não há ajuste de
-hiperparâmetros: uma busca exigiria separar parte do treino para validação, e com
-três cargas e uma gravação por combinação de defeito e carga, qualquer divisão
-interna também teria de ser por carga, deixando o treino ainda menor.
-
-As métricas são a acurácia global e por classe, e a matriz de confusão completa
-(Apêndice~\ref{ap:matrizes}). A severidade entra como recorte secundário: a
+classes, e segue o roteiro usual de seleção de modelos:
+\begin{enumerate}
+  \item \textbf{Pipeline.} Cada modelo é um \texttt{Pipeline} do
+  \texttt{scikit-learn} com um \texttt{StandardScaler} seguido do classificador.
+  A padronização é ajustada só nos dados de treino de cada etapa, o que evita
+  vazamento da média e do desvio.
+  \item \textbf{Seleção de modelos.} Cinco candidatos --- Regressão Logística,
+  KNN com $k = 3$ e $k = 9$, Random Forest e SVM com \emph{kernel} RBF --- são
+  comparados pela acurácia média na validação cruzada do treino. Os que aceitam
+  pesos por classe usam pesos inversamente proporcionais à frequência, porque o
+  treino tem 144 janelas normais contra cerca de 520 de cada falha.
+  \item \textbf{Validação cruzada por carga.} A validação é
+  \texttt{LeaveOneGroupOut} com o grupo igual à carga: são três partições, e cada
+  uma deixa uma carga inteira (0, 1 ou \SI{2}{\hp}) de fora, a mesma lógica do
+  teste em \SI{3}{\hp}~\cite{roberts2017}. Para quantificar o vazamento, a mesma
+  conta é feita com um \texttt{StratifiedKFold} de cinco partições embaralhadas,
+  que espalha janelas de uma mesma gravação entre treino e validação.
+  \item \textbf{Busca em grade.} Random Forest e SVM têm os hiperparâmetros
+  ajustados por \texttt{GridSearchCV}, com a mesma validação por carga. Grade do
+  Random Forest: número de árvores (100, 300, 500), profundidade máxima (sem
+  limite, 5, 10) e mínimo de amostras por folha (1, 5). Grade do SVM: $C$ (0,1,
+  1, 10, 100) e $\gamma$ (\emph{scale}, 0,01, 0,1, 1). O melhor pipeline de cada
+  busca é reajustado com todo o treino.
+  \item \textbf{Avaliação.} O pipeline final é avaliado uma única vez nas 581
+  janelas de \SI{3}{\hp}, com acurácia global e por classe,
+  \emph{classification report} e matriz de confusão completa
+  (Apêndice~\ref{ap:matrizes}).
+\end{enumerate}
+Os passos 2 a 5 são repetidos para cada conjunto de features. A severidade entra como recorte secundário: a
 acurácia é desagregada por diâmetro do defeito, sem transformar os diâmetros em
 classes. O classificador é aplicado também ao conjunto de generalização, em que
-o resultado correto é sempre ``pista externa''.
+o resultado correto é sempre ``pista externa''. Esse conjunto faz o papel de
+``casos novos'' para a predição.
+
+\subsection{CNN 1D}
+\label{sec:met-cnn}
+
+Como contraponto às features (\autoref{sec:tec-classificacao}), uma CNN 1D
+classifica diretamente as janelas de 4096 amostras. A arquitetura segue a WDCNN
+de \textcite{zhang2017}: uma primeira convolução de 16 filtros com
+\emph{kernel} de 64 amostras e passo 16, seguida de três blocos de convolução
+com \emph{kernel} 3 (32, 64 e 64 filtros), cada um com normalização em lote,
+ReLU e \emph{max pooling}; ao final, média global, \emph{dropout} de
+\num{0.3} e camada linear para as quatro classes. O treino usa Adam (taxa
+$10^{-3}$), lotes de 64 janelas, 30 épocas e entropia cruzada com pesos por
+classe, com a semente do projeto. Duas entradas são comparadas, mantendo a
+ablação de amplitude: o sinal como gravado e cada janela normalizada para média
+zero e desvio unitário. A rede é implementada em PyTorch.
 
 \section{Reprodutibilidade}
 \label{sec:reprodutibilidade}

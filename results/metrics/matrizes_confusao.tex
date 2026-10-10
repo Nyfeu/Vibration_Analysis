@@ -18,16 +18,16 @@
 
 \begin{table}[htb]
   \centering
-  \caption{Matriz de confusão: SVM, features ``tempo'', teste em \SI{3}{\hp} (janelas).}
+  \caption{Matriz de confusão: SVM (RBF), features ``tempo'', teste em \SI{3}{\hp} (janelas).}
   \label{tab:confusao-svm-tempo}
   \begin{tabular}{lcccc}
     \toprule
     \textbf{Verdadeira $\backslash$ Predita} & \textbf{Normal} & \textbf{Pista interna} & \textbf{Esfera} & \textbf{Pista externa} \\
     \midrule
     Normal & 58 & 0 & 0 & 0 \\
-    Pista interna & 0 & 166 & 9 & 0 \\
-    Esfera & 0 & 6 & 163 & 5 \\
-    Pista externa & 0 & 0 & 19 & 155 \\
+    Pista interna & 0 & 157 & 18 & 0 \\
+    Esfera & 0 & 4 & 168 & 2 \\
+    Pista externa & 0 & 0 & 18 & 156 \\
     \bottomrule
   \end{tabular}
   \fonte{Gerada por \texttt{scripts/gerar\_artefatos\_classificacao.py}.}
@@ -52,16 +52,16 @@
 
 \begin{table}[htb]
   \centering
-  \caption{Matriz de confusão: SVM, features ``envelope'', teste em \SI{3}{\hp} (janelas).}
+  \caption{Matriz de confusão: SVM (RBF), features ``envelope'', teste em \SI{3}{\hp} (janelas).}
   \label{tab:confusao-svm-envelope}
   \begin{tabular}{lcccc}
     \toprule
     \textbf{Verdadeira $\backslash$ Predita} & \textbf{Normal} & \textbf{Pista interna} & \textbf{Esfera} & \textbf{Pista externa} \\
     \midrule
-    Normal & 4 & 0 & 49 & 5 \\
-    Pista interna & 2 & 167 & 6 & 0 \\
-    Esfera & 38 & 22 & 108 & 6 \\
-    Pista externa & 19 & 1 & 49 & 105 \\
+    Normal & 3 & 0 & 49 & 6 \\
+    Pista interna & 0 & 169 & 1 & 5 \\
+    Esfera & 34 & 17 & 105 & 18 \\
+    Pista externa & 18 & 1 & 42 & 113 \\
     \bottomrule
   \end{tabular}
   \fonte{Gerada por \texttt{scripts/gerar\_artefatos\_classificacao.py}.}
@@ -76,9 +76,9 @@
     \textbf{Verdadeira $\backslash$ Predita} & \textbf{Normal} & \textbf{Pista interna} & \textbf{Esfera} & \textbf{Pista externa} \\
     \midrule
     Normal & 58 & 0 & 0 & 0 \\
-    Pista interna & 0 & 169 & 6 & 0 \\
+    Pista interna & 0 & 171 & 4 & 0 \\
     Esfera & 0 & 0 & 173 & 1 \\
-    Pista externa & 0 & 0 & 18 & 156 \\
+    Pista externa & 0 & 0 & 20 & 154 \\
     \bottomrule
   \end{tabular}
   \fonte{Gerada por \texttt{scripts/gerar\_artefatos\_classificacao.py}.}
@@ -86,15 +86,15 @@
 
 \begin{table}[htb]
   \centering
-  \caption{Matriz de confusão: SVM, features ``tempo+envelope'', teste em \SI{3}{\hp} (janelas).}
+  \caption{Matriz de confusão: SVM (RBF), features ``tempo+envelope'', teste em \SI{3}{\hp} (janelas).}
   \label{tab:confusao-svm-tempo-envelope}
   \begin{tabular}{lcccc}
     \toprule
     \textbf{Verdadeira $\backslash$ Predita} & \textbf{Normal} & \textbf{Pista interna} & \textbf{Esfera} & \textbf{Pista externa} \\
     \midrule
-    Normal & 57 & 0 & 1 & 0 \\
+    Normal & 58 & 0 & 0 & 0 \\
     Pista interna & 0 & 174 & 1 & 0 \\
-    Esfera & 1 & 0 & 167 & 6 \\
+    Esfera & 1 & 0 & 168 & 5 \\
     Pista externa & 2 & 0 & 20 & 152 \\
     \bottomrule
   \end{tabular}
@@ -109,10 +109,10 @@
     \toprule
     \textbf{Verdadeira $\backslash$ Predita} & \textbf{Normal} & \textbf{Pista interna} & \textbf{Esfera} & \textbf{Pista externa} \\
     \midrule
-    Normal & 3 & 0 & 41 & 14 \\
-    Pista interna & 0 & 154 & 21 & 0 \\
-    Esfera & 4 & 1 & 119 & 50 \\
-    Pista externa & 7 & 0 & 34 & 133 \\
+    Normal & 4 & 0 & 40 & 14 \\
+    Pista interna & 0 & 126 & 49 & 0 \\
+    Esfera & 4 & 0 & 116 & 54 \\
+    Pista externa & 9 & 0 & 31 & 134 \\
     \bottomrule
   \end{tabular}
   \fonte{Gerada por \texttt{scripts/gerar\_artefatos\_classificacao.py}.}
@@ -120,16 +120,50 @@
 
 \begin{table}[htb]
   \centering
-  \caption{Matriz de confusão: SVM, features ``forma'', teste em \SI{3}{\hp} (janelas).}
+  \caption{Matriz de confusão: SVM (RBF), features ``forma'', teste em \SI{3}{\hp} (janelas).}
   \label{tab:confusao-svm-forma}
   \begin{tabular}{lcccc}
     \toprule
     \textbf{Verdadeira $\backslash$ Predita} & \textbf{Normal} & \textbf{Pista interna} & \textbf{Esfera} & \textbf{Pista externa} \\
     \midrule
-    Normal & 12 & 0 & 38 & 8 \\
-    Pista interna & 0 & 170 & 5 & 0 \\
-    Esfera & 15 & 0 & 122 & 37 \\
-    Pista externa & 20 & 0 & 26 & 128 \\
+    Normal & 14 & 0 & 37 & 7 \\
+    Pista interna & 0 & 171 & 4 & 0 \\
+    Esfera & 16 & 0 & 127 & 31 \\
+    Pista externa & 20 & 0 & 27 & 127 \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Gerada por \texttt{scripts/gerar\_artefatos\_classificacao.py}.}
+\end{table}
+
+\begin{table}[htb]
+  \centering
+  \caption{Matriz de confusão: CNN 1D, entrada ``sinal bruto'', teste em \SI{3}{\hp} (janelas).}
+  \label{tab:confusao-cnn-1d-sinal-bruto}
+  \begin{tabular}{lcccc}
+    \toprule
+    \textbf{Verdadeira $\backslash$ Predita} & \textbf{Normal} & \textbf{Pista interna} & \textbf{Esfera} & \textbf{Pista externa} \\
+    \midrule
+    Normal & 58 & 0 & 0 & 0 \\
+    Pista interna & 0 & 158 & 17 & 0 \\
+    Esfera & 0 & 0 & 174 & 0 \\
+    Pista externa & 0 & 0 & 0 & 174 \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Gerada por \texttt{scripts/gerar\_artefatos\_classificacao.py}.}
+\end{table}
+
+\begin{table}[htb]
+  \centering
+  \caption{Matriz de confusão: CNN 1D, entrada ``sinal normalizado'', teste em \SI{3}{\hp} (janelas).}
+  \label{tab:confusao-cnn-1d-sinal-normalizado}
+  \begin{tabular}{lcccc}
+    \toprule
+    \textbf{Verdadeira $\backslash$ Predita} & \textbf{Normal} & \textbf{Pista interna} & \textbf{Esfera} & \textbf{Pista externa} \\
+    \midrule
+    Normal & 58 & 0 & 0 & 0 \\
+    Pista interna & 0 & 173 & 2 & 0 \\
+    Esfera & 0 & 0 & 174 & 0 \\
+    Pista externa & 0 & 0 & 0 & 174 \\
     \bottomrule
   \end{tabular}
   \fonte{Gerada por \texttt{scripts/gerar\_artefatos\_classificacao.py}.}

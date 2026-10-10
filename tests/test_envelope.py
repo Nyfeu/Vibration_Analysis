@@ -62,3 +62,27 @@ def test_validacao_fisica_concorda_com_smith_e_randall():
     assert r.loc["IR", "confirmadas"] == 12
     assert r.loc["OR @6", "confirmadas"] == r.loc["OR @6", "smith_m1_Y"]
     assert r["concorda_com_m1"].sum() >= 48  # de 52 gravações de falha
+
+
+def test_kurtograma_respeita_banda_minima_e_banda_comum(manifesto):
+    from src.features import BANDA_MIN_HZ, banda_kurtograma
+
+    x = carregar_sinal(manifesto.loc[105])
+    f_baixa, f_alta, sk = banda_kurtograma(x, FS_HZ)
+    assert f_alta - f_baixa >= BANDA_MIN_HZ - 1e-6
+    assert 0 < f_baixa < f_alta <= 4800
+    assert np.isfinite(sk)
+
+
+def test_prebranqueamento_iguala_a_magnitude_do_espectro(manifesto):
+    from src.features import prebranquear
+
+    y = prebranquear(carregar_sinal(manifesto.loc[130])[:8192])
+    mag = np.abs(np.fft.rfft(y))[1:-1]
+    assert np.allclose(mag, 1.0, atol=1e-6)
+
+
+def test_prebranqueamento_recupera_bsf_em_222_e_223():
+    # Smith & Randall (2015, Tab. B2): 222 e 223 são Y2 pelo método 2.
+    v = validacao_fisica(preprocessamento="prebranqueado").set_index("registro")
+    assert v.loc[222, "confirmada"] and v.loc[223, "confirmada"]

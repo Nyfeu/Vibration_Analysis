@@ -90,50 +90,61 @@ def tpr_por_grupo_smith(por_registro: pd.DataFrame) -> pd.DataFrame:
 # =============================================================================
 
 
-def rodar_classificacao(F, meta, Fg, meta_g, conjuntos=None, classificadores=None):
-    """Treina em 0/1/2 HP e avalia em 3 HP; aplica também ao conjunto de
-    generalização (pista externa a 3 h e 12 h, nunca vista no treino).
+def rodar_classificacao(F, meta, Fg, meta_g, conjuntos=None, modelos=("Random Forest", "SVM (RBF)")):
+    """Roteiro das aulas, para cada conjunto de features:
 
-    Devolve um dicionário com:
-    - metricas: acurácia global, por classe e taxa de "OR" na generalização;
-    - matrizes: {(conjunto, classificador): matriz de confusão completa};
-    - por_registro: classe predita majoritária e fração de acerto por gravação;
-    - severidade: acurácia por classe e diâmetro do defeito (eixo secundário);
-    - generalizacao: predições por posição, diâmetro e carga;
-    - erros: janelas classificadas errado;
-    - importancias: importância das features no Random Forest.
+    1. seleção de modelos: acurácia de todos os candidatos na validação cruzada
+       do treino (por carga, e embaralhada só para comparação);
+    2. GridSearchCV dos modelos em `modelos`, com CV por carga;
+    3. o melhor pipeline de cada busca é avaliado no teste (3 HP) e aplicado
+       ao conjunto de generalização (pista externa a 3 h e 12 h).
+
+    Devolve um dicionário com metricas, selecao, melhores_parametros,
+    matrizes, relatorios (classification_report), por_registro, severidade,
+    generalizacao, erros e importancias (Random Forest).
     """
+    from sklearn.metrics import classification_report
+
     from src.classification import (
-        CLASSIFICADORES,
         acuracia_por_classe,
+        ajustar_hiperparametros,
         erros_classificacao,
         matriz_confusao,
-        novo_classificador,
+        selecionar_modelos,
     )
     from src.evaluation import ler_auditoria
 
     conjuntos = conjuntos or list(CONJUNTOS_FEATURES)
-    classificadores = classificadores or CLASSIFICADORES
     treino, teste = split_por_carga(meta)
     meta_te = meta[teste].reset_index(drop=True)
+    y_tr = meta.loc[treino, "classe"]
+    cargas_tr = meta.loc[treino, "carga_hp"]
     aud = ler_auditoria()[["registro", "grupo"]]
 
-    metricas, matrizes, por_reg, sev, gen, erros, imp = [], {}, [], [], [], [], []
+    metricas, selecao, params, matrizes, relatorios = [], [], [], {}, {}
+    por_reg, sev, gen, erros, imp = [], [], [], [], []
     for conj in conjuntos:
         cols = CONJUNTOS_FEATURES[conj]
-        for nome in classificadores:
-            clf = novo_classificador(nome).fit(F.loc[treino, cols], meta.loc[treino, "classe"])
+        x_tr = F.loc[treino, cols]
+        selecao.append(selecionar_modelos(x_tr, y_tr, cargas_tr).assign(features=conj))
+        for nome in modelos:
+            busca = ajustar_hiperparametros(nome, x_tr, y_tr, cargas_tr)
+            clf = busca.best_estimator_
             p = clf.predict(F.loc[teste, cols])
             pg = clf.predict(Fg[cols])
             y = meta_te["classe"].to_numpy()
             tag = {"features": conj, "classificador": nome}
+            params.append({**tag, "cv_por_carga": busca.best_score_, **busca.best_params_})
 
             acc = acuracia_por_classe(y, p)
             metricas.append(
-                {**tag, "acuracia": (p == y).mean(), **{f"acc_{c}": v for c, v in acc.items()},
-                 "generalizacao_OR": (pg == "OR").mean()}
+                {**tag, "cv_por_carga": busca.best_score_, "acuracia": (p == y).mean(),
+                 **{f"acc_{c}": v for c, v in acc.items()}, "generalizacao_OR": (pg == "OR").mean()}
             )
             matrizes[(conj, nome)] = matriz_confusao(y, p)
+            relatorios[(conj, nome)] = pd.DataFrame(
+                classification_report(y, p, output_dict=True, zero_division=0)
+            ).transpose()
 
             d = meta_te.assign(predita=p, acerto=p == y)
             r = (
@@ -143,29 +154,65 @@ def rodar_classificacao(F, meta, Fg, meta_g, conjuntos=None, classificadores=Non
                 .merge(aud, on="registro", how="left")
             )
             por_reg.append(r.assign(**tag))
-
-            s = (
-                d[d["classe"] != "normal"]
-                .groupby(["classe", "diametro_pol"])["acerto"].mean()
-                .reset_index()
+            sev.append(
+                d[d["classe"] != "normal"].groupby(["classe", "diametro_pol"])["acerto"].mean()
+                .reset_index().assign(**tag)
             )
-            sev.append(s.assign(**tag))
-
-            g = meta_g.assign(predita=pg)
             gen.append(
-                g.groupby(["posicao_or_h", "diametro_pol", "carga_hp", "predita"])
+                meta_g.assign(predita=pg)
+                .groupby(["posicao_or_h", "diametro_pol", "carga_hp", "predita"])
                 .size().rename("janelas").reset_index().assign(**tag)
             )
             erros.append(erros_classificacao(meta_te, p).assign(**tag))
-            if nome == "random_forest":
-                imp.append(pd.DataFrame({"feature": cols, "importancia": clf.feature_importances_}).assign(**tag))
+            if nome == "Random Forest":
+                imp.append(
+                    pd.DataFrame({"feature": cols, "importancia": clf.named_steps["clf"].feature_importances_})
+                    .assign(**tag)
+                )
 
     return {
         "metricas": pd.DataFrame(metricas),
+        "selecao": pd.concat(selecao, ignore_index=True),
+        "melhores_parametros": pd.DataFrame(params),
         "matrizes": matrizes,
+        "relatorios": relatorios,
         "por_registro": pd.concat(por_reg, ignore_index=True),
         "severidade": pd.concat(sev, ignore_index=True),
         "generalizacao": pd.concat(gen, ignore_index=True),
         "erros": pd.concat(erros, ignore_index=True),
         "importancias": pd.concat(imp, ignore_index=True),
     }
+
+
+def rodar_cnn(meta=None, entradas=None):
+    """CNN 1D sobre as janelas (issue #21), treino 0/1/2 HP e teste 3 HP.
+
+    Exige PyTorch. Devolve (metricas, matrizes, por_registro).
+    """
+    from src.classification import acuracia_por_classe, matriz_confusao
+    from src.cnn import ENTRADAS, ClassificadorCNN
+
+    X, meta = montar_janelas("principal")
+    Xg, _ = montar_janelas("generalizacao")
+    treino, teste = split_por_carga(meta)
+    meta_te = meta[teste].reset_index(drop=True)
+    y = meta_te["classe"].to_numpy()
+    metricas, matrizes, por_reg = [], {}, []
+    for entrada in entradas or ENTRADAS:
+        clf = ClassificadorCNN(entrada).fit(X[treino], meta.loc[treino, "classe"])
+        p = clf.predict(X[teste])
+        pg = clf.predict(Xg)
+        tag = {"features": f"sinal {entrada}", "classificador": "CNN 1D"}
+        acc = acuracia_por_classe(y, p)
+        metricas.append(
+            {**tag, "acuracia": (p == y).mean(), **{f"acc_{c}": v for c, v in acc.items()},
+             "generalizacao_OR": (pg == "OR").mean()}
+        )
+        matrizes[(f"sinal {entrada}", "CNN 1D")] = matriz_confusao(y, p)
+        d = meta_te.assign(acerto=p == y, predita=p)
+        por_reg.append(
+            d.groupby(["registro", "classe"]).agg(
+                acerto=("acerto", "mean"), predita_majoritaria=("predita", lambda s: s.mode().iat[0])
+            ).reset_index().assign(**tag)
+        )
+    return pd.DataFrame(metricas), matrizes, pd.concat(por_reg, ignore_index=True)

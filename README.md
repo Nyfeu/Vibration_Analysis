@@ -89,7 +89,7 @@ sudo apt install texlive-latex-recommended texlive-latex-extra texlive-publisher
 git clone https://github.com/Nyfeu/Vibration_Analysis.git
 cd Vibration_Analysis
 pip install -r requirements.txt
-python -m pytest tests                          # testes: dados, features, detecção
+python -m pytest tests                          # testes: dados, features, detecção, classificação
 python -m scripts.gerar_artefatos_dados         # contagens, banda comum
 python -m scripts.gerar_artefatos_envelope      # validação física
 python -m scripts.gerar_artefatos_deteccao      # detecção one-class
@@ -98,6 +98,11 @@ python -m scripts.gerar_artefatos_classificacao # classificação e matrizes
 
 Os scripts escrevem em `results/metrics/` e `results/figures/`, de onde o
 relatório lê as figuras e as matrizes de confusão.
+
+O notebook segue o roteiro das aulas (*Clean Data* → *Pre-Processing* →
+*Select Models* → *GridSearch* → *Melhor modelo* → *Predição*) e está salvo
+**com as saídas** da última execução. A CNN 1D exige PyTorch (já instalado no
+Colab; localmente, `pip install torch`); sem ele, é ignorada.
 
 **Colab:** [abrir o notebook](https://colab.research.google.com/github/Nyfeu/Vibration_Analysis/blob/main/notebooks/projeto.ipynb). A primeira célula clona o repositório
 (os `.mat` estão versionados nele) e instala as dependências; não há download
@@ -158,8 +163,13 @@ O Pages é atualizado a cada push em `main` que toque em `docs/relatorio/`.
   aleatório em nível de janela, para evitar vazamento entre segmentos da mesma
   gravação.
 - **Detecção:** one-class, treinada apenas com dados normais.
-- **Diagnóstico:** classificação supervisionada multiclasse, com matriz de confusão
-  completa.
+- **Validação física:** o pico do espectro de envelope cai na frequência de defeito
+  prevista? Sinal bruto, pré-branqueamento cepstral e kurtograma, comparados à
+  auditoria de Smith & Randall (2015).
+- **Diagnóstico:** roteiro das aulas — `Pipeline` (scaler + classificador),
+  seleção de modelos por validação cruzada (agrupada por carga, para não vazar
+  janelas da mesma gravação), `GridSearchCV`, `classification_report` e matriz de
+  confusão completa; CNN 1D como contraponto.
 
 Detalhes e justificativa bibliográfica no relatório técnico.
 
@@ -190,9 +200,11 @@ discussão crítica.
 > Tabela exigida pelo enunciado (item 6.2). Preencher apenas com valores obtidos de
 > execuções reais.
 
-Teste em 3 HP (10 gravações, 581 janelas), treino em 0/1/2 HP. Para os
-classificadores, TPR/FPR tratam "falha" como qualquer classe ≠ normal; acurácia
-por classe na ordem normal / pista interna / esfera / pista externa.
+Teste em 3 HP (10 gravações, 581 janelas), treino em 0/1/2 HP. Os classificadores
+são `Pipeline(StandardScaler, modelo)`, escolhidos por validação cruzada por carga
+(`LeaveOneGroupOut`) entre Regressão Logística, KNN, Random Forest e SVM, com
+hiperparâmetros por `GridSearchCV`. TPR/FPR tratam "falha" como qualquer classe ≠
+normal; acurácia por classe na ordem normal / pista interna / esfera / pista externa.
 
 | Dataset | Técnica (features) | Tipo de falha identificada | Taxa de detecção (TPR) | Falso positivo (FPR) | Acurácia por classe |
 |---|---|---|---|---|---|
@@ -202,18 +214,22 @@ por classe na ordem normal / pista interna / esfera / pista externa.
 | CWRU | Autoencoder (tempo+envelope) | não se aplica | 1,00 | 0,17 | — |
 | CWRU | Mahalanobis (envelope) | não se aplica | 0,58 | 0,14 | — |
 | CWRU | Mahalanobis (forma, sem RMS/pico) | não se aplica | 0,83 | 0,24 | — |
-| CWRU | Random Forest (tempo+envelope) | normal, IR, B, OR | 1,00 | 0,00 | 1,00 / 0,97 / 0,99 / 0,90 |
-| CWRU | SVM (tempo+envelope) | normal, IR, B, OR | 0,99 | 0,02 | 0,98 / 0,99 / 0,96 / 0,87 |
+| CWRU | Random Forest (tempo+envelope) | normal, IR, B, OR | 1,00 | 0,00 | 1,00 / 0,98 / 0,99 / 0,89 |
+| CWRU | SVM (tempo+envelope) | normal, IR, B, OR | 0,99 | 0,00 | 1,00 / 0,99 / 0,97 / 0,87 |
 | CWRU | Random Forest (envelope) | normal, IR, B, OR | 0,96 | 1,00 | 0,00 / 0,94 / 0,65 / 0,67 |
+| CWRU | CNN 1D (sinal bruto) | normal, IR, B, OR | 1,00 | 0,00 | 1,00 / 0,90 / 1,00 / 1,00 |
+| CWRU | CNN 1D (sinal normalizado) | normal, IR, B, OR | 1,00 | 0,00 | 1,00 / 0,99 / 1,00 / 1,00 |
 
 **Leitura crítica (detalhes no relatório, cap. 5 e 6):** os valores próximos de
 100% não vêm de vazamento (verificado em código), mas de um atalho de amplitude:
 o RMS sozinho separa normal de falha (AUC = 1,00), inclusive nas gravações sem
 assinatura física do defeito. A validação física pelo espectro de envelope
 confirma o defeito em 12/12 gravações de pista interna e 8/12 de pista externa
-(@6), e em **nenhuma** de esfera — a classe que o Random Forest acerta em 99%.
-O modelo só com envelope acerta menos no teste (68%) e generaliza melhor para
-o defeito em outra posição (76% contra 46%).
+(@6), e em **nenhuma** de esfera pelo envelope bruto (duas com pré-branqueamento)
+— a classe que o Random Forest acerta em 99%. O modelo só com envelope acerta
+menos no teste (68%) e generaliza melhor para o defeito em outra posição (76%
+contra 40%). A CNN 1D chega a 99,7%, mas acerta até as gravações sem assinatura
+e generaliza pior (64%): aprende a montagem, não o defeito.
 
 Matrizes de confusão completas: `results/metrics/classificacao_matriz_*.csv` e
 Apêndice C do relatório.

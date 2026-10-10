@@ -14,7 +14,7 @@ import numpy as np
 import pandas as pd
 
 from src.data import FS_HZ, RAIZ, carregar_sinal, ler_manifesto
-from src.features import escores_envelope, espectro_envelope
+from src.features import escores_envelope, espectro_envelope, preprocessar_envelope
 
 AUDITORIA = RAIZ / "data" / "auditoria_smith2015.csv"
 
@@ -35,7 +35,9 @@ def ler_auditoria() -> pd.DataFrame:
     )
 
 
-def validacao_fisica(registros: pd.DataFrame | None = None) -> pd.DataFrame:
+def validacao_fisica(
+    registros: pd.DataFrame | None = None, preprocessamento: str = "bruto"
+) -> pd.DataFrame:
     """Escores de envelope de cada gravação inteira e o veredito físico.
 
     Para cada registro, o SES do sinal completo (~10 s, resolução ~0,1 Hz) dá
@@ -46,11 +48,16 @@ def validacao_fisica(registros: pd.DataFrame | None = None) -> pd.DataFrame:
          atinge nas gravações normais, que são o nível de "ruído" do método.
     O resultado é cruzado com o diagnóstico de Smith & Randall pelo método
     equivalente (M1, envelope do sinal bruto) e pelo melhor dos três métodos.
+
+    `preprocessamento` (ver `preprocessar_envelope`): "bruto" (M1),
+    "prebranqueado" (M2) ou "kurtograma". O limiar de cada família vem das
+    gravações normais com o MESMO pré-processamento.
     """
     m = ler_manifesto() if registros is None else registros
     linhas = []
     for _, reg in m.iterrows():
-        f, ses = espectro_envelope(carregar_sinal(reg), FS_HZ)
+        x = preprocessar_envelope(carregar_sinal(reg), FS_HZ, preprocessamento)
+        f, ses = espectro_envelope(x, FS_HZ)
         esc = escores_envelope(f, ses, reg["rpm"]).iloc[0]
         linhas.append(
             {
@@ -78,8 +85,8 @@ def validacao_fisica(registros: pd.DataFrame | None = None) -> pd.DataFrame:
         return bool(r["dominante"] == esperada and r[f"env_{esperada}"] > limiar[esperada])
 
     v["confirmada"] = v.apply(veredito, axis=1)
-    aud = ler_auditoria()[["registro", "m1", "melhor", "grupo"]]
-    return v.merge(aud, on="registro", how="left")
+    aud = ler_auditoria()[["registro", "m1", "m2", "m3", "melhor", "grupo"]]
+    return v.merge(aud, on="registro", how="left").assign(preprocessamento=preprocessamento)
 
 
 def resumo_validacao(v: pd.DataFrame) -> pd.DataFrame:
@@ -159,3 +166,28 @@ def alarmes_por_registro(meta: pd.DataFrame, alarme) -> pd.DataFrame:
     )
     aud = ler_auditoria()[["registro", "m1", "grupo"]]
     return r.merge(aud, on="registro", how="left")
+
+
+def comparar_preprocessamentos(registros: pd.DataFrame | None = None) -> pd.DataFrame:
+    """Gravações de falha confirmadas por classe com cada pré-processamento,
+    lado a lado com o que Smith & Randall diagnosticam (Y) por M1, M2 e M3.
+
+    M2 e M3 só foram aplicados pelo artigo quando M1 ficou em P1 ou abaixo;
+    quando estão vazios, o diagnóstico de M1 (Y) é contado também para eles.
+    """
+    vs = {p: validacao_fisica(registros, p) for p in ("bruto", "prebranqueado", "kurtograma")}
+    base = vs["bruto"]
+    f = base[base["classe"] != "normal"].copy()
+    f["grupo_classe"] = np.where(
+        f["classe"] == "OR", "OR @" + f["posicao_or_h"].astype(str), f["classe"]
+    )
+    linhas = {}
+    for p, v in vs.items():
+        f[p] = v.loc[f.index, "confirmada"].astype(bool).to_numpy()
+    for k in ("m1", "m2", "m3"):
+        f[f"smith_{k}"] = f[k].fillna(f["m1"]).str.startswith("Y")
+    cols = ["bruto", "prebranqueado", "kurtograma", "smith_m1", "smith_m2", "smith_m3"]
+    r = f.groupby("grupo_classe")[cols].sum()
+    r.insert(0, "gravacoes", f.groupby("grupo_classe").size())
+    ordem = ["IR", "B", "OR @6", "OR @3", "OR @12"]
+    return r.loc[[o for o in ordem if o in r.index]]

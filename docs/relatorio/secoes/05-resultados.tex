@@ -30,9 +30,11 @@ nas \autoref{tab:deteccao} e~\ref{tab:classificacao}.
     CWRU & Autoencoder (tempo+envelope)      & não se aplica & 1,00 & 0,17 & --- \\
     CWRU & Mahalanobis (envelope)            & não se aplica & 0,58 & 0,14 & --- \\
     CWRU & Mahalanobis (forma)               & não se aplica & 0,83 & 0,24 & --- \\
-    CWRU & Random Forest (tempo+envelope)    & N, IR, B, OR  & 1,00 & 0,00 & 1,00 / 0,97 / 0,99 / 0,90 \\
-    CWRU & SVM (tempo+envelope)              & N, IR, B, OR  & 0,99 & 0,02 & 0,98 / 0,99 / 0,96 / 0,87 \\
+    CWRU & Random Forest (tempo+envelope)    & N, IR, B, OR  & 1,00 & 0,00 & 1,00 / 0,98 / 0,99 / 0,89 \\
+    CWRU & SVM (tempo+envelope)              & N, IR, B, OR  & 0,99 & 0,00 & 1,00 / 0,99 / 0,97 / 0,87 \\
     CWRU & Random Forest (envelope)          & N, IR, B, OR  & 0,96 & 1,00 & 0,00 / 0,94 / 0,65 / 0,67 \\
+    CWRU & CNN 1D (sinal bruto)              & N, IR, B, OR  & 1,00 & 0,00 & 1,00 / 0,90 / 1,00 / 1,00 \\
+    CWRU & CNN 1D (sinal normalizado)        & N, IR, B, OR  & 1,00 & 0,00 & 1,00 / 0,99 / 1,00 / 1,00 \\
     \bottomrule
   \end{tabular}
   \fonte{Elaborado pelos autores a partir de \texttt{results/metrics/}.}
@@ -183,73 +185,134 @@ ensaiadas em montagens distintas~\cite{smith2015}.
 \label{sec:res-classificacao}
 
 % Rubrica: peso 1. Matriz de confusão COMPLETA é obrigatória (enunciado, item 6.2).
-A \autoref{tab:classificacao} mostra a acurácia dos dois classificadores em cada
-conjunto de features, e a fração das janelas do conjunto de generalização
-classificadas como pista externa, que é a resposta correta para todas elas. As
-matrizes de confusão completas estão no Apêndice~\ref{ap:matrizes}.
+\paragraph{Seleção de modelos.} A \autoref{tab:selecao} mostra a acurácia média
+dos cinco candidatos na validação cruzada do treino, com as features
+tempo+envelope. O Random Forest é o melhor na validação por carga, e é o modelo
+selecionado.
 
 \begin{table}[htb]
   \centering
-  \caption{Classificação no teste (\SI{3}{\hp}): acurácia global e por classe, e
-  fração do conjunto de generalização classificada como pista externa.}
-  \label{tab:classificacao}
+  \caption{Seleção de modelos: acurácia média na validação cruzada do treino
+  (features tempo+envelope).}
+  \label{tab:selecao}
   \footnotesize
-  \begin{tabular}{llcccccc}
+  \begin{tabular}{lccc}
     \toprule
-    \textbf{Features} & \textbf{Classificador} & \textbf{Global} & \textbf{Normal} &
-    \textbf{P. interna} & \textbf{Esfera} & \textbf{P. externa} & \textbf{Generalização} \\
+    \textbf{Modelo} & \textbf{CV por carga} & \textbf{Desvio} & \textbf{CV embaralhada} \\
     \midrule
-    tempo          & Random Forest & 0,933 & 1,000 & 0,909 & 0,971 & 0,897 & 0,500 \\
-                   & SVM           & 0,933 & 1,000 & 0,949 & 0,937 & 0,891 & 0,499 \\
-    envelope       & Random Forest & 0,676 & 0,000 & 0,937 & 0,649 & 0,667 & 0,760 \\
-                   & SVM           & 0,661 & 0,069 & 0,954 & 0,621 & 0,603 & 0,712 \\
-    tempo+envelope & Random Forest & 0,957 & 1,000 & 0,966 & 0,994 & 0,897 & 0,456 \\
-                   & SVM           & 0,947 & 0,983 & 0,994 & 0,960 & 0,874 & 0,273 \\
-    forma          & Random Forest & 0,704 & 0,052 & 0,880 & 0,684 & 0,764 & 0,605 \\
-                   & SVM           & 0,744 & 0,207 & 0,971 & 0,701 & 0,736 & 0,190 \\
+    Random Forest        & 0,979 & 0,010 & 0,994 \\
+    SVM (RBF)            & 0,924 & 0,011 & 0,952 \\
+    KNN ($k = 3$)        & 0,923 & 0,017 & 0,944 \\
+    KNN ($k = 9$)        & 0,920 & 0,015 & 0,936 \\
+    Regressão Logística  & 0,862 & 0,021 & 0,881 \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/classificacao\_selecao\_modelos.csv}.}
+\end{table}
+
+A validação embaralhada dá, para todos os modelos, uma acurácia de \num{1.5} a
+\num{2.8} pontos percentuais maior que a por carga: é o vazamento entre janelas da
+mesma gravação. A diferença é pequena porque nem a validação por carga separa as
+montagens --- cada combinação de defeito e diâmetro foi ensaiada numa única
+montagem, presente nas quatro cargas (\autoref{sec:limitacoes}).
+
+\paragraph{Busca em grade.} Com tempo+envelope, o \texttt{GridSearchCV}
+escolheu, para o Random Forest, 100 árvores com profundidade máxima 5 e no mínimo
+5 amostras por folha (acurácia de \num{0.984} na validação por carga), e, para o
+SVM, $C = 10$ e $\gamma = \num{0.1}$ (\num{0.980}). Os parâmetros escolhidos para
+cada conjunto de features estão em
+\texttt{results/metrics/classificacao\_melhores\_parametros.csv}.
+
+\paragraph{Melhor modelo no teste.} A \autoref{tab:classificacao} mostra os
+pipelines ajustados avaliados no teste, para cada conjunto de features, e a
+fração das janelas do conjunto de generalização classificadas como pista
+externa, que é a resposta correta para todas elas. As linhas da CNN 1D estão na
+mesma tabela. As matrizes de confusão completas estão no
+Apêndice~\ref{ap:matrizes}.
+
+\begin{table}[htb]
+  \centering
+  \caption{Classificação no teste (\SI{3}{\hp}): acurácia na validação por carga,
+  acurácia global e por classe no teste, e fração do conjunto de generalização
+  classificada como pista externa.}
+  \label{tab:classificacao}
+  \scriptsize
+  \begin{tabular}{llccccccc}
+    \toprule
+    \textbf{Entrada} & \textbf{Modelo} & \textbf{CV} & \textbf{Global} & \textbf{Normal} &
+    \textbf{P. int.} & \textbf{Esfera} & \textbf{P. ext.} & \textbf{Generaliz.} \\
+    \midrule
+    tempo          & Random Forest & 0,972 & 0,933 & 1,000 & 0,909 & 0,971 & 0,897 & 0,500 \\
+                   & SVM           & 0,974 & 0,928 & 1,000 & 0,897 & 0,966 & 0,897 & 0,500 \\
+    envelope       & Random Forest & 0,753 & 0,676 & 0,000 & 0,937 & 0,649 & 0,667 & 0,760 \\
+                   & SVM           & 0,713 & 0,671 & 0,052 & 0,966 & 0,603 & 0,649 & 0,677 \\
+    tempo+envelope & Random Forest & 0,984 & 0,957 & 1,000 & 0,977 & 0,994 & 0,885 & 0,400 \\
+                   & SVM           & 0,980 & 0,950 & 1,000 & 0,994 & 0,966 & 0,874 & 0,115 \\
+    forma          & Random Forest & 0,860 & 0,654 & 0,069 & 0,720 & 0,667 & 0,770 & 0,581 \\
+                   & SVM           & 0,865 & 0,756 & 0,241 & 0,977 & 0,730 & 0,730 & 0,295 \\
+    \midrule
+    sinal bruto    & CNN 1D        & ---   & 0,971 & 1,000 & 0,903 & 1,000 & 1,000 & 0,356 \\
+    sinal normaliz.& CNN 1D        & ---   & 0,997 & 1,000 & 0,989 & 1,000 & 1,000 & 0,641 \\
     \bottomrule
   \end{tabular}
   \fonte{Elaborado pelos autores a partir de
   \texttt{results/metrics/classificacao\_metricas.csv}.}
 \end{table}
 
-A melhor acurácia no teste é a do Random Forest com tempo+envelope:
-\SI{95.7}{\percent}, com \SI{99.4}{\percent} na esfera. Três observações
-relativizam esse número.
+O modelo selecionado, Random Forest com tempo+envelope, acerta
+\SI{95.7}{\percent} das janelas de teste, com \SI{99.4}{\percent} na esfera. No
+\emph{classification report}, a esfera tem precisão de \num{0.88} e
+\emph{recall} de \num{0.99}: quase todas as janelas de esfera são reconhecidas,
+mas 20 janelas de pista externa (todas da gravação 200) e 4 de pista interna são
+tomadas por esfera. Três observações relativizam esse número.
 
-\paragraph{A esfera é acertada sem assinatura física.} A validação física não
-confirmou o defeito em nenhuma gravação de esfera (\autoref{sec:res-fisica}).
-Das três gravações de esfera do teste, \textcite{smith2015} só diagnosticam a 121,
-e apenas com o método mais elaborado; a 188 é parcial e a 225, não
-diagnosticável. Mesmo assim, a gravação 225, que não tem
-assinatura, é classificada como esfera em todas as 58 janelas. No Random Forest,
-RMS e pico respondem por \SI{58}{\percent} da importância das features, e o
-escore de BSF por \SI{3.5}{\percent}. O classificador reconhece as gravações de
-esfera pelo nível de vibração --- intermediário entre o das pistas e o dos
-normais (\autoref{fig:rms}) ---, e não pela frequência do defeito.
+\paragraph{A esfera é acertada sem assinatura física.} A validação física pelo
+envelope do sinal bruto --- o mesmo usado nas features --- não confirmou o defeito
+em nenhuma gravação de esfera (\autoref{sec:res-fisica}). Das três gravações de
+esfera do teste, \textcite{smith2015} só diagnosticam a 121, e apenas com o
+método mais elaborado; a 188 é parcial e a 225, não diagnosticável. Mesmo assim,
+a gravação 225 é classificada como esfera em todas as 58 janelas. No Random
+Forest, RMS e pico respondem por \SI{56.3}{\percent} da importância das
+features, e o escore de BSF por \SI{3.3}{\percent}. O classificador reconhece as
+gravações de esfera pelo nível de vibração --- intermediário entre o das pistas e
+o dos normais (\autoref{fig:rms}) ---, e não pela frequência do defeito.
 
 \paragraph{O desempenho no teste não se transfere para outra posição do
 defeito.} No conjunto de generalização, o mesmo modelo classifica como pista
-externa só \SI{45.6}{\percent} das janelas; o SVM, \SI{27.3}{\percent}. Os erros
-seguem a amplitude: a pista externa a 12~h com \SI{0.007}{\inch} é tomada por
-pista interna, e a 3~h com \SI{0.021}{\inch}, por esfera. Só com as features de
-envelope, a acurácia no teste cai para \SI{67.6}{\percent}, mas a generalização
-sobe para \SI{76.0}{\percent}, e as janelas de 3~h e \SI{0.021}{\inch} passam a
-ser classificadas corretamente em \SI{97}{\percent} dos casos (225 de 232). O modelo que usa a física acerta menos
-no teste e generaliza melhor.
+externa só \SI{40.0}{\percent} das janelas; o SVM, \SI{11.5}{\percent}. Com o
+Random Forest, a pista externa a 12~h com \SI{0.007}{\inch} e a 3~h com
+\SI{0.021}{\inch} são tomadas quase inteiramente por pista interna. Só com as
+features de envelope, a acurácia no teste cai para \SI{67.6}{\percent}, mas a
+generalização sobe para \SI{76.0}{\percent}, e as janelas de 3~h passam a ser
+classificadas corretamente em \SI{99}{\percent} dos casos (457 de 464). O modelo
+que usa a física acerta menos no teste e generaliza melhor.
 
 \paragraph{Sem amplitude, o normal desaparece.} Com envelope ou ``forma'', a
-classe normal quase não é reconhecida (acurácia de \numrange{0}{0.21}): nos quatro
-casos, a maioria das janelas da gravação 100 é classificada como esfera. Isso é coerente com a
-validação física: nem as gravações normais nem as de esfera têm pico nas
-frequências de defeito, e o envelope não tem como separá-las.
+classe normal quase não é reconhecida (acurácia de \numrange{0}{0.24}): nos
+quatro casos, a maioria das janelas da gravação 100 é classificada como esfera.
+Isso é coerente com a validação física: nem as gravações normais nem as de
+esfera têm pico nas frequências de defeito, e o envelope não tem como
+separá-las.
+
+\paragraph{A CNN 1D.} A rede atinge \SI{97.1}{\percent} com o sinal bruto e
+\SI{99.7}{\percent} com as janelas normalizadas --- o maior valor do trabalho, e
+por isso o mais suspeito. A normalização retira a amplitude, então o atalho do
+RMS não explica esse resultado. A rede acerta, porém, \SI{100}{\percent} das
+janelas das gravações 200 e 225, que não mostram o defeito declarado, e reconhece
+como pista externa só \SI{64.1}{\percent} do conjunto de generalização. A
+explicação mais provável é que ela aprende a ``impressão digital'' espectral de
+cada montagem --- ressonâncias, componentes do eixo e da bancada ---, que se repete
+nas quatro cargas. Sem amplitude, a rede generaliza melhor que com ela
+(\SI{64.1}{\percent} contra \SI{35.6}{\percent}), mas ainda pior que o Random
+Forest só com envelope.
 
 \paragraph{Severidade.} Desagregando por diâmetro do defeito, o pior caso é a
-pista externa de \SI{0.014}{\inch}, a gravação 200: \SI{69}{\percent} de acerto
+pista externa de \SI{0.014}{\inch}, a gravação 200: \SI{66}{\percent} de acerto
 com tempo+envelope e \SI{21}{\percent} só com envelope, em que é classificada
 principalmente como esfera. É a mesma gravação que a validação física e o artigo
 de referência apontam como sem assinatura. Nas demais combinações de classe e
-diâmetro, o Random Forest com tempo+envelope acerta \SI{90}{\percent} ou mais.
+diâmetro, o Random Forest com tempo+envelope acerta \SI{93}{\percent} ou mais.
 
 \section{Validação física}
 \label{sec:res-fisica}
@@ -342,10 +405,71 @@ simples em 50 das 52 gravações de falha. Por classe:
   não a capta.
 \end{itemize}
 
+\paragraph{Pré-branqueamento e kurtograma.} A
+\autoref{tab:preprocessamentos} repete a validação com os dois pré-processamentos
+da \autoref{sec:features-envelope}, cada um com o limiar das normais tratadas da
+mesma forma, ao lado do que \textcite[Tab.~B2]{smith2015} diagnosticam por cada
+método.
+
+\begin{table}[htb]
+  \centering
+  \caption{Gravações de falha confirmadas com cada pré-processamento do envelope,
+  e as diagnosticadas (Y) por Smith e Randall (2015) com os métodos 1 (sinal
+  bruto), 2 (pré-branqueamento) e 3 (DRS e kurtograma).}
+  \label{tab:preprocessamentos}
+  \footnotesize
+  \begin{tabular}{lccccccc}
+    \toprule
+    & & \multicolumn{3}{c}{\textbf{Este trabalho}} & \multicolumn{3}{c}{\textbf{Smith e Randall}} \\
+    \cmidrule(lr){3-5}\cmidrule(lr){6-8}
+    \textbf{Classe} & \textbf{Grav.} & \textbf{Bruto} & \textbf{Pré-branq.} &
+    \textbf{Kurtograma} & \textbf{M1} & \textbf{M2} & \textbf{M3} \\
+    \midrule
+    Pista interna        & 12 & 12 & 12 & 12 & 11 & 12 & 12 \\
+    Esfera               & 12 & 0  & 5  & 0  & 1  & 2  & 2  \\
+    Pista externa (6~h)  & 12 & 8  & 8  & 10 & 8  & 8  & 9  \\
+    Pista externa (3~h)  & 8  & 8  & 8  & 8  & 8  & 8  & 8  \\
+    Pista externa (12~h) & 8  & 8  & 8  & 8  & 8  & 8  & 8  \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/validacao\_fisica\_preprocessamentos.csv} e de
+  \textcite[Tab.~B2]{smith2015}. M2 e M3 vazios no artigo contam como o
+  diagnóstico de M1.}
+\end{table}
+
+O pré-branqueamento é o que mais muda o quadro da esfera: confirma as gravações
+222 e 223, exatamente as que o artigo diagnostica pelo método 2, com o escore de
+BSF em \num{7.7} e \SI{7.3}{\decibel} contra um limiar de \SI{4.4}{\decibel}.
+Confirma também as gravações 185 a 187, mas com margem de só \num{0.1} a
+\SI{0.7}{\decibel}; o artigo as classifica como apenas potencialmente
+diagnosticáveis (P2), e essas três confirmações devem ser lidas como frágeis.
+O kurtograma confirma duas gravações de pista externa de \SI{0.014}{\inch} (197 e
+198), mas também com margem pequena (\SI{0.5}{\decibel} na 197). A
+\autoref{fig:kurtograma} mostra por quê: na gravação 197, a curtose espectral
+fica perto de zero em todas as bandas admissíveis --- o valor máximo é de
+cerca de \num{0.1} ---, ou seja, não há banda claramente impulsiva, e a banda
+escolhida (de 750 a \SI{2250}{\hertz}) é pouco melhor que qualquer outra. Isso
+é coerente com o artigo, em que essa gravação só é diagnosticada quando a
+separação de componentes discretos (DRS) é aplicada \emph{antes} do kurtograma.
+Nenhum pré-processamento recupera as gravações 121, 188, 200, 224 e 225.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Registro 197 (pista externa, \SI{0.014}{\inch}, \SI{0}{\hp}):
+  curtose espectral por largura de banda, com a banda escolhida sombreada, e
+  espectro de envelope antes e depois do filtro nessa banda.}
+  \label{fig:kurtograma}
+  \includegraphics[width=0.9\textwidth]{kurtograma_registro_197.png}
+  \fonte{Elaborado pelos autores.}
+\end{figure}
+
 Duas consequências seguem para os modelos. Primeiro, um acerto do classificador
 na classe esfera não pode ser atribuído à assinatura física do defeito, porque
-ela não aparece no envelope de nenhuma gravação; qualquer acerto nessa classe
-deve ser investigado como possível atalho (\autoref{sec:erros}). Segundo, as
+ela não aparece no envelope do sinal bruto --- o mesmo usado nas features --- de
+nenhuma gravação, e só aparece com pré-branqueamento em duas gravações de forma
+clara; qualquer acerto nessa classe deve ser investigado como possível atalho
+(\autoref{sec:erros}). Segundo, as
 gravações de pista externa de \SI{0.014}{\inch} formam um subgrupo que se
 comporta, no envelope, mais como ruído do que como falha; a gravação 200, que
 está no teste, é a mais extrema.

@@ -316,3 +316,93 @@ def matriz_features(janelas: np.ndarray, rpm, fs: float, indice=None) -> pd.Data
     if indice is not None:
         df.index = indice
     return df
+
+
+# =============================================================================
+# Curtose espectral e kurtograma (issue #14)
+# =============================================================================
+#
+# A curtose espectral (SK) mede, para cada frequência, quão impulsivo é o sinal
+# naquela faixa (Antoni, 2006). Impactos de defeito excitam ressonâncias e
+# elevam a SK na banda delas; ruído estacionário tem SK ~ 0. O kurtograma
+# calcula a SK para várias resoluções (larguras de banda) e escolhe a banda de
+# maior SK como banda de demodulação (Antoni; Randall, 2006; Antoni, 2007).
+# Aqui a SK é estimada pela STFT: SK(f) = <|X(t,f)|^4> / <|X(t,f)|^2>^2 - 2.
+
+# Comprimentos de janela da STFT avaliados. A largura de banda de cada raia é
+# ~ fs / Nw: a 12 kHz, 1500, 750 e 375 Hz.
+JANELAS_SK = (8, 16, 32)
+
+# Banda mínima: 3 x a maior BPFI do conjunto (~162 Hz a 1797 rpm), para que a
+# banda filtrada contenha a portadora e as bandas laterais da modulação.
+BANDA_MIN_HZ = 3 * 5.4152 * 1797 / 60
+
+
+def curtose_espectral(x: np.ndarray, fs: float, nw: int) -> tuple[np.ndarray, np.ndarray]:
+    """SK(f) de um sinal 1D pela STFT com janela de Hann de nw amostras."""
+    from scipy.signal import stft
+
+    f, _, z = stft(x, fs=fs, window="hann", nperseg=nw, noverlap=3 * nw // 4, boundary=None)
+    p2 = np.mean(np.abs(z) ** 2, axis=1)
+    p4 = np.mean(np.abs(z) ** 4, axis=1)
+    return f, p4 / p2**2 - 2.0
+
+
+def banda_kurtograma(
+    x: np.ndarray, fs: float, f_max: float = 4800.0, janelas=JANELAS_SK
+) -> tuple[float, float, float]:
+    """Banda (f_baixa, f_alta) de maior curtose espectral e o valor da SK.
+
+    Percorre as resoluções de `janelas`, descarta bandas mais estreitas que
+    BANDA_MIN_HZ ou que ultrapassem f_max (a banda comum), e devolve a melhor.
+    """
+    melhor = (np.nan, np.nan, -np.inf)
+    for nw in janelas:
+        largura = fs / nw
+        if largura < BANDA_MIN_HZ:
+            continue
+        f, sk = curtose_espectral(x, fs, nw)
+        validas = (f - largura / 2 > 0) & (f + largura / 2 <= f_max)
+        if not validas.any():
+            continue
+        i = np.argmax(np.where(validas, sk, -np.inf))
+        if sk[i] > melhor[2]:
+            melhor = (f[i] - largura / 2, f[i] + largura / 2, float(sk[i]))
+    return melhor
+
+
+def filtrar_banda(x: np.ndarray, fs: float, f_baixa: float, f_alta: float) -> np.ndarray:
+    """Passa-banda Butterworth de ordem 4, fase zero."""
+    from scipy.signal import butter, sosfiltfilt
+
+    sos = butter(4, [f_baixa, f_alta], btype="bandpass", fs=fs, output="sos")
+    return sosfiltfilt(sos, x, axis=-1)
+
+
+def prebranquear(x: np.ndarray) -> np.ndarray:
+    """Pré-branqueamento cepstral: espectro com magnitude unitária e a fase
+    original ("método 2" de Smith & Randall, 2015, p. 104). Iguala o peso de
+    todas as faixas, de modo que as mais impulsivas passam a dominar o sinal,
+    e remove os picos discretos fortes que mascaram o defeito."""
+    espectro = np.fft.rfft(x, axis=-1)
+    return np.fft.irfft(espectro / np.maximum(np.abs(espectro), 1e-12), n=x.shape[-1], axis=-1)
+
+
+PREPROCESSAMENTOS = ("bruto", "prebranqueado", "kurtograma")
+
+
+def preprocessar_envelope(x: np.ndarray, fs: float, metodo: str) -> np.ndarray:
+    """Sinal pronto para o envelope, segundo o pré-processamento escolhido:
+    - "bruto": o sinal na banda comum (método 1 de Smith & Randall);
+    - "prebranqueado": pré-branqueamento cepstral (método 2);
+    - "kurtograma": filtro na banda de maior curtose espectral, sem a separação
+      de componentes discretos (DRS) que o método 3 do artigo aplica antes.
+    """
+    if metodo == "bruto":
+        return x
+    if metodo == "prebranqueado":
+        return prebranquear(x)
+    if metodo == "kurtograma":
+        f_baixa, f_alta, _ = banda_kurtograma(x, fs)
+        return filtrar_banda(x, fs, f_baixa, f_alta)
+    raise ValueError(f"pré-processamento desconhecido: {metodo}")

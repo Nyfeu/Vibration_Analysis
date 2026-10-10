@@ -164,14 +164,15 @@
   pista interna, em 8 de 12 de pista externa e em nenhuma de esfera, concordando
   com a auditoria de Smith e Randall (2015) em 50 de 52 gravações de falha. Quatro
   detectores treinados só com dados normais (Mahalanobis, Isolation Forest,
-  One-Class SVM e autoencoder) atingiram AUC de até 1,00, e o Random Forest
-  classificou 95,7\% das janelas de teste corretamente. A investigação desses
+  One-Class SVM e autoencoder) atingiram AUC de até 1,00, e o Random Forest, escolhido por
+  validação cruzada por carga e busca em grade, classificou 95,7\% das janelas
+  de teste corretamente. A investigação desses
   resultados mostrou que eles não decorrem de vazamento, mas de um atalho de
   amplitude: o RMS sozinho separa normal de falha, inclusive nas gravações sem
   assinatura do defeito, e o classificador acerta 99\% da classe esfera sem que
   o defeito apareça no envelope. Com features só de envelope, a acurácia no teste
   cai para 67,6\%, mas a generalização para o defeito em outra posição sobe de
-  45,6\% para 76,0\%. A principal limitação é do próprio conjunto de dados: com
+  40,0\% para 76,0\%. A principal limitação é do próprio conjunto de dados: com
   quatro gravações normais e cada defeito ensaiado numa única montagem, alta
   acurácia no CWRU é fácil e diz pouco sobre o diagnóstico do defeito.
 
@@ -194,14 +195,15 @@
     records and in none of the ball records, agreeing with the audit by Smith
     and Randall (2015) in 50 of 52 fault records. Four detectors trained on
     normal data only (Mahalanobis, Isolation Forest, One-Class SVM and
-    autoencoder) reached an AUC of up to 1.00, and a Random Forest classified
-    95.7\% of the test windows correctly. Investigating these results showed
+    autoencoder) reached an AUC of up to 1.00, and a Random Forest, selected by
+    load-grouped cross-validation and grid search, classified 95.7\% of the
+    test windows correctly. Investigating these results showed
     that they do not come from data leakage but from an amplitude shortcut: the
     RMS alone separates normal from faulty records, including those without a
     fault signature, and the classifier gets 99\% of the ball class right
     although the fault does not appear in the envelope. With envelope features
     only, test accuracy drops to 67.6\%, but generalization to a fault at a
-    different position rises from 45.6\% to 76.0\%. The main limitation lies
+    different position rises from 40.0\% to 76.0\%. The main limitation lies
     in the data set itself: with four normal records and each fault tested on a
     single assembly, high accuracy on CWRU is easy and says little about fault
     diagnosis.

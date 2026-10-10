@@ -1,23 +1,23 @@
 feature,importancia,features,classificador
-rms,0.4158,tempo,random_forest
-curtose,0.1143,tempo,random_forest
-fator_crista,0.0523,tempo,random_forest
-assimetria,0.0580,tempo,random_forest
-pico,0.3596,tempo,random_forest
-env_bpfo,0.3586,envelope,random_forest
-env_bpfi,0.3996,envelope,random_forest
-env_bsf,0.2417,envelope,random_forest
-rms,0.3043,tempo+envelope,random_forest
-curtose,0.1009,tempo+envelope,random_forest
-fator_crista,0.0464,tempo+envelope,random_forest
-assimetria,0.0391,tempo+envelope,random_forest
-pico,0.2742,tempo+envelope,random_forest
-env_bpfo,0.1054,tempo+envelope,random_forest
-env_bpfi,0.0948,tempo+envelope,random_forest
-env_bsf,0.0348,tempo+envelope,random_forest
-curtose,0.2228,forma,random_forest
-fator_crista,0.1218,forma,random_forest
-assimetria,0.0930,forma,random_forest
-env_bpfo,0.2267,forma,random_forest
-env_bpfi,0.2227,forma,random_forest
-env_bsf,0.1130,forma,random_forest
+rms,0.4141,tempo,Random Forest
+curtose,0.1158,tempo,Random Forest
+fator_crista,0.0555,tempo,Random Forest
+assimetria,0.0573,tempo,Random Forest
+pico,0.3573,tempo,Random Forest
+env_bpfo,0.3586,envelope,Random Forest
+env_bpfi,0.3996,envelope,Random Forest
+env_bsf,0.2417,envelope,Random Forest
+rms,0.2976,tempo+envelope,Random Forest
+curtose,0.1010,tempo+envelope,Random Forest
+fator_crista,0.0465,tempo+envelope,Random Forest
+assimetria,0.0322,tempo+envelope,Random Forest
+pico,0.2654,tempo+envelope,Random Forest
+env_bpfo,0.1312,tempo+envelope,Random Forest
+env_bpfi,0.0929,tempo+envelope,Random Forest
+env_bsf,0.0330,tempo+envelope,Random Forest
+curtose,0.2253,forma,Random Forest
+fator_crista,0.1257,forma,Random Forest
+assimetria,0.0926,forma,Random Forest
+env_bpfo,0.2252,forma,Random Forest
+env_bpfi,0.2225,forma,Random Forest
+env_bsf,0.1087,forma,Random Forest

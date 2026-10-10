@@ -1,202 +1,205 @@
 posicao_or_h,diametro_pol,carga_hp,predita,janelas,features,classificador
-12,0.007,0,B,57,tempo,random_forest
-12,0.007,0,IR,1,tempo,random_forest
-12,0.007,1,B,57,tempo,random_forest
-12,0.007,1,IR,1,tempo,random_forest
-12,0.007,2,B,57,tempo,random_forest
-12,0.007,2,IR,1,tempo,random_forest
-12,0.007,3,B,58,tempo,random_forest
-12,0.021,0,OR,58,tempo,random_forest
-12,0.021,1,OR,58,tempo,random_forest
-12,0.021,2,OR,58,tempo,random_forest
-12,0.021,3,OR,58,tempo,random_forest
-3,0.007,0,OR,58,tempo,random_forest
-3,0.007,1,OR,58,tempo,random_forest
-3,0.007,2,OR,58,tempo,random_forest
-3,0.007,3,OR,58,tempo,random_forest
-3,0.021,0,B,5,tempo,random_forest
-3,0.021,0,IR,53,tempo,random_forest
-3,0.021,1,B,3,tempo,random_forest
-3,0.021,1,IR,55,tempo,random_forest
-3,0.021,2,B,1,tempo,random_forest
-3,0.021,2,IR,57,tempo,random_forest
-3,0.021,3,B,3,tempo,random_forest
-3,0.021,3,IR,55,tempo,random_forest
-12,0.007,0,B,58,tempo,svm
-12,0.007,1,B,58,tempo,svm
-12,0.007,2,B,58,tempo,svm
-12,0.007,3,B,58,tempo,svm
-12,0.021,0,OR,58,tempo,svm
-12,0.021,1,OR,58,tempo,svm
-12,0.021,2,OR,58,tempo,svm
-12,0.021,3,IR,1,tempo,svm
-12,0.021,3,OR,57,tempo,svm
-3,0.007,0,OR,58,tempo,svm
-3,0.007,1,OR,58,tempo,svm
-3,0.007,2,OR,58,tempo,svm
-3,0.007,3,OR,58,tempo,svm
-3,0.021,0,B,19,tempo,svm
-3,0.021,0,IR,39,tempo,svm
-3,0.021,1,B,16,tempo,svm
-3,0.021,1,IR,42,tempo,svm
-3,0.021,2,B,9,tempo,svm
-3,0.021,2,IR,49,tempo,svm
-3,0.021,3,B,7,tempo,svm
-3,0.021,3,IR,51,tempo,svm
-12,0.007,0,B,3,envelope,random_forest
-12,0.007,0,OR,55,envelope,random_forest
-12,0.007,1,B,2,envelope,random_forest
-12,0.007,1,OR,56,envelope,random_forest
-12,0.007,2,OR,58,envelope,random_forest
-12,0.007,3,OR,58,envelope,random_forest
-12,0.021,0,B,56,envelope,random_forest
-12,0.021,0,OR,2,envelope,random_forest
-12,0.021,1,B,38,envelope,random_forest
-12,0.021,1,OR,18,envelope,random_forest
-12,0.021,1,normal,2,envelope,random_forest
-12,0.021,2,B,52,envelope,random_forest
-12,0.021,2,OR,1,envelope,random_forest
-12,0.021,2,normal,5,envelope,random_forest
-12,0.021,3,B,56,envelope,random_forest
-12,0.021,3,normal,2,envelope,random_forest
-3,0.007,0,OR,58,envelope,random_forest
-3,0.007,1,OR,58,envelope,random_forest
-3,0.007,2,OR,58,envelope,random_forest
-3,0.007,3,OR,58,envelope,random_forest
-3,0.021,0,B,5,envelope,random_forest
-3,0.021,0,OR,53,envelope,random_forest
-3,0.021,1,B,1,envelope,random_forest
-3,0.021,1,OR,57,envelope,random_forest
-3,0.021,2,OR,58,envelope,random_forest
-3,0.021,3,B,1,envelope,random_forest
-3,0.021,3,OR,57,envelope,random_forest
-12,0.007,0,B,6,envelope,svm
-12,0.007,0,OR,52,envelope,svm
-12,0.007,1,B,3,envelope,svm
-12,0.007,1,OR,55,envelope,svm
-12,0.007,2,OR,58,envelope,svm
-12,0.007,3,B,1,envelope,svm
-12,0.007,3,OR,57,envelope,svm
-12,0.021,0,B,58,envelope,svm
-12,0.021,1,B,49,envelope,svm
-12,0.021,1,OR,9,envelope,svm
-12,0.021,2,B,39,envelope,svm
-12,0.021,2,OR,2,envelope,svm
-12,0.021,2,normal,17,envelope,svm
-12,0.021,3,B,58,envelope,svm
-3,0.007,0,OR,58,envelope,svm
-3,0.007,1,OR,58,envelope,svm
-3,0.007,2,OR,58,envelope,svm
-3,0.007,3,OR,58,envelope,svm
-3,0.021,0,B,29,envelope,svm
-3,0.021,0,OR,29,envelope,svm
-3,0.021,1,B,2,envelope,svm
-3,0.021,1,OR,56,envelope,svm
-3,0.021,2,OR,58,envelope,svm
-3,0.021,3,B,5,envelope,svm
-3,0.021,3,OR,53,envelope,svm
-12,0.007,0,B,9,tempo+envelope,random_forest
-12,0.007,0,IR,49,tempo+envelope,random_forest
-12,0.007,1,B,17,tempo+envelope,random_forest
-12,0.007,1,IR,34,tempo+envelope,random_forest
-12,0.007,1,OR,7,tempo+envelope,random_forest
-12,0.007,2,B,1,tempo+envelope,random_forest
-12,0.007,2,IR,53,tempo+envelope,random_forest
-12,0.007,2,OR,4,tempo+envelope,random_forest
-12,0.007,3,IR,58,tempo+envelope,random_forest
-12,0.021,0,OR,58,tempo+envelope,random_forest
-12,0.021,1,B,4,tempo+envelope,random_forest
-12,0.021,1,OR,54,tempo+envelope,random_forest
-12,0.021,2,B,16,tempo+envelope,random_forest
-12,0.021,2,OR,42,tempo+envelope,random_forest
-12,0.021,3,B,32,tempo+envelope,random_forest
-12,0.021,3,OR,26,tempo+envelope,random_forest
-3,0.007,0,OR,58,tempo+envelope,random_forest
-3,0.007,1,OR,58,tempo+envelope,random_forest
-3,0.007,2,OR,58,tempo+envelope,random_forest
-3,0.007,3,OR,58,tempo+envelope,random_forest
-3,0.021,0,B,54,tempo+envelope,random_forest
-3,0.021,0,IR,4,tempo+envelope,random_forest
-3,0.021,1,B,55,tempo+envelope,random_forest
-3,0.021,1,IR,3,tempo+envelope,random_forest
-3,0.021,2,B,37,tempo+envelope,random_forest
-3,0.021,2,IR,21,tempo+envelope,random_forest
-3,0.021,3,B,24,tempo+envelope,random_forest
-3,0.021,3,IR,34,tempo+envelope,random_forest
-12,0.007,0,B,58,tempo+envelope,svm
-12,0.007,1,B,58,tempo+envelope,svm
-12,0.007,2,B,58,tempo+envelope,svm
-12,0.007,3,B,58,tempo+envelope,svm
-12,0.021,0,OR,58,tempo+envelope,svm
-12,0.021,1,B,1,tempo+envelope,svm
-12,0.021,1,OR,57,tempo+envelope,svm
-12,0.021,2,B,4,tempo+envelope,svm
-12,0.021,2,OR,54,tempo+envelope,svm
-12,0.021,3,B,5,tempo+envelope,svm
-12,0.021,3,IR,2,tempo+envelope,svm
-12,0.021,3,OR,51,tempo+envelope,svm
-3,0.007,0,B,58,tempo+envelope,svm
-3,0.007,1,B,58,tempo+envelope,svm
-3,0.007,2,B,27,tempo+envelope,svm
-3,0.007,2,OR,31,tempo+envelope,svm
-3,0.007,3,B,56,tempo+envelope,svm
-3,0.007,3,OR,2,tempo+envelope,svm
-3,0.021,0,B,58,tempo+envelope,svm
-3,0.021,1,B,58,tempo+envelope,svm
-3,0.021,2,B,58,tempo+envelope,svm
-3,0.021,3,B,58,tempo+envelope,svm
-12,0.007,0,B,5,forma,random_forest
-12,0.007,0,OR,53,forma,random_forest
-12,0.007,1,B,3,forma,random_forest
-12,0.007,1,OR,55,forma,random_forest
-12,0.007,2,OR,58,forma,random_forest
-12,0.007,3,OR,58,forma,random_forest
-12,0.021,0,B,29,forma,random_forest
-12,0.021,0,OR,29,forma,random_forest
-12,0.021,1,B,18,forma,random_forest
-12,0.021,1,OR,40,forma,random_forest
-12,0.021,2,B,29,forma,random_forest
-12,0.021,2,OR,29,forma,random_forest
-12,0.021,3,B,37,forma,random_forest
-12,0.021,3,OR,21,forma,random_forest
-3,0.007,0,B,58,forma,random_forest
-3,0.007,1,B,58,forma,random_forest
-3,0.007,2,B,57,forma,random_forest
-3,0.007,2,OR,1,forma,random_forest
-3,0.007,3,B,58,forma,random_forest
-3,0.021,0,B,6,forma,random_forest
-3,0.021,0,OR,52,forma,random_forest
-3,0.021,1,B,2,forma,random_forest
-3,0.021,1,OR,56,forma,random_forest
-3,0.021,2,B,2,forma,random_forest
-3,0.021,2,OR,56,forma,random_forest
-3,0.021,3,B,3,forma,random_forest
-3,0.021,3,IR,2,forma,random_forest
-3,0.021,3,OR,53,forma,random_forest
-12,0.007,0,B,55,forma,svm
-12,0.007,0,OR,3,forma,svm
-12,0.007,1,B,53,forma,svm
-12,0.007,1,OR,5,forma,svm
-12,0.007,2,B,40,forma,svm
-12,0.007,2,OR,18,forma,svm
-12,0.007,3,B,50,forma,svm
-12,0.007,3,OR,8,forma,svm
-12,0.021,0,B,21,forma,svm
-12,0.021,0,OR,37,forma,svm
-12,0.021,1,B,20,forma,svm
-12,0.021,1,OR,38,forma,svm
-12,0.021,2,B,28,forma,svm
-12,0.021,2,OR,30,forma,svm
-12,0.021,3,B,49,forma,svm
-12,0.021,3,OR,9,forma,svm
-3,0.007,0,B,58,forma,svm
-3,0.007,1,B,58,forma,svm
-3,0.007,2,B,58,forma,svm
-3,0.007,3,B,58,forma,svm
-3,0.021,0,B,58,forma,svm
-3,0.021,1,B,54,forma,svm
-3,0.021,1,OR,4,forma,svm
-3,0.021,2,B,38,forma,svm
-3,0.021,2,OR,20,forma,svm
-3,0.021,3,B,54,forma,svm
-3,0.021,3,OR,4,forma,svm
+12,0.007,0,B,57,tempo,Random Forest
+12,0.007,0,IR,1,tempo,Random Forest
+12,0.007,1,B,58,tempo,Random Forest
+12,0.007,2,B,57,tempo,Random Forest
+12,0.007,2,IR,1,tempo,Random Forest
+12,0.007,3,B,58,tempo,Random Forest
+12,0.021,0,OR,58,tempo,Random Forest
+12,0.021,1,OR,58,tempo,Random Forest
+12,0.021,2,OR,58,tempo,Random Forest
+12,0.021,3,OR,58,tempo,Random Forest
+3,0.007,0,OR,58,tempo,Random Forest
+3,0.007,1,OR,58,tempo,Random Forest
+3,0.007,2,OR,58,tempo,Random Forest
+3,0.007,3,OR,58,tempo,Random Forest
+3,0.021,0,B,6,tempo,Random Forest
+3,0.021,0,IR,52,tempo,Random Forest
+3,0.021,1,B,4,tempo,Random Forest
+3,0.021,1,IR,54,tempo,Random Forest
+3,0.021,2,B,1,tempo,Random Forest
+3,0.021,2,IR,57,tempo,Random Forest
+3,0.021,3,B,3,tempo,Random Forest
+3,0.021,3,IR,55,tempo,Random Forest
+12,0.007,0,B,58,tempo,SVM (RBF)
+12,0.007,1,B,58,tempo,SVM (RBF)
+12,0.007,2,B,58,tempo,SVM (RBF)
+12,0.007,3,B,58,tempo,SVM (RBF)
+12,0.021,0,OR,58,tempo,SVM (RBF)
+12,0.021,1,OR,58,tempo,SVM (RBF)
+12,0.021,2,OR,58,tempo,SVM (RBF)
+12,0.021,3,OR,58,tempo,SVM (RBF)
+3,0.007,0,OR,58,tempo,SVM (RBF)
+3,0.007,1,OR,58,tempo,SVM (RBF)
+3,0.007,2,OR,58,tempo,SVM (RBF)
+3,0.007,3,OR,58,tempo,SVM (RBF)
+3,0.021,0,B,21,tempo,SVM (RBF)
+3,0.021,0,IR,37,tempo,SVM (RBF)
+3,0.021,1,B,16,tempo,SVM (RBF)
+3,0.021,1,IR,42,tempo,SVM (RBF)
+3,0.021,2,B,9,tempo,SVM (RBF)
+3,0.021,2,IR,49,tempo,SVM (RBF)
+3,0.021,3,B,8,tempo,SVM (RBF)
+3,0.021,3,IR,50,tempo,SVM (RBF)
+12,0.007,0,B,3,envelope,Random Forest
+12,0.007,0,OR,55,envelope,Random Forest
+12,0.007,1,B,2,envelope,Random Forest
+12,0.007,1,OR,56,envelope,Random Forest
+12,0.007,2,OR,58,envelope,Random Forest
+12,0.007,3,OR,58,envelope,Random Forest
+12,0.021,0,B,56,envelope,Random Forest
+12,0.021,0,OR,2,envelope,Random Forest
+12,0.021,1,B,38,envelope,Random Forest
+12,0.021,1,OR,18,envelope,Random Forest
+12,0.021,1,normal,2,envelope,Random Forest
+12,0.021,2,B,52,envelope,Random Forest
+12,0.021,2,OR,1,envelope,Random Forest
+12,0.021,2,normal,5,envelope,Random Forest
+12,0.021,3,B,56,envelope,Random Forest
+12,0.021,3,normal,2,envelope,Random Forest
+3,0.007,0,OR,58,envelope,Random Forest
+3,0.007,1,OR,58,envelope,Random Forest
+3,0.007,2,OR,58,envelope,Random Forest
+3,0.007,3,OR,58,envelope,Random Forest
+3,0.021,0,B,5,envelope,Random Forest
+3,0.021,0,OR,53,envelope,Random Forest
+3,0.021,1,B,1,envelope,Random Forest
+3,0.021,1,OR,57,envelope,Random Forest
+3,0.021,2,OR,58,envelope,Random Forest
+3,0.021,3,B,1,envelope,Random Forest
+3,0.021,3,OR,57,envelope,Random Forest
+12,0.007,0,B,8,envelope,SVM (RBF)
+12,0.007,0,OR,50,envelope,SVM (RBF)
+12,0.007,1,B,6,envelope,SVM (RBF)
+12,0.007,1,OR,52,envelope,SVM (RBF)
+12,0.007,2,OR,58,envelope,SVM (RBF)
+12,0.007,3,B,1,envelope,SVM (RBF)
+12,0.007,3,OR,57,envelope,SVM (RBF)
+12,0.021,0,B,58,envelope,SVM (RBF)
+12,0.021,1,B,49,envelope,SVM (RBF)
+12,0.021,1,OR,7,envelope,SVM (RBF)
+12,0.021,1,normal,2,envelope,SVM (RBF)
+12,0.021,2,B,31,envelope,SVM (RBF)
+12,0.021,2,OR,3,envelope,SVM (RBF)
+12,0.021,2,normal,24,envelope,SVM (RBF)
+12,0.021,3,B,55,envelope,SVM (RBF)
+12,0.021,3,normal,3,envelope,SVM (RBF)
+3,0.007,0,OR,58,envelope,SVM (RBF)
+3,0.007,1,B,5,envelope,SVM (RBF)
+3,0.007,1,OR,53,envelope,SVM (RBF)
+3,0.007,2,OR,58,envelope,SVM (RBF)
+3,0.007,3,OR,58,envelope,SVM (RBF)
+3,0.021,0,B,43,envelope,SVM (RBF)
+3,0.021,0,OR,15,envelope,SVM (RBF)
+3,0.021,1,B,12,envelope,SVM (RBF)
+3,0.021,1,OR,46,envelope,SVM (RBF)
+3,0.021,2,OR,58,envelope,SVM (RBF)
+3,0.021,3,B,3,envelope,SVM (RBF)
+3,0.021,3,OR,55,envelope,SVM (RBF)
+12,0.007,0,B,1,tempo+envelope,Random Forest
+12,0.007,0,IR,57,tempo+envelope,Random Forest
+12,0.007,1,B,1,tempo+envelope,Random Forest
+12,0.007,1,IR,57,tempo+envelope,Random Forest
+12,0.007,2,IR,56,tempo+envelope,Random Forest
+12,0.007,2,OR,2,tempo+envelope,Random Forest
+12,0.007,3,IR,58,tempo+envelope,Random Forest
+12,0.021,0,B,4,tempo+envelope,Random Forest
+12,0.021,0,OR,54,tempo+envelope,Random Forest
+12,0.021,1,B,20,tempo+envelope,Random Forest
+12,0.021,1,OR,38,tempo+envelope,Random Forest
+12,0.021,2,B,34,tempo+envelope,Random Forest
+12,0.021,2,OR,24,tempo+envelope,Random Forest
+12,0.021,3,B,51,tempo+envelope,Random Forest
+12,0.021,3,OR,7,tempo+envelope,Random Forest
+3,0.007,0,OR,58,tempo+envelope,Random Forest
+3,0.007,1,OR,58,tempo+envelope,Random Forest
+3,0.007,2,OR,58,tempo+envelope,Random Forest
+3,0.007,3,OR,58,tempo+envelope,Random Forest
+3,0.021,0,B,5,tempo+envelope,Random Forest
+3,0.021,0,IR,43,tempo+envelope,Random Forest
+3,0.021,0,OR,10,tempo+envelope,Random Forest
+3,0.021,1,B,2,tempo+envelope,Random Forest
+3,0.021,1,IR,54,tempo+envelope,Random Forest
+3,0.021,1,OR,2,tempo+envelope,Random Forest
+3,0.021,2,B,1,tempo+envelope,Random Forest
+3,0.021,2,IR,55,tempo+envelope,Random Forest
+3,0.021,2,OR,2,tempo+envelope,Random Forest
+3,0.021,3,B,3,tempo+envelope,Random Forest
+3,0.021,3,IR,55,tempo+envelope,Random Forest
+12,0.007,0,B,58,tempo+envelope,SVM (RBF)
+12,0.007,1,B,58,tempo+envelope,SVM (RBF)
+12,0.007,2,B,58,tempo+envelope,SVM (RBF)
+12,0.007,3,B,58,tempo+envelope,SVM (RBF)
+12,0.021,0,IR,26,tempo+envelope,SVM (RBF)
+12,0.021,0,OR,32,tempo+envelope,SVM (RBF)
+12,0.021,1,IR,31,tempo+envelope,SVM (RBF)
+12,0.021,1,OR,27,tempo+envelope,SVM (RBF)
+12,0.021,2,B,6,tempo+envelope,SVM (RBF)
+12,0.021,2,IR,31,tempo+envelope,SVM (RBF)
+12,0.021,2,OR,21,tempo+envelope,SVM (RBF)
+12,0.021,3,B,3,tempo+envelope,SVM (RBF)
+12,0.021,3,IR,38,tempo+envelope,SVM (RBF)
+12,0.021,3,OR,17,tempo+envelope,SVM (RBF)
+3,0.007,0,B,58,tempo+envelope,SVM (RBF)
+3,0.007,1,B,58,tempo+envelope,SVM (RBF)
+3,0.007,2,B,48,tempo+envelope,SVM (RBF)
+3,0.007,2,OR,10,tempo+envelope,SVM (RBF)
+3,0.007,3,B,58,tempo+envelope,SVM (RBF)
+3,0.021,0,B,58,tempo+envelope,SVM (RBF)
+3,0.021,1,B,58,tempo+envelope,SVM (RBF)
+3,0.021,2,B,58,tempo+envelope,SVM (RBF)
+3,0.021,3,B,58,tempo+envelope,SVM (RBF)
+12,0.007,0,B,5,forma,Random Forest
+12,0.007,0,OR,53,forma,Random Forest
+12,0.007,1,B,3,forma,Random Forest
+12,0.007,1,OR,55,forma,Random Forest
+12,0.007,2,OR,58,forma,Random Forest
+12,0.007,3,OR,58,forma,Random Forest
+12,0.021,0,B,28,forma,Random Forest
+12,0.021,0,OR,30,forma,Random Forest
+12,0.021,1,B,17,forma,Random Forest
+12,0.021,1,OR,41,forma,Random Forest
+12,0.021,2,B,25,forma,Random Forest
+12,0.021,2,OR,33,forma,Random Forest
+12,0.021,3,B,36,forma,Random Forest
+12,0.021,3,OR,22,forma,Random Forest
+3,0.007,0,B,58,forma,Random Forest
+3,0.007,1,B,58,forma,Random Forest
+3,0.007,2,B,58,forma,Random Forest
+3,0.007,3,B,58,forma,Random Forest
+3,0.021,0,B,18,forma,Random Forest
+3,0.021,0,OR,40,forma,Random Forest
+3,0.021,1,B,4,forma,Random Forest
+3,0.021,1,OR,54,forma,Random Forest
+3,0.021,2,B,6,forma,Random Forest
+3,0.021,2,OR,52,forma,Random Forest
+3,0.021,3,B,12,forma,Random Forest
+3,0.021,3,IR,3,forma,Random Forest
+3,0.021,3,OR,43,forma,Random Forest
+12,0.007,0,B,53,forma,SVM (RBF)
+12,0.007,0,OR,5,forma,SVM (RBF)
+12,0.007,1,B,47,forma,SVM (RBF)
+12,0.007,1,OR,11,forma,SVM (RBF)
+12,0.007,2,B,19,forma,SVM (RBF)
+12,0.007,2,OR,39,forma,SVM (RBF)
+12,0.007,3,B,42,forma,SVM (RBF)
+12,0.007,3,OR,16,forma,SVM (RBF)
+12,0.021,0,B,1,forma,SVM (RBF)
+12,0.021,0,OR,57,forma,SVM (RBF)
+12,0.021,1,B,7,forma,SVM (RBF)
+12,0.021,1,OR,51,forma,SVM (RBF)
+12,0.021,2,B,9,forma,SVM (RBF)
+12,0.021,2,OR,49,forma,SVM (RBF)
+12,0.021,3,B,25,forma,SVM (RBF)
+12,0.021,3,OR,33,forma,SVM (RBF)
+3,0.007,0,B,58,forma,SVM (RBF)
+3,0.007,1,B,58,forma,SVM (RBF)
+3,0.007,2,B,58,forma,SVM (RBF)
+3,0.007,3,B,58,forma,SVM (RBF)
+3,0.021,0,B,58,forma,SVM (RBF)
+3,0.021,1,B,57,forma,SVM (RBF)
+3,0.021,1,OR,1,forma,SVM (RBF)
+3,0.021,2,B,48,forma,SVM (RBF)
+3,0.021,2,OR,10,forma,SVM (RBF)
+3,0.021,3,B,56,forma,SVM (RBF)
+3,0.021,3,OR,2,forma,SVM (RBF)

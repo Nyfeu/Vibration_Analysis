@@ -205,7 +205,9 @@ Técnicas que só detectam deixam a coluna de tipo de falha como "não se aplica
 │   ├── data.py                # carregamento, segmentação, splits
 │   ├── features.py            # tempo, frequência, envelope, frequências do rolamento
 │   ├── detection.py           # one-class
-│   ├── classification.py
+│   ├── classification.py      # pipelines, seleção de modelos, GridSearchCV
+│   ├── cnn.py                 # CNN 1D (PyTorch opcional)
+│   ├── experimentos.py        # orquestra detecção e classificação
 │   └── evaluation.py          # métricas e matrizes de confusão
 ├── scripts/                   # download, backlog e geração de artefatos
 ├── tests/                     # pytest; rodar da raiz: python -m pytest tests
@@ -339,8 +341,19 @@ Próximos passos:
 - [ ] Pendências do grupo: responsáveis por capítulo, Apêndice A (uso de IA),
       vídeo e slides; revisar referências escritas de memória (técnicas one-class
       e classificação)
+- [x] Roteiro das aulas (pedido do grupo): `Pipeline(StandardScaler, clf)`,
+      seleção de modelos (LogReg, KNN 3/9, RF, SVM) por `cross_val_score` com
+      **`LeaveOneGroupOut` por carga** (StratifiedKFold embaralhado só como
+      contraste de vazamento), `GridSearchCV`, `classification_report`; notebook
+      reorganizado nas seções da prova e salvo com saídas
+- [x] Kurtograma (#14): SK por STFT + pré-branqueamento cepstral. Pré-branq.
+      recupera B 222/223 (= Smith M2); kurtograma sem DRS é frágil (197: SK≈0,1)
+- [x] CNN 1D (#21, `src/cnn.py`, PyTorch opcional): 99,7% normalizada, mas acerta
+      200/225 e generaliza 64% → aprende a montagem
+- [x] MFPT (#23): **não feito** — site oficial saiu do ar (redireciona à ASNT);
+      só há cópias não oficiais
 - [ ] Extras possíveis: split por diâmetro (montagem), normalização de amplitude
-      por gravação, kurtograma (#14), MFPT (#23), CNN 1D (#21)
+      por gravação, DRS antes do kurtograma
 - [x] Features de tempo (issue #10) e frequências características do
       rolamento (issue #12) em `src/features.py`, com testes em `tests/`;
       BSF na convenção de Smith & Randall

@@ -1,0 +1,21 @@
+registro,classe,acerto,predita_majoritaria,features,classificador
+100,normal,1.0000,normal,sinal bruto,CNN 1D
+108,IR,1.0000,IR,sinal bruto,CNN 1D
+121,B,1.0000,B,sinal bruto,CNN 1D
+133,OR,1.0000,OR,sinal bruto,CNN 1D
+172,IR,0.7069,IR,sinal bruto,CNN 1D
+188,B,1.0000,B,sinal bruto,CNN 1D
+200,OR,1.0000,OR,sinal bruto,CNN 1D
+212,IR,1.0000,IR,sinal bruto,CNN 1D
+225,B,1.0000,B,sinal bruto,CNN 1D
+237,OR,1.0000,OR,sinal bruto,CNN 1D
+100,normal,1.0000,normal,sinal normalizado,CNN 1D
+108,IR,1.0000,IR,sinal normalizado,CNN 1D
+121,B,1.0000,B,sinal normalizado,CNN 1D
+133,OR,1.0000,OR,sinal normalizado,CNN 1D
+172,IR,0.9655,IR,sinal normalizado,CNN 1D
+188,B,1.0000,B,sinal normalizado,CNN 1D
+200,OR,1.0000,OR,sinal normalizado,CNN 1D
+212,IR,1.0000,IR,sinal normalizado,CNN 1D
+225,B,1.0000,B,sinal normalizado,CNN 1D
+237,OR,1.0000,OR,sinal normalizado,CNN 1D

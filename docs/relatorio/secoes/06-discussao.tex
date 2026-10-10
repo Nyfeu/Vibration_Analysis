@@ -27,6 +27,11 @@ detector reage ao nível de vibração''. Trocar de detector quase não muda o
 quadro (os quatro têm AUC próximo de 1 com features de tempo); trocar de
 features o muda completamente.
 
+\paragraph{O pré-branqueamento.} Sem escolher banda alguma, o pré-branqueamento
+cepstral recuperou o BSF nas duas gravações de esfera que o artigo de referência
+diagnostica pelo mesmo método (222 e 223), elevando de zero para duas as
+gravações de esfera com assinatura clara (\autoref{tab:preprocessamentos}).
+
 \paragraph{O pré-processamento.} A verificação espectral da decimação encontrou
 um resíduo de \emph{aliasing} que, sem a banda comum, deixaria normais e falhas
 com cadeias de filtragem diferentes (\autoref{sec:banda-comum}). Foi um atalho
@@ -48,16 +53,24 @@ e não diria nada sobre o rolamento.
 \SI{99.4}{\percent} das janelas de esfera no teste, inclusive todas as da
 gravação 225, que não tem assinatura do defeito. A validação física não confirmou
 o BSF em nenhuma gravação de esfera, e o escore de BSF tem a menor importância
-entre as oito features (\SI{3.5}{\percent}). O classificador aprendeu a
-reconhecer a montagem e o nível de vibração das gravações de esfera.
+entre as oito features (\SI{3.3}{\percent}). O classificador aprendeu a
+reconhecer a montagem e o nível de vibração das gravações de esfera. A seleção de
+modelos não protegeu contra isso: a validação cruzada por carga também mantém a
+mesma montagem dos dois lados, e por isso premiou o mesmo atalho
+(\num{0.984} na validação, \SI{40.0}{\percent} na generalização).
 
 \paragraph{O modelo mais acurado é o que pior generaliza.} Com tempo+envelope, a
-acurácia no teste é de \SI{95.7}{\percent}, mas só \SI{45.6}{\percent} das janelas
+acurácia no teste é de \SI{95.7}{\percent}, mas só \SI{40.0}{\percent} das janelas
 de pista externa a 3~h e 12~h são reconhecidas como pista externa. Só com
 envelope, a acurácia no teste cai para \SI{67.6}{\percent} e a generalização sobe
 para \SI{76.0}{\percent}. O teste em \SI{3}{\hp} premia o modelo que memoriza a
 amplitude de cada montagem, porque cada montagem aparece nas quatro cargas; o
-conjunto de generalização, com montagens novas, o penaliza.
+conjunto de generalização, com montagens novas, o penaliza. A CNN 1D repete o
+padrão com outro mecanismo: com janelas normalizadas, sem acesso à amplitude,
+chega a \SI{99.7}{\percent} no teste e acerta todas as janelas das gravações sem
+assinatura (200 e 225), mas reconhece só \SI{64.1}{\percent} do conjunto de
+generalização. Uma rede que aprende do sinal bruto aprende também a ``impressão
+digital'' de cada montagem.
 
 \paragraph{O limiar não se transfere.} A FPR no limiar variou de 0 a
 \SI{81}{\percent} entre detectores com AUC semelhante, porque o limiar foi
@@ -80,7 +93,7 @@ o teste é todo em \SI{3}{\hp}, os erros se concentram por gravação, e cada
 padrão tem uma explicação física:
 \begin{itemize}
   \item \textbf{Gravação 200 (pista externa, \SI{0.014}{\inch}).} É o erro mais
-  persistente: 18 janelas tomadas por esfera no Random Forest com tempo+envelope,
+  persistente: 20 janelas tomadas por esfera no Random Forest com tempo+envelope,
   46 de 58 erradas só com envelope, e 24 sem alarme no Isolation Forest. As
   janelas erradas se espalham ao longo da gravação, e não num trecho contínuo, o
   que é compatível com os pulsos aleatórios que \textcite[p.~110]{smith2015}
@@ -91,15 +104,15 @@ padrão tem uma explicação física:
   janelas no Isolation Forest e em 51 no Mahalanobis de envelope; só com envelope,
   22 janelas são tomadas por pista externa. É a gravação que
   \textcite{smith2015} só diagnosticam com o método mais elaborado (DRS e
-  kurtograma), e o nosso envelope do sinal bruto não tem esse
-  pré-processamento.
+  kurtograma). Nem o pré-branqueamento nem o kurtograma sem DRS a recuperaram
+  (\autoref{tab:preprocessamentos}).
   \item \textbf{Gravação 225 (esfera, \SI{0.021}{\inch}).} Com envelope, 19
   janelas são tomadas por pista interna. A validação física mostrou nela um
   escore de BPFI de \SI{14.2}{\decibel}, maior que o de BSF, o que concorda com a
   observação de danos não intencionais nas pistas de várias gravações de
   esfera~\cite[p.~109--110]{smith2015}. O classificador ``vê'' o defeito que
   está no sinal, e não o declarado.
-  \item \textbf{Gravação 172 (pista interna, \SI{0.014}{\inch}).} Seis janelas
+  \item \textbf{Gravação 172 (pista interna, \SI{0.014}{\inch}).} Quatro janelas
   tomadas por esfera com tempo+envelope, e 38 sem alarme no Mahalanobis de
   envelope. Por janela, o escore de BPFI é mais fraco que na gravação inteira
   (resolução de \SI{2.93}{\hertz} contra \SI{0.1}{\hertz}), e o diâmetro de
@@ -114,8 +127,9 @@ Os erros não são aleatórios: concentram-se nas gravações que a auditoria de
 \textcite{smith2015} e a nossa validação física já apontavam como sem assinatura
 ou com assinatura fraca. O inverso, porém, é o achado mais importante: os
 modelos com features de amplitude \emph{acertam} essas mesmas gravações (225 com
-\SI{100}{\percent}, 200 com \SI{69}{\percent}), o que só é possível por um caminho
-que não passa pelo defeito.
+\SI{100}{\percent}, 200 com \SI{66}{\percent}; a CNN, ambas com
+\SI{100}{\percent}), o que só é possível por um caminho que não passa pelo
+defeito.
 
 \section{Limitações}
 \label{sec:limitacoes}
@@ -165,10 +179,11 @@ resultado deste trabalho:
   \item \textbf{Normalizar a amplitude por gravação.} Dividir cada janela pelo
   RMS da gravação --- ou usar só features adimensionais --- e verificar se algum
   desempenho sobra sem o atalho.
-  \item \textbf{Banda de demodulação por kurtograma.} O envelope do sinal bruto
-  perde as gravações que só o método de referência de \textcite{smith2015}
-  diagnostica (121, 197); escolher a banda por curtose
-  espectral~\cite{antoni2007} deveria recuperá-las.
+  \item \textbf{Separação de componentes discretos antes do kurtograma.} O
+  kurtograma sozinho não encontrou banda impulsiva na gravação 197 e não
+  recuperou a 121 (\autoref{tab:preprocessamentos}); o método de referência de
+  \textcite{smith2015} aplica antes a separação discreto/aleatório (DRS), que
+  remove as componentes determinísticas que mascaram os impactos.
   \item \textbf{Mais dados normais.} Com uma gravação normal por carga, a FPR e o
   limiar são estimados sobre uma única gravação. Gravações normais de outras
   montagens, ou de outro conjunto de dados como o MFPT, testariam se o detector

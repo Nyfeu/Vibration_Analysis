@@ -15,15 +15,18 @@ física, o AUC cai para \numrange{0.69}{0.83}, mas os alarmes passam a seguir a
 diagnosticabilidade do defeito.
 
 \textbf{Diagnóstico do tipo de falha.} O Random Forest com features de tempo e de
-envelope atingiu \SI{95.7}{\percent} de acurácia, mas acerta a classe esfera sem
-que o defeito apareça no envelope de nenhuma gravação, e reconhece como pista
-externa menos da metade das janelas com o defeito em outra posição. Só com o
-envelope, a acurácia cai para \SI{67.6}{\percent} e a generalização sobe para
-\SI{76.0}{\percent}.
+envelope, escolhido por validação cruzada por carga e ajustado por busca em grade,
+atingiu \SI{95.7}{\percent} de acurácia, mas acerta a classe esfera sem que o
+defeito apareça no envelope do sinal bruto de nenhuma gravação, e reconhece como
+pista externa só \SI{40.0}{\percent} das janelas com o defeito em outra posição.
+Só com o envelope, a acurácia cai para \SI{67.6}{\percent} e a generalização sobe
+para \SI{76.0}{\percent}. A CNN 1D chega a \SI{99.7}{\percent}, mas acerta
+inclusive as gravações sem assinatura e generaliza pior que o modelo de
+envelope.
 
 A conclusão principal é metodológica. No CWRU, alta acurácia é fácil e diz pouco:
 o conjunto permite acertar pela amplitude e pela montagem. O que dá sentido aos
 resultados é a verificação física --- se o pico do envelope cai na frequência
 prevista --- e a confirmou para pista interna e para a maior parte da pista
-externa, mas não para a esfera. Um modelo útil fora deste conjunto de dados
+externa, mas, para a esfera, só em duas gravações e só com pré-branqueamento. Um modelo útil fora deste conjunto de dados
 precisa ser avaliado em montagens que não viu.

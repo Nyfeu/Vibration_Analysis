@@ -1,9 +1,11 @@
-features,classificador,acuracia,acc_normal,acc_IR,acc_B,acc_OR,generalizacao_OR
-tempo,random_forest,0.9329,1.0000,0.9086,0.9713,0.8966,0.5000
-tempo,svm,0.9329,1.0000,0.9486,0.9368,0.8908,0.4989
-envelope,random_forest,0.6764,0.0000,0.9371,0.6494,0.6667,0.7597
-envelope,svm,0.6609,0.0690,0.9543,0.6207,0.6034,0.7123
-tempo+envelope,random_forest,0.9570,1.0000,0.9657,0.9943,0.8966,0.4558
-tempo+envelope,svm,0.9466,0.9828,0.9943,0.9598,0.8736,0.2726
-forma,random_forest,0.7040,0.0517,0.8800,0.6839,0.7644,0.6045
-forma,svm,0.7435,0.2069,0.9714,0.7011,0.7356,0.1897
+features,classificador,cv_por_carga,acuracia,acc_normal,acc_IR,acc_B,acc_OR,generalizacao_OR
+tempo,Random Forest,0.9717,0.9329,1.0000,0.9086,0.9713,0.8966,0.5000
+tempo,SVM (RBF),0.9739,0.9277,1.0000,0.8971,0.9655,0.8966,0.5000
+envelope,Random Forest,0.7529,0.6764,0.0000,0.9371,0.6494,0.6667,0.7597
+envelope,SVM (RBF),0.7131,0.6713,0.0517,0.9657,0.6034,0.6494,0.6767
+tempo+envelope,Random Forest,0.9842,0.9570,1.0000,0.9771,0.9943,0.8851,0.3998
+tempo+envelope,SVM (RBF),0.9798,0.9501,1.0000,0.9943,0.9655,0.8736,0.1153
+forma,Random Forest,0.8599,0.6540,0.0690,0.7200,0.6667,0.7701,0.5808
+forma,SVM (RBF),0.8646,0.7556,0.2414,0.9771,0.7299,0.7299,0.2953
+sinal bruto,CNN 1D,,0.9707,1.0000,0.9029,1.0000,1.0000,0.3556
+sinal normalizado,CNN 1D,,0.9966,1.0000,0.9886,1.0000,1.0000,0.6412

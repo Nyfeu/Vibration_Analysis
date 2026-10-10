@@ -173,9 +173,16 @@ A escolha da banda de demodulação é o ponto crítico. Sem filtro algum, o env
 podem mascará-lo. Esse é o ``método 1'' de \textcite[p.~104]{smith2015}, que
 mesmo assim diagnosticou boa parte do CWRU. A curtose espectral e o kurtograma
 escolhem automaticamente a banda mais impulsiva, que tende a ser a que carrega os
-impactos~\cite{antoni2007}; com uma etapa de separação de componentes
-determinísticos, compõem o ``método de referência'' do mesmo
-estudo~\cite[p.~104--105]{smith2015}.
+impactos~\cite{antoni2006sk,antoni2006aplicacao,antoni2007}. A curtose espectral
+de uma faixa de frequência vale aproximadamente zero para ruído estacionário e
+cresce quando a faixa contém transitórios, como os impactos de um defeito; o
+kurtograma a calcula para várias larguras de banda e escolhe a combinação de
+maior valor~\cite{antoni2007}. Com uma etapa prévia de separação de componentes
+determinísticos (DRS), essa escolha compõe o ``método de referência'' de
+\textcite[p.~104--105]{smith2015}. Uma alternativa mais simples é o
+pré-branqueamento cepstral, que iguala a magnitude de todo o espectro e mantém a
+fase: as faixas impulsivas passam a dominar o sinal sem que seja preciso
+escolher uma banda~\cite[p.~104]{smith2015}.
 
 Neste trabalho, o espectro de envelope tem dois usos: como fonte de features para
 os modelos e como validação física, verificando se o pico observado cai na
@@ -231,3 +238,22 @@ decisão se apoia em grandezas com sentido físico. Como contraponto, usa-se a
 fronteira de margem máxima entre as classes, com \emph{kernel} para fronteiras
 não lineares. As implementações são as do
 \texttt{scikit-learn}~\cite{pedregosa2011}.
+
+\paragraph{Seleção de modelos com validação cruzada agrupada.} Os modelos e seus
+hiperparâmetros são escolhidos por validação cruzada no conjunto de treino. A
+validação cruzada estima o desempenho em dados não vistos treinando em parte dos
+dados e avaliando no restante, alternando as partes~\cite{kohavi1995}; a busca
+em grade (\emph{grid search}) repete esse procedimento para cada combinação de
+hiperparâmetros. A estimativa só é válida se as partes forem independentes.
+Quando os dados têm estrutura --- aqui, várias janelas da mesma gravação ---, a
+divisão aleatória coloca observações quase idênticas dos dois lados e
+superestima o desempenho; a divisão deve respeitar os grupos, deixando grupos
+inteiros de fora em cada partição~\cite{roberts2017}.
+
+\paragraph{Rede neural convolucional 1D.} Como contraponto às features
+calculadas à mão, uma rede convolucional unidimensional aprende os filtros
+diretamente do sinal bruto. Em diagnóstico de motores e rolamentos, CNNs 1D
+compactas atingem alto desempenho sem extração manual de
+features~\cite{ince2016}; a arquitetura WDCNN usa na primeira camada um
+\emph{kernel} largo, que funciona como um banco de filtros aprendido, e
+camadas pequenas em seguida~\cite{zhang2017}.
