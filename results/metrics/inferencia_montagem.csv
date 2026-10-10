@@ -1,0 +1,4 @@
+modelo,acuracia_janelas,ic95_inf,ic95_sup,montagens_certas,montagens,p_binomial_montagens,gravacoes_certas,gravacoes,p_binomial_gravacoes
+Random Forest (tempo+envelope),0.4567,0.3073,0.6215,4,9,0.3497,17,36,0.05838
+KNN k=9 (tempo+envelope),0.5381,0.2352,0.8296,5,9,0.1448,20,36,0.004991
+Regra física (sem treino),0.6573,0.5034,0.8071,6,9,0.04242,24,36,4.447e-05

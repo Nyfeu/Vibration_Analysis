@@ -8,6 +8,7 @@ conferência no original (ver o aviso no topo de cada um).
 | Chave | Obra |
 |---|---|
 | [`smith2015`](smith2015.md) | Smith & Randall (2015) — benchmark do CWRU (**leitura obrigatória**) |
+| [`agresti1998`](agresti1998.md) | Agresti & Coull (1998) — Intervalos para proporções |
 | [`antoni2006aplicacao`](antoni2006aplicacao.md) | Antoni & Randall (2006) — SK aplicada a máquinas rotativas |
 | [`antoni2006sk`](antoni2006sk.md) | Antoni (2006) — Curtose espectral |
 | [`antoni2007`](antoni2007.md) | Antoni (2007) — Fast kurtogram |
@@ -20,13 +21,17 @@ conferência no original (ver o aviso no topo de cada um).
 | [`crochiere1983`](crochiere1983.md) | Crochiere & Rabiner (1983) — Multirate Digital Signal Processing |
 | [`cwru`](cwru.md) | CWRU Bearing Data Center — documentação oficial do dataset |
 | [`demaesschalck2000`](demaesschalck2000.md) | De Maesschalck et al. (2000) — The Mahalanobis distance |
+| [`efron1993`](efron1993.md) | Efron & Tibshirani (1993) — An Introduction to the Bootstrap |
 | [`enunciado2026`](enunciado2026.md) | Enunciado do Projeto Desafio — ECM514 |
+| [`field2007`](field2007.md) | Field & Welsh (2007) — Bootstrapping clustered data |
 | [`gustafsson1996`](gustafsson1996.md) | Gustafsson (1996) — Filtragem forward-backward |
 | [`hastie2009`](hastie2009.md) | Hastie, Tibshirani & Friedman (2009) — The Elements of Statistical Learning |
 | [`hinton2006`](hinton2006.md) | Hinton & Salakhutdinov (2006) — Autoencoders profundos |
+| [`hollander2014`](hollander2014.md) | Hollander, Wolfe & Chicken (2014) — Nonparametric Statistical Methods |
 | [`ince2016`](ince2016.md) | Ince et al. (2016) — CNN 1D para falhas de motor |
 | [`iso20816`](iso20816.md) | ISO 20816-1:2016 — Avaliação de vibração de máquinas |
 | [`kohavi1995`](kohavi1995.md) | Kohavi (1995) — Validação cruzada e bootstrap |
+| [`kruskal1952`](kruskal1952.md) | Kruskal & Wallis (1952) — Teste de Kruskal–Wallis |
 | [`liu2008`](liu2008.md) | Liu, Ting & Zhou (2008) — Isolation Forest |
 | [`liu2012`](liu2012.md) | Liu, Ting & Zhou (2012) — Isolation-based anomaly detection |
 | [`mahalanobis1936`](mahalanobis1936.md) | Mahalanobis (1936) — Distância generalizada |
@@ -40,6 +45,9 @@ conferência no original (ver o aviso no topo de cada um).
 | [`sakurada2014`](sakurada2014.md) | Sakurada & Yairi (2014) — Autoencoders para detecção de anomalias |
 | [`sawalhi2011`](sawalhi2011.md) | Sawalhi & Randall (2011) — Pré-branqueamento por edição do cepstro |
 | [`scholkopf2001`](scholkopf2001.md) | Schölkopf et al. (2001) — One-Class SVM |
+| [`shapiro1965`](shapiro1965.md) | Shapiro & Wilk (1965) — Teste de normalidade |
+| [`spearman1904`](spearman1904.md) | Spearman (1904) — Correlação de postos |
 | [`tax2004`](tax2004.md) | Tax & Duin (2004) — Support Vector Data Description |
 | [`virtanen2020`](virtanen2020.md) | Virtanen et al. (2020) — SciPy 1.0 |
+| [`wilson1927`](wilson1927.md) | Wilson (1927) — Intervalo de Wilson para proporções |
 | [`zhang2017`](zhang2017.md) | Zhang et al. (2017) — WDCNN |

@@ -7,7 +7,7 @@
 | **Chave no `.bib`** | `enunciado2026` |
 | **Arquivo** | não versionado (PDFs ficam em `docs/articles/`, fora do Git) |
 | **Fichado por** | Claude Code (assistente de IA), a pedido do grupo |
-| **Revisado por** | _preencher_ |
+| **Revisado por** | André Maiolini (sessão de trabalho) |
 | **Última atualização** | 2026-10-10 |
 | **Por que ler** | Define o problema, as regras, os entregáveis e a rubrica. A distinção entre detectar e diagnosticar vem dele. |
 

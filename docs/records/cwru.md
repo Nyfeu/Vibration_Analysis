@@ -7,7 +7,7 @@
 | **Chave no `.bib`** | `cwru` |
 | **Arquivo** | não versionado (PDFs ficam em `docs/articles/`, fora do Git) |
 | **Fichado por** | Claude Code (assistente de IA), a pedido do grupo |
-| **Revisado por** | _preencher_ |
+| **Revisado por** | André Maiolini (sessão de trabalho) |
 | **Última atualização** | 2026-10-10 |
 | **Por que ler** | Fonte primária do dataset. Todo número do capítulo 2 vem dela ou de Smith e Randall (2015). Conferida diretamente pelo grupo (ver `data/raw/README.md`). |
 

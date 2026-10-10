@@ -1,4 +1,4 @@
-% Responsável: TODO(grupo)
+% Responsável: Durval Consorti Soranz de Barros Santos
 % Enunciado, item 6.3: no MÍNIMO 2 referências bibliográficas POR TÉCNICA.
 % Rubrica: "Levantamento e seleção dos métodos" (peso 1).
 \chapter{Fundamentação teórica}
@@ -118,7 +118,7 @@ frequência prevista é o argumento físico mais forte disponível neste trabalh
 
 Decimar um sinal discreto por um fator inteiro $M$ é reduzir sua taxa de
 amostragem de $f_s$ para $f_s/M$, mantendo uma a cada $M$
-amostras~\cite[seç.~4.6]{oppenheim2010}. A operação é necessária quando sinais
+amostras~\cite[cap.~4]{oppenheim2010}. A operação é necessária quando sinais
 gravados a taxas diferentes precisam ser comparados na mesma base, que é o caso
 das gravações normais do CWRU (\autoref{sec:fs-normais}).
 
@@ -127,7 +127,7 @@ subamostragem $y[n] = x[nM]$. Pelo teorema da amostragem, um sinal discreto à
 taxa $f_s$ só representa sem ambiguidade frequências até $f_s/2$, a frequência de
 Nyquist. Após a subamostragem, esse limite cai para $f_s/(2M)$, e o espectro de
 $y$ passa a ser a soma de $M$ cópias deslocadas e dilatadas do espectro de
-$x$~\cite[seç.~4.6.1]{oppenheim2010}:
+$x$~\cite[cap.~4]{oppenheim2010}:
 \begin{equation}
   Y(e^{j\omega}) = \frac{1}{M}\sum_{k=0}^{M-1} X\!\left(e^{j(\omega - 2\pi k)/M}\right).
 \end{equation}
@@ -276,3 +276,33 @@ compactas atingem alto desempenho sem extração manual de
 features~\cite{ince2016}; a arquitetura WDCNN usa na primeira camada um
 \emph{kernel} largo, que funciona como um banco de filtros aprendido, e
 camadas pequenas em seguida~\cite{zhang2017}.
+
+\subsection{Estatística aplicada a dados agrupados}
+\label{sec:tec-estatistica}
+
+Os dados deste trabalho têm uma estrutura que condiciona toda a inferência: cada
+gravação gera dezenas de janelas, sobrepostas e da mesma montagem, que não são
+observações independentes. Tratar as janelas como amostras independentes
+subestima a variância e produz intervalos estreitos demais e valores-$p$ pequenos
+demais. As técnicas abaixo foram escolhidas para respeitar essa estrutura.
+
+\paragraph{Análise exploratória e testes não paramétricos.} As features têm
+distribuições assimétricas e com caudas pesadas (o RMS de uma falha é dezenas de
+vezes o de um normal), o que desaconselha a ANOVA. O teste de
+Kruskal--Wallis compara a distribuição de uma variável entre $k$ grupos usando só
+os postos das observações, sem supor normalidade~\cite{kruskal1952,hollander2014}.
+O tamanho do efeito é medido por $\varepsilon^2 = H/(n-1)$, entre 0 e
+1~\cite{hollander2014}. A associação entre features é medida pela correlação de
+postos de Spearman, robusta a relações monotônicas não
+lineares~\cite{spearman1904,hollander2014}. A normalidade, quando é pressuposto de
+um método --- como a distribuição qui-quadrado da distância de Mahalanobis ---, é
+verificada pelo teste de Shapiro--Wilk~\cite{shapiro1965}.
+
+\paragraph{Bootstrap por grupos.} O bootstrap estima a distribuição amostral de
+uma estatística reamostrando os próprios dados com reposição, e dá intervalos de
+confiança sem fórmula fechada~\cite{efron1993}. Quando os dados são agrupados, a
+reamostragem deve ser feita no nível do grupo --- gravações inteiras, e não
+janelas ---, para preservar a dependência interna e não subestimar a
+variância~\cite{field2007}. Para uma proporção estimada sobre um único grupo, em
+que esse bootstrap não se aplica, o intervalo de Wilson tem cobertura melhor que o
+intervalo normal clássico~\cite{wilson1927,agresti1998}.

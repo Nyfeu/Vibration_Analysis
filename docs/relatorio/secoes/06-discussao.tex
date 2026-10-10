@@ -1,4 +1,4 @@
-% Responsável: TODO(grupo) — escrita coletiva.
+% Responsável: escrita coletiva, coordenada por Estevan Delazari Feher.
 % Rubrica: peso 2, empatado com detecção. É a seção que mais vale por página.
 % Enunciado, item 6.3: limitações da técnica, casos em que falhou, o que mudaria
 % com mais tempo/dados.
@@ -41,6 +41,16 @@ tipo de falha, contra no máximo \SI{54.7}{\percent} dos modelos treinados, e
 \SI{99.8}{\percent} do conjunto de generalização (\autoref{sec:res-montagem}).
 O conhecimento físico, embutido na geometria do rolamento, generaliza onde o
 aprendizado a partir dos dados não generaliza.
+
+\paragraph{A inferência com a gravação como unidade.} Tratar a gravação, e não a
+janela, como unidade mudou a força de várias afirmações. O teste de
+Kruskal--Wallis por gravação mostrou que o escore de BSF é a única feature sem
+diferença significativa entre as classes; o bootstrap por gravação mostrou que a
+superioridade do modelo com amplitude no teste é real (diferença de \num{0.28},
+IC de \numrange{0.20}{0.36}), mas também que o recall da pista externa depende
+quase todo de uma gravação; e o teste binomial por montagem mostrou que só a
+regra física tem evidência de generalização. Com as janelas como unidade, todos os
+testes seriam ``significativos'', e nenhuma dessas distinções apareceria.
 
 \paragraph{O pré-branqueamento.} Sem escolher banda alguma, o pré-branqueamento
 cepstral recuperou o BSF nas duas gravações de esfera que o artigo de referência
@@ -88,7 +98,17 @@ padrão com outro mecanismo: com janelas normalizadas, sem acesso à amplitude,
 chega a \SI{99.7}{\percent} no teste e acerta todas as janelas das gravações sem
 assinatura (200 e 225), mas reconhece só \SI{64.1}{\percent} do conjunto de
 generalização. Uma rede que aprende do sinal bruto aprende também a ``impressão
-digital'' de cada montagem.
+digital'' de cada montagem. É o mesmo protocolo com que a arquitetura em que nos
+baseamos foi avaliada no próprio CWRU: \textcite{zhang2017} medem a
+generalização treinando numa carga e testando nas outras (seção 4.4.1 do
+artigo), o que, pelos nossos resultados, não separa montagens.
+
+\paragraph{A generalização dos modelos treinados é instável.} Entre 10 sementes, a
+acurácia no teste do Random Forest com tempo+envelope quase não muda (desvio de
+\num{0.004}), mas a fração da pista externa em outra posição reconhecida varia de
+\num{0.40} a \num{0.72}. Um único treinamento, como é o usual, poderia ter
+reportado qualquer valor nessa faixa. O modelo só de envelope, ao contrário, fica
+entre \num{0.755} e \num{0.762}.
 
 \paragraph{Nenhum modelo treinado generaliza para uma montagem nova.} Com um
 diâmetro inteiro fora do treino, todos os classificadores --- inclusive a CNN e os
@@ -107,6 +127,11 @@ com falhas raras, a mesma FPR de \num{0.12} faria a maioria dos alarmes ser fals
 (\autoref{sec:res-deteccao}). Avaliar um detector exige um conjunto de teste com a
 proporção de normais da operação real, que o CWRU, com quatro gravações normais,
 não oferece.
+
+\paragraph{O limiar teórico não vale.} As features normais não são normais
+(Shapiro--Wilk rejeita cinco de oito), e o limiar qui-quadrado do Mahalanobis
+daria \SI{6.2}{\percent} de falsos alarmes no treino em vez de \SI{1}{\percent}.
+O limiar empírico resolveu isso no treino, mas não no teste.
 
 \paragraph{O limiar não se transfere.} A FPR no limiar variou de 0 a
 \SI{81}{\percent} entre detectores com AUC semelhante, porque o limiar foi
@@ -200,6 +225,15 @@ resultado deste trabalho:
   \item \textbf{Banda limitada.} Para igualar a cadeia de filtragem de normais e
   falhas, a análise usa só a banda de \SIrange{0}{4.8}{\kilo\hertz}
   (\autoref{sec:banda-comum}), renunciando a ressonâncias acima dela.
+  \item \textbf{Poder estatístico baixo.} As unidades independentes são poucas:
+  10 gravações no teste, 1 normal, 9 montagens no experimento de generalização.
+  Os intervalos de confiança são largos, a FPR não tem estimativa de variabilidade
+  entre gravações, e um efeito real menor que o observado poderia não ser
+  detectado. Os valores-$p$ não foram corrigidos para comparações múltiplas; os
+  testes centrais (regra física contra o acaso e diferença entre modelos) foram
+  definidos antes de olhar os resultados por montagem, mas a família de
+  comparações da \autoref{tab:montagem-inferencia} é pequena e deve ser lida com
+  esse cuidado.
   \item \textbf{Limiar de confirmação com quatro normais.} Na validação física, o
   limiar de cada família é o maior escore de quatro gravações normais. Com tão
   poucas, o limiar é incerto, e confirmações por margem de menos de

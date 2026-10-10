@@ -7,12 +7,12 @@
 | **Chave no `.bib`** | `zhang2017` |
 | **Arquivo** | não versionado (PDFs ficam em `docs/articles/`, fora do Git) |
 | **Fichado por** | Claude Code (assistente de IA), a pedido do grupo |
-| **Revisado por** | _preencher_ |
+| **Revisado por** | André Maiolini (sessão de trabalho) |
 | **Última atualização** | 2026-10-10 |
 | **Por que ler** | Arquitetura WDCNN, base da nossa CNN 1D; avaliada no próprio CWRU. |
 
 > **Origem deste fichamento.** Redigido com assistência de IA (Claude Code), a partir do
-> conhecimento estabelecido sobre a obra, sem acesso ao texto completo nesta sessão.
+> conhecimento estabelecido sobre a obra, com o texto completo consultado no PubMed Central (PMC5336047) para o protocolo de avaliação.
 > Por isso **não há citações diretas nem números de página**: tudo é paráfrase. Antes
 > de citar algo específico no relatório, conferir no original (DOI abaixo) e registrar
 > a página. Ver `docs/uso_de_ia.md`.
@@ -26,7 +26,9 @@
 
 ## Pontos relevantes para o projeto
 
-- → Projeto: copiamos a ideia do kernel largo inicial. O artigo reporta generalização entre cargas no CWRU — nosso teste entre montagens mostra que essa generalização não garante diagnóstico do defeito, pois cada montagem aparece em todas as cargas.
+- → Projeto: copiamos a ideia do kernel largo inicial.
+- **Verificado no texto completo (PMC5336047, 2026-10-10):** as amostras de treino são janelas de 2048 pontos cortadas com sobreposição dos sinais (seção 3.4), e as de teste, sem sobreposição, dos mesmos sinais (seções 4.1 e 4.3). Na adaptação de domínio, treina-se numa carga (1, 2 ou 3 HP) e testa-se nas outras (seção 4.4.1, Tabela 3).
+- → Projeto: o teste entre cargas do artigo é o mesmo tipo de teste do nosso split por carga, que não separa montagens: no CWRU, cada defeito foi ensaiado numa única montagem, presente em todas as cargas. Nossa CNN no estilo WDCNN chega a 99,7% nesse teste e cai para ~50% com uma montagem nova (seção 5.6 do relatório).
 
 ## Onde é usado no relatório
 
@@ -34,8 +36,8 @@
 
 ## Cuidados ao citar
 
-- Conferir o protocolo de divisão do artigo (por carga? por janela?) antes de comparar números com os nossos.
+- O protocolo foi conferido: treino e teste vêm das mesmas gravações, e a generalização é avaliada entre cargas.
 
 ## Pendências
 
-- [ ] **Conferir o split usado no artigo** — é um bom exemplo para a discussão se ele não separar montagens.
+- [x] Split conferido no texto completo (2026-10-10) e usado na discussão crítica do relatório.

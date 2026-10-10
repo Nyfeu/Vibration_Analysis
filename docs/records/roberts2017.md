@@ -7,7 +7,7 @@
 | **Chave no `.bib`** | `roberts2017` |
 | **Arquivo** | não versionado (PDFs ficam em `docs/articles/`, fora do Git) |
 | **Fichado por** | Claude Code (assistente de IA), a pedido do grupo |
-| **Revisado por** | _preencher_ |
+| **Revisado por** | André Maiolini (sessão de trabalho) |
 | **Última atualização** | 2026-10-10 |
 | **Por que ler** | Fundamenta a validação cruzada agrupada (LeaveOneGroupOut por carga e por diâmetro). |
 
@@ -30,7 +30,7 @@
 
 ## Onde é usado no relatório
 
-- Seções 3.3.4, 4.5.2 e 5.5.
+- Seções 3.3.4, 4.5.2, 4.6, 5.6 (montagens) e 5.7 (inferência).
 
 ## Cuidados ao citar
 

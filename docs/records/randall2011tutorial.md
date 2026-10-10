@@ -7,7 +7,7 @@
 | **Chave no `.bib`** | `randall2011tutorial` |
 | **Arquivo** | não versionado (PDFs ficam em `docs/articles/`, fora do Git) |
 | **Fichado por** | Claude Code (assistente de IA), a pedido do grupo |
-| **Revisado por** | _preencher_ |
+| **Revisado por** | André Maiolini (sessão de trabalho) |
 | **Última atualização** | 2026-10-10 |
 | **Por que ler** | Tutorial de referência sobre diagnóstico de rolamentos; base da fundamentação física e da análise de envelope. Fonte original da Figura 2 do relatório (reproduzida por Smith e Randall). |
 

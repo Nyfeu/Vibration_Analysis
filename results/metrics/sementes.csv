@@ -1,0 +1,26 @@
+modelo,semente,acuracia_teste,generalizacao_OR
+Random Forest (tempo+envelope),0,0.9518,0.3976
+Random Forest (tempo+envelope),1,0.9621,0.4116
+Random Forest (tempo+envelope),2,0.9570,0.3955
+Random Forest (tempo+envelope),3,0.9604,0.4698
+Random Forest (tempo+envelope),4,0.9501,0.7188
+Random Forest (tempo+envelope),5,0.9621,0.5399
+Random Forest (tempo+envelope),6,0.9604,0.4591
+Random Forest (tempo+envelope),7,0.9587,0.4871
+Random Forest (tempo+envelope),8,0.9604,0.4623
+Random Forest (tempo+envelope),9,0.9587,0.4698
+Random Forest (envelope),0,0.6781,0.7619
+Random Forest (envelope),1,0.6799,0.7619
+Random Forest (envelope),2,0.6764,0.7554
+Random Forest (envelope),3,0.6730,0.7608
+Random Forest (envelope),4,0.6816,0.7586
+Random Forest (envelope),5,0.6799,0.7554
+Random Forest (envelope),6,0.6799,0.7608
+Random Forest (envelope),7,0.6816,0.7597
+Random Forest (envelope),8,0.6816,0.7608
+Random Forest (envelope),9,0.6764,0.7575
+CNN 1D (normalizado),0,0.9914,0.4386
+CNN 1D (normalizado),1,1.0000,0.6034
+CNN 1D (normalizado),2,1.0000,0.5819
+CNN 1D (normalizado),3,0.9966,0.5830
+CNN 1D (normalizado),4,1.0000,0.5517

@@ -1,0 +1,14 @@
+metrica,estimativa,ic95_inf,ic95_sup,unidade
+acurácia — Random Forest tempo+envelope,0.9570,0.8936,1.0000,gravação
+recall IR — Random Forest tempo+envelope,0.9771,0.9310,1.0000,gravação
+recall B — Random Forest tempo+envelope,0.9943,0.9828,1.0000,gravação
+recall OR — Random Forest tempo+envelope,0.8851,0.6552,1.0000,gravação
+acurácia — Random Forest envelope,0.6764,0.5517,0.7955,gravação
+recall IR — Random Forest envelope,0.9371,0.8103,1.0000,gravação
+recall B — Random Forest envelope,0.6494,0.5517,0.8103,gravação
+recall OR — Random Forest envelope,0.6667,0.2069,1.0000,gravação
+diferença de acurácia (tempo+envelope − envelope),0.2806,0.1997,0.3563,gravação
+TPR Mahalanobis — tempo+envelope,1.0000,1.0000,1.0000,gravação
+FPR Mahalanobis — tempo+envelope,0.1207,0.0597,0.2288,janela (Wilson; 1 gravação)
+TPR Mahalanobis — envelope,0.5755,0.3270,0.7920,gravação
+FPR Mahalanobis — envelope,0.1379,0.0716,0.2493,janela (Wilson; 1 gravação)

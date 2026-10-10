@@ -1,4 +1,4 @@
-% Responsável: TODO(grupo)
+% Responsáveis: Leonardo Roberto Amadio (detecção) e Lucas Castanho Paganotto Carvalho (classificação)
 % Enunciado, item 6.2: tabela resumo padronizada, obrigatória no texto e no README.
 % ATENÇÃO: nenhum número entra aqui sem vir de execução real do repositório.
 \chapter{Resultados}
@@ -43,6 +43,82 @@ nas \autoref{tab:deteccao} e~\ref{tab:classificacao}.
 Os números altos da \autoref{tab:resumo} precisam ser lidos junto com a
 \autoref{sec:investigacao-amplitude}: eles medem, em grande parte, o nível de
 vibração das gravações, e não a assinatura do defeito.
+
+\section{Análise exploratória das features}
+\label{sec:res-eda}
+
+A \autoref{fig:eda-boxplots} mostra a distribuição das oito features por classe
+nas janelas de treino, com a mediana de cada gravação sobreposta. O RMS e o pico
+crescem de normal para esfera, pista interna e pista externa, com medianas de RMS
+de \num{0.058}, \num{0.136}, \num{0.291} e \num{0.556}: as classes ocupam faixas
+de amplitude quase disjuntas. Os escores de envelope separam as classes de outra
+forma --- o de BPFI é alto só na pista interna (mediana de
+\SI{9.3}{\decibel}, contra 1,2 a \SI{3.8}{\decibel} nas demais) e o de BPFO, só na
+pista externa (\SI{6.5}{\decibel}) ---, enquanto o de BSF quase não varia entre as
+classes.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Distribuição das features por classe nas janelas de treino (caixas:
+  quartis; pontos: mediana de cada gravação). RMS e pico em escala logarítmica.
+  No título de cada painel, o tamanho de efeito $\varepsilon^2$ do teste de
+  Kruskal--Wallis por gravação.}
+  \label{fig:eda-boxplots}
+  \includegraphics[width=\textwidth]{eda_boxplots_features.png}
+  \fonte{Elaborado pelos autores.}
+\end{figure}
+
+A \autoref{tab:kruskal} testa essas diferenças com a gravação como unidade. Sete
+das oito features diferem significativamente entre as classes ($p < 0{,}05$),
+com efeitos grandes ($\varepsilon^2$ de \numrange{0.31}{0.54}). A exceção é o
+escore de BSF ($p = \num{0.071}$), justamente a feature que deveria caracterizar
+a esfera --- o mesmo resultado, por outro caminho, da validação física
+(\autoref{sec:res-fisica}). Vale notar que, por gravação, os escores de BPFI e de
+BPFO têm efeito tão grande quanto o RMS e o pico: a informação física existe nos
+dados, mas os modelos preferem a amplitude porque ela separa \emph{também} a
+classe normal e a esfera.
+
+\begin{table}[htb]
+  \centering
+  \caption{Teste de Kruskal--Wallis entre as quatro classes, com a mediana de cada
+  gravação de treino como unidade ($n = 30$, $k = 4$).}
+  \label{tab:kruskal}
+  \footnotesize
+  \begin{tabular}{lccc}
+    \toprule
+    \textbf{Feature} & \textbf{$H$} & \textbf{Valor-$p$} & \textbf{$\varepsilon^2$} \\
+    \midrule
+    escore BPFI     & 15,52 & 0,001 & 0,54 \\
+    assimetria      & 15,33 & 0,002 & 0,53 \\
+    escore BPFO     & 15,25 & 0,002 & 0,53 \\
+    pico            & 14,12 & 0,003 & 0,49 \\
+    RMS             & 14,11 & 0,003 & 0,49 \\
+    curtose         & 10,14 & 0,017 & 0,35 \\
+    fator de crista &  9,01 & 0,029 & 0,31 \\
+    escore BSF      &  7,04 & 0,071 & 0,24 \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/eda\_kruskal\_wallis.csv}.}
+\end{table}
+
+A \autoref{fig:eda-correlacao} mostra a correlação de Spearman entre as
+features. Há dois pares quase redundantes: RMS e pico ($\rho = \num{0.95}$) e
+curtose e fator de crista ($\rho = \num{0.94}$). Os escores de envelope, ao
+contrário, são pouco correlacionados com as features de tempo
+($|\rho| \le \num{0.54}$) e entre si. Duas consequências: a importância que o
+Random Forest atribui a RMS e pico deve ser lida em conjunto, porque as duas
+medem a mesma coisa; e a covariância usada pelo Mahalanobis é quase singular
+nessas direções, o que torna a distância sensível a pequenas variações de
+amplitude.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Correlação de Spearman entre as oito features nas janelas de treino.}
+  \label{fig:eda-correlacao}
+  \includegraphics[width=0.62\textwidth]{eda_correlacao_features.png}
+  \fonte{Elaborado pelos autores.}
+\end{figure}
 
 \section{Validação física}
 \label{sec:res-fisica}
@@ -287,6 +363,36 @@ precisão do Mahalanobis com tempo+envelope cairia de \num{0.987} para
 \num{0.077} --- de cada 13 alarmes, 12 seriam falsos ---, e a do Isolation Forest,
 para \num{0.117}. Nesse cenário, a FPR é a métrica que decide se o detector é
 utilizável, e não a acurácia nem a precisão medidas aqui.
+
+\paragraph{Pressupostos do Mahalanobis.} A distância de Mahalanobis ao quadrado
+só segue uma qui-quadrado com 8 graus de liberdade se as features normais forem
+normais multivariadas. O teste de Shapiro--Wilk rejeita a normalidade em cinco
+das oito features nas janelas normais de treino (RMS, pico, fator de crista,
+curtose e escore de BSF; $p < 0{,}05$), com assimetrias de até \num{1.4}. A
+\autoref{tab:limiar-chi2} mostra a consequência: o limiar teórico de
+\num{4.48} deixaria \SI{6.2}{\percent} das janelas normais de treino acima dele,
+em vez do \SI{1}{\percent} nominal, e a FPR no teste subiria de \num{0.12} para
+\num{0.22}. O limiar empírico, que não depende da forma da distribuição, é o
+adequado aqui.
+
+\begin{table}[htb]
+  \centering
+  \caption{Limiar do detector de Mahalanobis (tempo+envelope): empírico e
+  teórico pela qui-quadrado.}
+  \label{tab:limiar-chi2}
+  \footnotesize
+  \begin{tabular}{lcccc}
+    \toprule
+    \textbf{Limiar} & \textbf{Valor} & \textbf{Normais de treino acima} &
+    \textbf{TPR teste} & \textbf{FPR teste} \\
+    \midrule
+    Empírico (percentil 99)        & 5,12 & 0,014 & 1,000 & 0,121 \\
+    Qui-quadrado (99\%, $k = 8$)   & 4,48 & 0,062 & 1,000 & 0,224 \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/deteccao\_limiar\_qui\_quadrado.csv}.}
+\end{table}
 
 \subsection{Investigação dos resultados próximos de 100\%}
 \label{sec:investigacao-amplitude}
@@ -544,7 +650,8 @@ outra posição.
 
 \paragraph{O desempenho no teste não se transfere para outra posição do
 defeito.} No conjunto de generalização, o mesmo modelo classifica como pista
-externa só \SI{40.0}{\percent} das janelas; o SVM, \SI{11.5}{\percent}. Com o
+externa só \SI{40.0}{\percent} das janelas --- valor que, entre sementes, varia de
+40 a \SI{72}{\percent} (\autoref{sec:res-inferencia}) ---; o SVM, \SI{11.5}{\percent}. Com o
 Random Forest, a pista externa a 12~h com \SI{0.007}{\inch} e a 3~h com
 \SI{0.021}{\inch} são tomadas quase inteiramente por pista interna. Só com as
 features de envelope, a acurácia no teste cai para \SI{67.6}{\percent}, mas a
@@ -647,3 +754,122 @@ O resultado inverte a leitura da \autoref{tab:resumo}: os modelos de maior
 acurácia no teste por carga são os que mais dependem da montagem, e o
 procedimento menos sofisticado --- comparar o pico do envelope com a frequência
 calculada pela geometria --- é o único que se mantém quando a montagem muda.
+
+\section{Inferência estatística}
+\label{sec:res-inferencia}
+
+Os valores anteriores são estimativas pontuais com a semente 42. Esta seção mede
+a incerteza deles com a gravação ou a montagem como unidade
+(\autoref{sec:met-estatistica}).
+
+\paragraph{Intervalos de confiança.} A \autoref{tab:ic} reúne os intervalos de
+95\%. A acurácia de \SI{95.7}{\percent} do Random Forest com tempo+envelope tem
+intervalo de \numrange{0.894}{1.000}, e a do modelo só de envelope, de
+\numrange{0.552}{0.796}; a diferença entre os dois, \num{0.28}, tem intervalo de
+\numrange{0.20}{0.36}, que exclui o zero. O recall da pista externa é o mais
+incerto (\numrange{0.66}{1.00} e \numrange{0.21}{1.00}): basta reamostrar ou não
+a gravação 200, sem assinatura, para mudar o resultado. Na detecção, o TPR do
+Mahalanobis só de envelope é de \num{0.58}, com intervalo de
+\numrange{0.33}{0.79}. A FPR de \num{0.12} tem intervalo de Wilson de
+\numrange{0.06}{0.23}, e mesmo esse intervalo é otimista: vem de uma única
+gravação normal, e a variabilidade entre gravações normais, que é a que importa
+numa planta, não pode ser estimada com estes dados.
+
+\begin{table}[htb]
+  \centering
+  \caption{Intervalos de confiança de 95\% no teste (\SI{3}{\hp}). Bootstrap por
+  gravação (2000 reamostragens, estratificado por classe), exceto a FPR (Wilson
+  sobre as 58 janelas da única gravação normal).}
+  \label{tab:ic}
+  \footnotesize
+  \begin{tabular}{lcc}
+    \toprule
+    \textbf{Métrica} & \textbf{Estimativa} & \textbf{IC 95\%} \\
+    \midrule
+    Acurácia --- Random Forest tempo+envelope   & 0,957 & 0,894 -- 1,000 \\
+    \quad recall pista interna                  & 0,977 & 0,931 -- 1,000 \\
+    \quad recall esfera                         & 0,994 & 0,983 -- 1,000 \\
+    \quad recall pista externa                  & 0,885 & 0,655 -- 1,000 \\
+    Acurácia --- Random Forest envelope         & 0,676 & 0,552 -- 0,796 \\
+    \quad recall pista externa                  & 0,667 & 0,207 -- 1,000 \\
+    Diferença de acurácia (tempo+env. $-$ env.) & 0,281 & 0,200 -- 0,356 \\
+    \midrule
+    TPR --- Mahalanobis tempo+envelope          & 1,000 & 1,000 -- 1,000 \\
+    TPR --- Mahalanobis envelope                & 0,576 & 0,327 -- 0,792 \\
+    FPR --- Mahalanobis tempo+envelope (Wilson) & 0,121 & 0,060 -- 0,229 \\
+    FPR --- Mahalanobis envelope (Wilson)       & 0,138 & 0,072 -- 0,249 \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/inferencia\_intervalos.csv}.}
+\end{table}
+
+\paragraph{Montagem nova: diferente do acaso?} A \autoref{tab:montagem-inferencia}
+testa o experimento da \autoref{sec:res-montagem} com a montagem como unidade.
+Só a regra física acerta significativamente mais montagens que o acaso
+(6 de 9, $p = \num{0.042}$). O Random Forest acerta 4 de 9 ($p = \num{0.35}$) e
+o KNN, 5 de 9 ($p = \num{0.14}$): não há evidência de que generalizem para
+montagens novas melhor que um sorteio. A diferença de acurácia entre a regra
+física e o Random Forest é de \num{0.20}, com intervalo de \numrange{0.04}{0.38}
+por bootstrap de montagens, que exclui o zero. Os intervalos são largos porque há
+só 9 montagens: o poder dos testes é baixo, e a conclusão deve ser lida como
+``a regra física é a única com evidência de generalização'', e não como uma
+estimativa precisa da sua acurácia.
+
+\begin{table}[htb]
+  \centering
+  \caption{Montagem nova: acurácia nas janelas (IC 95\% por bootstrap de
+  montagens) e teste binomial unilateral contra o acaso ($1/3$), por montagem
+  ($n = 9$) e por gravação ($n = 36$; ignora a dependência entre gravações da
+  mesma montagem).}
+  \label{tab:montagem-inferencia}
+  \scriptsize
+  \begin{tabular}{lccccc}
+    \toprule
+    \textbf{Modelo} & \textbf{Acurácia} & \textbf{IC 95\%} &
+    \textbf{Montagens (p)} & \textbf{Gravações (p)} \\
+    \midrule
+    Random Forest (tempo+envelope) & 0,457 & 0,31 -- 0,62 & 4/9 (0,35)  & 17/36 (0,058) \\
+    KNN $k=9$ (tempo+envelope)     & 0,538 & 0,24 -- 0,83 & 5/9 (0,14)  & 20/36 (0,005) \\
+    Regra física (sem treino)      & 0,657 & 0,50 -- 0,81 & 6/9 (0,042) & 24/36 ($<$0,001) \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/inferencia\_montagem.csv}.}
+\end{table}
+
+\paragraph{Variabilidade entre sementes.} A \autoref{tab:sementes} mostra que a
+acurácia no teste é estável entre sementes para todos os modelos (desvio de
+\num{0.003} a \num{0.004}), mas a generalização para o defeito em outra posição
+não é. Para o Random Forest com tempo+envelope, ela varia de \num{0.40} a
+\num{0.72} (média \num{0.48}); o valor de \SI{40.0}{\percent} reportado com a
+semente 42 está no extremo inferior. Para o modelo só de envelope, varia de
+\num{0.755} a \num{0.762}. Mesmo a melhor semente do modelo com amplitude fica
+abaixo da pior semente do modelo de envelope: a vantagem do envelope na
+generalização não depende da semente, e a instabilidade do outro modelo é, ela
+mesma, um sintoma de que ele decide por características que não se transferem.
+Na CNN, a semente 42 deu a generalização mais alta observada (\num{0.641}); nas
+outras cinco sementes, ela fica entre \num{0.44} e \num{0.60} (média
+\num{0.55}), sempre abaixo do modelo de envelope.
+
+\begin{table}[htb]
+  \centering
+  \caption{Variabilidade entre sementes: média, desvio-padrão e amplitude da
+  acurácia no teste e da fração do conjunto de generalização classificada como
+  pista externa.}
+  \label{tab:sementes}
+  \footnotesize
+  \begin{tabular}{lccc}
+    \toprule
+    \textbf{Modelo (sementes)} & \textbf{Acurácia no teste} &
+    \multicolumn{2}{c}{\textbf{Generalização}} \\
+    \cmidrule(lr){3-4}
+    & média $\pm$ desvio & média $\pm$ desvio & mín.--máx. \\
+    \midrule
+    Random Forest tempo+envelope (10) & 0,958 $\pm$ 0,004 & 0,481 $\pm$ 0,094 & 0,40 -- 0,72 \\
+    Random Forest envelope (10)       & 0,679 $\pm$ 0,003 & 0,759 $\pm$ 0,002 & 0,755 -- 0,762 \\
+    CNN 1D normalizada (5)            & 0,998 $\pm$ 0,004 & 0,552 $\pm$ 0,066 & 0,44 -- 0,60 \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de \texttt{results/metrics/sementes.csv}.}
+\end{table}

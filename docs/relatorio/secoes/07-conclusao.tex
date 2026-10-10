@@ -1,4 +1,4 @@
-% Responsável: TODO(grupo)
+% Responsável: Estevan Delazari Feher
 \chapter{Conclusão}
 \label{cap:conclusao}
 
@@ -8,7 +8,8 @@ sempre com treino em \SIlist{0;1;2}{\hp} e teste em \SI{3}{\hp}.
 
 \textbf{Detecção sem exemplos de falha.} Os detectores one-class treinados só com
 sinais normais separaram normal de falha com AUC de até \num{1.000} e TPR de
-\num{1.000}, com FPR de \num{0.12} e precisão de \num{0.99} no baseline de
+\num{1.000}, com FPR de \num{0.12} (IC de Wilson de \numrange{0.06}{0.23}, sobre
+uma única gravação normal) e precisão de \num{0.99} no baseline de
 Mahalanobis --- precisão que, com \SI{90}{\percent} de falhas no teste, pouco
 informa. Esse resultado,
 porém, é explicado pelo nível de vibração: todas as gravações de falha vibram
@@ -31,9 +32,12 @@ envelope.
 
 \textbf{Generalização entre montagens.} Com um diâmetro --- e, portanto, uma
 montagem --- inteiro fora do treino, todos os modelos treinados caem para perto
-do acaso (de \num{0.26} a \num{0.55}), enquanto uma regra física sem treino, que
-atribui a classe pela frequência de defeito dominante no envelope, acerta
-\num{0.66} e reconhece \SI{99.8}{\percent} da pista externa em outra posição.
+do acaso (de \num{0.26} a \num{0.55}) e nenhum acerta significativamente mais
+montagens que um sorteio, enquanto uma regra física sem treino, que atribui a
+classe pela frequência de defeito dominante no envelope, acerta \num{0.66}
+(6 de 9 montagens, $p = \num{0.042}$ contra o acaso) e reconhece
+\SI{99.8}{\percent} da pista externa em outra posição. Com só 9 montagens, a
+evidência é modesta, mas aponta numa única direção.
 
 A conclusão principal é metodológica. No CWRU, alta acurácia é fácil e diz pouco:
 o conjunto permite acertar pela amplitude e pela montagem. O que dá sentido aos

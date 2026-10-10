@@ -7,7 +7,7 @@
 | **Chave no `.bib`** | `gustafsson1996` |
 | **Arquivo** | não versionado (PDFs ficam em `docs/articles/`, fora do Git) |
 | **Fichado por** | Claude Code (assistente de IA), a pedido do grupo |
-| **Revisado por** | _preencher_ |
+| **Revisado por** | André Maiolini (sessão de trabalho) |
 | **Última atualização** | 2026-10-10 |
 | **Por que ler** | Fundamenta a filtragem de fase zero (filtfilt), usada na decimação e na banda comum. É a referência do próprio `scipy.signal.filtfilt`. |
 

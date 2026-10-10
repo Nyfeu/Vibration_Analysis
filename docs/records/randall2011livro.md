@@ -7,7 +7,7 @@
 | **Chave no `.bib`** | `randall2011livro` |
 | **Arquivo** | não versionado (PDFs ficam em `docs/articles/`, fora do Git) |
 | **Fichado por** | Claude Code (assistente de IA), a pedido do grupo |
-| **Revisado por** | _preencher_ |
+| **Revisado por** | André Maiolini (sessão de trabalho) |
 | **Última atualização** | 2026-10-10 |
 | **Por que ler** | Livro-texto de referência em monitoramento por vibração, indicado no enunciado. Sustenta a escolha dos indicadores do domínio do tempo e o contexto geral. |
 

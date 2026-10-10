@@ -7,7 +7,7 @@
 | **Chave no `.bib`** | `breiman1984` |
 | **Arquivo** | não versionado (PDFs ficam em `docs/articles/`, fora do Git) |
 | **Fichado por** | Claude Code (assistente de IA), a pedido do grupo |
-| **Revisado por** | _preencher_ |
+| **Revisado por** | André Maiolini (sessão de trabalho) |
 | **Última atualização** | 2026-10-10 |
 | **Por que ler** | Livro que define o CART, com cortes binários e o índice de Gini — o critério padrão do scikit-learn e das árvores do Random Forest. |
 

@@ -7,7 +7,7 @@
 | **Chave no `.bib`** | `antoni2007` |
 | **Arquivo** | não versionado (PDFs ficam em `docs/articles/`, fora do Git) |
 | **Fichado por** | Claude Code (assistente de IA), a pedido do grupo |
-| **Revisado por** | _preencher_ |
+| **Revisado por** | André Maiolini (sessão de trabalho) |
 | **Última atualização** | 2026-10-10 |
 | **Por que ler** | Algoritmo do kurtograma rápido, o padrão de fato para escolha automática da banda de demodulação; citado por Smith e Randall. |
 

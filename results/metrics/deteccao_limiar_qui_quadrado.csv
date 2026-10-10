@@ -1,0 +1,3 @@
+limiar,valor,fracao_normais_treino_acima,TPR_teste,FPR_teste
+empírico (p99 do treino),5.1212,0.0139,1.0000,0.1207
+"qui-quadrado (99%, k=8)",4.4822,0.0625,1.0000,0.2241

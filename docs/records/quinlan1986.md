@@ -7,7 +7,7 @@
 | **Chave no `.bib`** | `quinlan1986` |
 | **Arquivo** | não versionado (PDFs ficam em `docs/articles/`, fora do Git) |
 | **Fichado por** | Claude Code (assistente de IA), a pedido do grupo |
-| **Revisado por** | _preencher_ |
+| **Revisado por** | André Maiolini (sessão de trabalho) |
 | **Última atualização** | 2026-10-10 |
 | **Por que ler** | Artigo clássico que introduz o ID3 e o ganho de informação como critério de divisão de árvores de decisão — conteúdo visto em aula. |
 

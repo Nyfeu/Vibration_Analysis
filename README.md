@@ -32,6 +32,7 @@ classificação); relatório em revisão pelo grupo.
 | Slides | fonte em [`docs/apresentacao/slides.tex`](docs/apresentacao/slides.tex) · PDF: [https://nyfeu.github.io/Vibration_Analysis/slides.pdf](https://nyfeu.github.io/Vibration_Analysis/slides.pdf) |
 | Declaração de uso de IA | [`docs/uso_de_ia.md`](docs/uso_de_ia.md) |
 | Auditoria de arquivos descartados | [`docs/arquivos_excluidos.md`](docs/arquivos_excluidos.md) |
+| Fichamentos das referências | [`docs/records/`](docs/records/README.md) |
 
 ---
 
@@ -243,6 +244,22 @@ fora do treino, todos os modelos treinados caem para perto do acaso (26–55%,
 acaso = 33%), enquanto uma **regra física sem treino** — classe pela frequência
 de defeito dominante no envelope — acerta 65,7% do tipo de falha e 99,8% da
 pista externa em outra posição.
+
+**Estatística aplicada.** A unidade estatística é a gravação (as janelas de uma
+gravação são correlacionadas):
+
+- *Análise exploratória*: Kruskal–Wallis por gravação mostra diferença entre
+  classes em 7 de 8 features (ε² de 0,31 a 0,54); a exceção é o escore da esfera
+  (p = 0,07). RMS e pico são redundantes (ρ de Spearman = 0,95).
+- *Pressupostos*: as features normais não são normais (Shapiro–Wilk); o limiar
+  qui-quadrado do Mahalanobis daria 6,2% de falsos alarmes no treino em vez de 1%.
+- *Intervalos (bootstrap por gravação)*: acurácia do Random Forest 0,957
+  [0,894; 1,000]; diferença para o modelo só de envelope 0,28 [0,20; 0,36]. A FPR
+  (0,12 [0,06; 0,23], Wilson) vem de uma única gravação normal.
+- *Montagem nova*: só a regra física acerta mais montagens que o acaso (6/9,
+  p = 0,042, binomial); Random Forest 4/9 (p = 0,35).
+- *Sementes*: a generalização do Random Forest com amplitude varia de 0,40 a 0,72
+  entre 10 sementes; a do modelo de envelope, de 0,755 a 0,762.
 
 Matrizes de confusão completas: `results/metrics/classificacao_matriz_*.csv` e
 Apêndice C do relatório.

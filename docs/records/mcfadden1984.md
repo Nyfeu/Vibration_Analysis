@@ -7,7 +7,7 @@
 | **Chave no `.bib`** | `mcfadden1984` |
 | **Arquivo** | não versionado (PDFs ficam em `docs/articles/`, fora do Git) |
 | **Fichado por** | Claude Code (assistente de IA), a pedido do grupo |
-| **Revisado por** | _preencher_ |
+| **Revisado por** | André Maiolini (sessão de trabalho) |
 | **Última atualização** | 2026-10-10 |
 | **Por que ler** | Modelo clássico que explica a forma do sinal de um defeito pontual e as bandas laterais do envelope. Smith e Randall baseiam nele a tabela de componentes esperados (nossa Tabela 5). |
 

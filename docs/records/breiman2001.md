@@ -7,7 +7,7 @@
 | **Chave no `.bib`** | `breiman2001` |
 | **Arquivo** | não versionado (PDFs ficam em `docs/articles/`, fora do Git) |
 | **Fichado por** | Claude Code (assistente de IA), a pedido do grupo |
-| **Revisado por** | _preencher_ |
+| **Revisado por** | André Maiolini (sessão de trabalho) |
 | **Última atualização** | 2026-10-10 |
 | **Por que ler** | Artigo original do Random Forest, nosso classificador selecionado. |
 
@@ -31,7 +31,7 @@
 
 ## Onde é usado no relatório
 
-- Seção 3.3.4; resultados 5.4.
+- Seção 3.3.4; resultados 5.5 (classificação).
 
 ## Cuidados ao citar
 

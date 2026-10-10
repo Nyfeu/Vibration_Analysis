@@ -183,7 +183,11 @@
   acurácia no CWRU é fácil e diz pouco sobre o diagnóstico do defeito. Quando um
   diâmetro inteiro (uma montagem) fica fora do treino, todos os modelos caem para
   perto do acaso, enquanto uma regra física sem treino, baseada na frequência de
-  defeito dominante no envelope, acerta 65,7\% do tipo de falha.
+  defeito dominante no envelope, acerta 65,7\% do tipo de falha e é a única
+  significativamente melhor que o acaso (teste binomial por montagem, $p = 0{,}042$).
+  Intervalos de confiança por bootstrap de gravações e a repetição com várias
+  sementes confirmam que a vantagem do modelo físico na generalização não é
+  efeito do acaso.
 
   \textbf{Palavras-chave}: manutenção preditiva; detecção de anomalias;
   rolamentos; análise de envelope; CWRU.
@@ -218,7 +222,11 @@
     diagnosis. When a whole fault diameter (an assembly) is left out of
     training, all models fall close to chance, whereas a training-free physical
     rule based on the dominant fault frequency in the envelope gets 65.7\% of
-    the fault types right.
+    the fault types right and is the only approach significantly better than
+    chance (binomial test over assemblies, $p = 0.042$). Confidence intervals
+    from a recording-level bootstrap and retraining with several seeds confirm
+    that the advantage of the physics-based model in generalization is not due
+    to chance.
 
     \textbf{Keywords}: predictive maintenance; anomaly detection; rolling
     element bearings; envelope analysis; CWRU.

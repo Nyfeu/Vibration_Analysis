@@ -7,7 +7,7 @@
 | **Chave no `.bib`** | `oppenheim2010` |
 | **Arquivo** | não versionado (PDFs ficam em `docs/articles/`, fora do Git) |
 | **Fichado por** | Claude Code (assistente de IA), a pedido do grupo |
-| **Revisado por** | _preencher_ |
+| **Revisado por** | André Maiolini (sessão de trabalho) |
 | **Última atualização** | 2026-10-10 |
 | **Por que ler** | Livro-texto clássico de processamento digital de sinais. Fundamenta a decimação e o aliasing (Seção 3.3.1). |
 
@@ -31,12 +31,12 @@
 
 ## Onde é usado no relatório
 
-- Seção 3.3.1 (com citação das seções 4.6 e 4.6.1).
+- Seção 3.3.1 (citado pelo capítulo 4, *Sampling of Continuous-Time Signals*).
 
 ## Cuidados ao citar
 
-- As seções 4.6/4.6.1 citadas são da 3.ª edição; conferir num exemplar, porque a numeração muda entre edições.
+- A numeração das seções muda entre edições. O relatório cita só o capítulo 4 da 3.ª edição, confirmado no sumário da editora; os números de seção não puderam ser conferidos e foram retirados.
 
 ## Pendências
 
-- [ ] **Conferir num exemplar** os números das seções 4.6 e 4.6.1 citados no relatório.
+- [x] Citação ajustada para o capítulo 4 (2026-10-10); números de seção não confirmados foram retirados do relatório.

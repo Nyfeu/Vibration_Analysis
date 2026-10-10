@@ -6,7 +6,7 @@
 | **Chave no `.bib`** | `smith2015` |
 | **Arquivo** | `docs/articles/smith2015.pdf` (local, fora do versionamento; obter pelo DOI) |
 | **Fichado por** | André Solano Ferreira Rodrigues Maiolini |
-| **Revisado por** | _preencher_ |
+| **Revisado por** | André Maiolini (sessão de trabalho) |
 | **Última atualização** | 2026-10-06 |
 | **Por que ler** | Leitura obrigatória antes de usar o CWRU. É a auditoria registro a registro que fundamenta `docs/arquivos_excluidos.md`. |
 

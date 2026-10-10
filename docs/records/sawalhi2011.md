@@ -7,7 +7,7 @@
 | **Chave no `.bib`** | `sawalhi2011` |
 | **Arquivo** | não versionado (PDFs ficam em `docs/articles/`, fora do Git) |
 | **Fichado por** | Claude Code (assistente de IA), a pedido do grupo |
-| **Revisado por** | _preencher_ |
+| **Revisado por** | André Maiolini (sessão de trabalho) |
 | **Última atualização** | 2026-10-10 |
 | **Por que ler** | Origem do pré-branqueamento cepstral, segundo Smith e Randall (2015, ref. [6]). Fundamenta o 'método 2'. |
 

@@ -14,22 +14,45 @@ executa comandos).
 \section*{Usos registrados}
 
 \begin{itemize}
-  \item download do subconjunto do CWRU e verificação da taxa de amostragem e do
-  número de arquivos contra a documentação oficial;
-  \item proposta da estrutura dos fichamentos de artigos;
-  \item preenchimento da auditoria de arquivos a partir do fichamento de
-  \textcite{smith2015}, segundo decisões do grupo;
-  \item implementação da escolha da posição do defeito em pista externa no
-  carregamento dos dados;
-  \item rascunho do capítulo de descrição do dataset;
-  \item revisão e reorganização dos módulos de features;
-  \item assistência na depuração de bugs e na escrita de código.
+  \item \textbf{Dados}: download do subconjunto do CWRU, verificação da taxa de
+  amostragem e do número de arquivos contra a documentação oficial, e auditoria
+  dos arquivos a partir do fichamento de \textcite{smith2015}, segundo decisões do
+  grupo.
+  \item \textbf{Código}: implementação de todo o pipeline do notebook --- leitura,
+  decimação e banda comum, janelas, features, validação física, detecção,
+  classificação (no roteiro da disciplina), CNN, teste entre montagens, análise
+  exploratória e inferência estatística ---, além de depuração.
+  \item \textbf{Texto}: rascunhos dos capítulos do relatório, do resumo e do
+  abstract, dos fichamentos das referências e dos slides da apresentação.
+  \item \textbf{Repositório}: integração contínua do PDF, publicação no GitHub
+  Pages e organização do histórico.
 \end{itemize}
+
+\section*{O que foi do grupo}
+
+A escolha do dataset; a configuração do estudo (sensor, taxa, classes, posição
+da pista externa, split por carga); as decisões da auditoria; o fichamento de
+\textcite{smith2015}; os módulos iniciais de features; a direção do trabalho
+(roteiro da disciplina, métricas de precisão e recall, ganho de informação,
+ênfase em estatística aplicada, separação entre detectar e diagnosticar); a
+divisão de responsabilidades; e a gravação do vídeo.
+
+\section*{Correções feitas sobre a saída da ferramenta}
+
+Entre outras: a explicação inicial da taxa de falsos positivos do One-Class SVM
+estava errada e foi corrigida; as páginas citadas de \textcite{smith2015} seguiam
+a numeração da versão preliminar e foram convertidas para a publicada; a
+verificação da decimação revelou um resíduo de \emph{aliasing}, que levou à
+banda comum; e a conclusão sobre generalização foi revista depois da análise de
+variabilidade entre sementes.
 
 \section*{Limites}
 
-Nenhum número de resultado (acurácia, TPR, FPR, AUC) foi produzido pela
-ferramenta: todos saem da execução do código deste repositório, e cada tabela do
-relatório indica o arquivo de \texttt{results/} de onde vem. Não foram usados
-dados sintéticos. O registro de cada uso, com o que foi aproveitado, o que foi
-descartado e quem revisou, está em \texttt{docs/uso\_de\_ia.md}.
+Nenhum número de resultado (acurácia, TPR, FPR, AUC, intervalos, valores-$p$) foi
+escrito pela ferramenta: todos saem da execução do notebook deste repositório, e
+cada tabela do relatório indica o arquivo de \texttt{results/} de onde vem. Não
+foram usados dados sintéticos. Fichamentos redigidos sem acesso ao texto completo
+das obras são marcados como tal. Todo texto produzido com a ferramenta foi lido
+por um integrante antes de entrar no repositório. O registro detalhado, com o que
+foi pedido, aproveitado, corrigido e quem revisou cada uso, está em
+\texttt{docs/uso\_de\_ia.md}.
