@@ -35,7 +35,7 @@
 
 ## Cuidados ao citar
 
-- A importância por impureza favorece features contínuas e correlacionadas; é indício, não prova — a prova veio das ablações e do teste entre montagens.
+- A importância por impureza favorece features contínuas e correlacionadas; é indício, não prova — a prova veio da comparação de conjuntos de features e do teste entre montagens.
 
 ## Pendências
 
