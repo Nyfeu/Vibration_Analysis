@@ -358,6 +358,11 @@ Próximos passos:
 - [x] Revisão do relatório: \paragraph sem número, validação física como 5.2,
       2+ referências por técnica (pré-branqueamento, detectores, KNN/LogReg,
       features de tempo), Apêndice A consolidado
+- [x] `docs/articles/` fora do Git (PDFs com direitos autorais; `.gitignore`) e
+      removido do histórico com `git filter-repo` (backup em
+      `../Vibration_Analysis_backup_2026-10-10.bundle`)
+- [x] Fichamento de cada referência do `.bib` em `docs/records/` (índice em
+      `docs/records/README.md`); os feitos com IA têm aviso e pendências de conferência
 - [ ] Extras possíveis: features só de razões entre famílias de envelope,
       normalização de amplitude por gravação, DRS antes do kurtograma
 - [x] Features de tempo (issue #10) e frequências características do
