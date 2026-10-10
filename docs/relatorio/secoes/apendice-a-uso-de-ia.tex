@@ -1,58 +1,14 @@
-% Espelha docs/uso_de_ia.md. Manter os dois em sincronia.
-\chapter{Declaração de uso de IA}
+\chapter{Declaração sobre o uso de Inteligência Artificial (IA)}
 \label{ap:uso-de-ia}
 
-Exigida pelo enunciado (item 6.3). O registro detalhado e versionado está em
-\texttt{docs/uso\_de\_ia.md}, no repositório.
+Os autores declaram que utilizaram a ferramenta de Inteligência Artificial
+generativa Claude Code, com o modelo Claude Opus 5.5, disponibilizada pela
+Anthropic, entre 6 e 10 de outubro de 2026, com o objetivo de apoiar a
+implementação e a depuração do código de análise, a redação de versões
+preliminares do relatório, dos fichamentos e dos slides, e a organização do
+repositório.
 
-\section*{Ferramenta}
-
-Foi utilizada uma única ferramenta de IA: o Claude Code, com o modelo Claude Opus
-5.5, um assistente de programação que opera no repositório (lê e edita arquivos e
-executa comandos).
-
-\section*{Usos registrados}
-
-\begin{itemize}
-  \item \textbf{Dados}: download do subconjunto do CWRU, verificação da taxa de
-  amostragem e do número de arquivos contra a documentação oficial, e auditoria
-  dos arquivos a partir do fichamento de \textcite{smith2015}, segundo decisões do
-  grupo.
-  \item \textbf{Código}: implementação de todo o pipeline do notebook --- leitura,
-  decimação e banda comum, janelas, features, validação física, detecção,
-  classificação (no roteiro da disciplina), CNN, teste entre montagens, análise
-  exploratória e inferência estatística ---, além de depuração.
-  \item \textbf{Texto}: rascunhos dos capítulos do relatório, do resumo e do
-  abstract, dos fichamentos das referências e dos slides da apresentação.
-  \item \textbf{Repositório}: integração contínua do PDF, publicação no GitHub
-  Pages e organização do histórico.
-\end{itemize}
-
-\section*{O que foi do grupo}
-
-A escolha do dataset; a configuração do estudo (sensor, taxa, classes, posição
-da pista externa, split por carga); as decisões da auditoria; o fichamento de
-\textcite{smith2015}; os módulos iniciais de features; a direção do trabalho
-(roteiro da disciplina, métricas de precisão e recall, ganho de informação,
-ênfase em estatística aplicada, separação entre detectar e diagnosticar); a
-divisão de responsabilidades; e a gravação do vídeo.
-
-\section*{Correções feitas sobre a saída da ferramenta}
-
-Entre outras: a explicação inicial da taxa de falsos positivos do One-Class SVM
-estava errada e foi corrigida; as páginas citadas de \textcite{smith2015} seguiam
-a numeração da versão preliminar e foram convertidas para a publicada; a
-verificação da decimação revelou um resíduo de \emph{aliasing}, que levou à
-banda comum; e a conclusão sobre generalização foi revista depois da análise de
-variabilidade entre sementes.
-
-\section*{Limites}
-
-Nenhum número de resultado (acurácia, TPR, FPR, AUC, intervalos, valores-$p$) foi
-escrito pela ferramenta: todos saem da execução do notebook deste repositório, e
-cada tabela do relatório indica o arquivo de \texttt{results/} de onde vem. Não
-foram usados dados sintéticos. Fichamentos redigidos sem acesso ao texto completo
-das obras são marcados como tal. Todo texto produzido com a ferramenta foi lido
-por um integrante antes de entrar no repositório. O registro detalhado, com o que
-foi pedido, aproveitado, corrigido e quem revisou cada uso, está em
-\texttt{docs/uso\_de\_ia.md}.
+O conteúdo gerado foi integralmente revisado, validado e assumido pelos autores,
+que se responsabilizam pela exatidão das informações, pelas referências e pela
+originalidade do trabalho. Nenhuma ferramenta de IA foi listada como autora ou
+coautora do manuscrito.
