@@ -36,12 +36,6 @@ permissions:
   pages: write      # publicar no GitHub Pages
   id-token: write   # exigido pelo actions/deploy-pages
 
-# Não deixa dois deploys de Pages correrem juntos, mas também não corta pela
-# metade um deploy já em andamento.
-concurrency:
-  group: pages
-  cancel-in-progress: false
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -115,6 +109,14 @@ jobs:
     if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
+    # Concorrência só no deploy, e não no workflow inteiro: em 06/10 um deploy
+    # ficou preso em "waiting" e, com o grupo no nível do workflow, travou também
+    # a compilação de todos os pushes seguintes. Deploys não correm juntos, mas
+    # um deploy antigo ainda pendente é substituído pelo mais novo.
+    concurrency:
+      group: pages
+      cancel-in-progress: true
+    timeout-minutes: 15
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
