@@ -19,7 +19,10 @@ nas Tabelas~\ref{tab:deteccao} e~\ref{tab:classificacao}. A regra física
 (\autoref{sec:met-regra-fisica}) aparece em duas linhas: no teste em \SI{3}{\hp}
 e no teste com uma montagem nova, que é o principal achado do trabalho
 (\autoref{sec:res-montagem}); o Random Forest selecionado aparece no mesmo teste,
-para comparação.
+para comparação. Nessas linhas, TPR e FPR aparecem como ``n.\,a.'' (não se
+aplica): as duas medem a \emph{detecção}, isto é, a separação entre normal e
+falha, e exigem janelas das duas condições, como explicam as notas da
+tabela.
 
 \begin{table}[htb]
   \centering
@@ -51,9 +54,14 @@ para comparação.
     \bottomrule
   \end{tabular}
   \fonte{Elaborado pelos autores a partir de \texttt{results/metrics/}. (a) A regra
-  física decide só entre os três tipos de falha e não prevê a classe normal; TPR e
-  FPR não se aplicam, e as matrizes completas estão no Apêndice~\ref{ap:matrizes}.
-  (b) Acurácia nas janelas de falha: regra física \num{0.657} (6 de 9 montagens,
+  física decide só entre os três tipos de falha e nunca prevê a classe normal:
+  toda janela, normal ou não, recebe um tipo de falha. A TPR seria 1 e a FPR
+  seria 1 por construção, sem medir nada, e por isso não se aplicam; as matrizes
+  completas estão no Apêndice~\ref{ap:matrizes}. (b) No teste com montagem nova
+  só entram janelas de falha, porque a classe normal não tem diâmetro e fica
+  fora da validação por diâmetro. Sem janelas normais, a FPR não pode ser
+  calculada e a TPR não distingue nenhum modelo; a comparação é feita pela
+  acurácia por classe. Acurácia nas janelas de falha: regra física \num{0.657} (6 de 9 montagens,
   $p = \num{0.042}$ contra o acaso); Random Forest \num{0.457} (4 de 9,
   $p = \num{0.35}$).}
 \end{table}
@@ -83,6 +91,27 @@ classes.
   Kruskal--Wallis por gravação.}
   \label{fig:eda-boxplots}
   \includegraphics[width=\textwidth]{eda_boxplots_features.png}
+  \fonte{Elaborado pelos autores.}
+\end{figure}
+
+A \autoref{fig:eda-rms} detalha a distribuição do RMS. Dentro de cada classe, ela
+é multimodal, porque cada classe reúne gravações com níveis de vibração
+diferentes. Na pista interna e na externa, cada diâmetro de defeito forma um
+grupo separado, e o nível não cresce com o diâmetro: na pista externa, o RMS
+mediano das janelas é de \num{0.094} com \SI{0.014}{\inch} e de
+\numrange{0.56}{0.58} com os outros dois diâmetros. A dispersão também muda
+muito entre as classes: o desvio padrão do RMS das janelas é de \num{0.006} no
+normal e de \num{0.234} na pista externa. Normalidade dentro dos grupos e
+variâncias iguais, os dois pressupostos da ANOVA, não valem, e por isso as
+classes são comparadas pelo teste de Kruskal--Wallis
+(\autoref{sec:tec-estatistica}).
+
+\begin{figure}[htb]
+  \centering
+  \caption{Distribuição do RMS das janelas de treino por classe, em escala linear
+  (a) e logarítmica (b).}
+  \label{fig:eda-rms}
+  \includegraphics[width=\textwidth]{eda_rms_distribuicao.png}
   \fonte{Elaborado pelos autores.}
 \end{figure}
 
@@ -349,11 +378,25 @@ features, e a \autoref{fig:roc} mostra as curvas ROC correspondentes.
 \begin{figure}[htb]
   \centering
   \caption{Curvas ROC dos quatro detectores no teste (\SI{3}{\hp}), por conjunto
-  de features.}
+  de features. Cada curva percorre todos os limiares possíveis do \emph{score}; os
+  pontos marcam o limiar adotado (percentil 99 dos normais de treino), e a
+  diagonal pontilhada corresponde a um detector que sorteia o alarme.}
   \label{fig:roc}
   \includegraphics[width=0.92\textwidth]{deteccao_roc_por_conjunto_de_features.png}
   \fonte{Elaborado pelos autores.}
 \end{figure}
+
+Cada painel da \autoref{fig:roc} corresponde a um conjunto de features, e cada
+curva, a um detector. A curva é traçada variando o limiar de alarme do mais alto,
+em que nenhuma janela dispara (canto inferior esquerdo), ao mais baixo, em que
+todas disparam (canto superior direito); cada ponto intermediário dá a fração de
+janelas de falha detectadas (TPR) e a fração de janelas normais com alarme falso
+(FPR) para um limiar (\autoref{sec:tec-one-class}). Uma curva que sobe colada ao
+eixo vertical até TPR = 1 separa perfeitamente as duas condições; uma curva
+próxima da diagonal não as separa. O ponto marcado em cada curva é o limiar
+efetivamente usado. Como ele foi fixado só com os normais de treino, pode cair em
+qualquer lugar da curva: com as mesmas features e AUC próxima de 1, o
+Mahalanobis opera com FPR de \num{0.12} e o One-Class SVM, de \num{0.81}.
 
 Três padrões aparecem. Primeiro, com as features de tempo, os quatro detectores
 separam normal de falha quase perfeitamente (AUC de \num{0.995} a \num{1.000}).
@@ -1010,6 +1053,24 @@ a incerteza deles com a gravação ou a montagem como unidade
 
 \subsection{Intervalos de confiança}
 \label{sec:res-ic}
+
+A \autoref{fig:bootstrap-acuracia} mostra o que o bootstrap por gravação produz
+(\autoref{fig:bootstrap-esquema}): a distribuição das \num{2000} acurácias
+recalculadas, para os dois Random Forest. A distribuição é irregular, com picos
+separados, porque há poucas unidades a reamostrar --- uma gravação por combinação
+de classe e diâmetro, e uma única normal ---, e cada reamostra só pode combinar
+essas gravações de poucas formas. Os intervalos de 95\% são os percentis 2,5 e
+97,5 de cada distribuição.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Distribuição bootstrap (\num{2000} reamostragens de gravações inteiras,
+  estratificadas por classe) da acurácia no teste dos dois Random Forest. Linhas
+  contínuas: estimativa pontual; tracejadas: limites do intervalo de 95\%.}
+  \label{fig:bootstrap-acuracia}
+  \includegraphics[width=\textwidth]{bootstrap_acuracia.png}
+  \fonte{Elaborado pelos autores.}
+\end{figure}
 
 A \autoref{tab:ic} reúne os intervalos de
 95\%. A acurácia de \SI{95.7}{\percent} do Random Forest com tempo+envelope tem

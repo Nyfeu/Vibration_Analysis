@@ -9,7 +9,19 @@
 
 \subsection{Leitura dos registros}
 
-De cada arquivo \texttt{.mat} é lido apenas o canal do DE, pela variável com o
+Os arquivos \texttt{.mat} do CWRU trazem até três canais de vibração: o do DE, o
+do FE e, nos ensaios de falha, o da base do motor (BA). Só o canal do DE é usado,
+por três razões. Primeiro, todos os defeitos analisados estão no rolamento do DE,
+e o acelerômetro do DE, fixado na carcaça desse rolamento, é o mais próximo
+deles; no FE, o sinal do defeito chega depois de atravessar o motor, tende a
+estar atenuado e se mistura à vibração do rolamento do próprio FE, que é de outro
+modelo e não é o rolamento danificado nesses ensaios (\autoref{sec:setup}). Segundo, o canal BA não
+existe nas gravações normais, e usá-lo deixaria a classe normal sem dados. Terceiro,
+é o canal analisado por \textcite{smith2015} para os defeitos do DE, o que
+permite comparar a validação física com a auditoria do artigo. Combinar sensores
+é uma extensão possível, fora do escopo deste trabalho.
+
+De cada arquivo \texttt{.mat}, o canal do DE é lido pela variável com o
 número do próprio arquivo (por exemplo, \texttt{X099\_DE\_time}). A regra
 importa porque o arquivo \texttt{99.mat} também traz, idênticas, as variáveis do
 registro 98; ler ``a primeira variável do DE'' do arquivo duplicaria o registro 98
@@ -106,8 +118,23 @@ trabalho é, portanto, de \SIrange{0}{4.8}{\kilo\hertz}.
 \section{Segmentação em janelas}
 \label{sec:janelas}
 
-Cada gravação é cortada em janelas de tamanho fixo, que são as unidades de
-análise dos modelos. O tamanho não é escolhido por conveniência: é derivado da
+Cada gravação é cortada em trechos consecutivos de tamanho fixo, as
+\emph{janelas}, que são as unidades de análise dos modelos: cada janela gera um
+vetor de features, ou, na CNN, uma entrada, e recebe o rótulo da gravação de
+origem (\autoref{fig:janelas}a). Há três motivos para não analisar a gravação
+inteira de uma vez. Os modelos precisam de muitos exemplos de entrada com o mesmo
+tamanho, e o conjunto tem só 40 gravações; cortadas em janelas, elas dão
+\num{2291}. Em monitoramento, a decisão é tomada sobre trechos curtos do sinal, à
+medida que ele chega. E as features --- RMS, curtose, espectro de envelope --- são
+estimativas que supõem um trecho de sinal com estatística estável, o que vale
+melhor para trechos curtos. Cortar o sinal em janelas de tamanho fixo, com ou sem
+sobreposição, é o procedimento usual quando sinais longos de vibração ou de
+corrente de motores alimentam classificadores, inclusive no próprio
+CWRU~\cites{zhang2017}{ince2016}; no
+trabalho de \textcite{zhang2017}, a sobreposição é usada justamente para
+multiplicar as amostras de treino.
+
+O tamanho da janela não é escolhido por conveniência: é derivado da
 rotação do eixo e da taxa de amostragem, a partir da modulação mais lenta que as
 assinaturas de defeito podem ter.
 
@@ -129,7 +156,22 @@ O valor é arredondado para a potência de 2 seguinte, por eficiência da FFT:
 $N = 4096$ amostras, ou \SI{0.341}{\second}. A janela cobre \num{3.9} períodos
 da gaiola e de \num{9.8} a \num{10.2} revoluções do eixo (de 1718 a
 \SI{1797}{rpm}), com resolução espectral de \SI{2.93}{\hertz}. O mesmo tamanho
-vale para todas as gravações, inclusive as do conjunto de generalização.
+vale para todas as gravações, inclusive as do conjunto de generalização. Na
+\autoref{fig:janelas}b, uma janela de pista interna mostra as cerca de dez
+revoluções do eixo que ela contém; a amplitude dos impactos varia a cada volta,
+porque o defeito entra e sai da zona de carga, que é a modulação em $f_r$ da
+\autoref{tab:assinaturas}.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Segmentação em janelas da gravação de pista interna 210
+  (\SI{1}{\hp}): (a) as cinco primeiras janelas, de 4096 amostras e passo de
+  2048, de modo que cada janela compartilha metade das amostras com a seguinte;
+  (b) a primeira janela, com linhas pontilhadas a cada revolução do eixo.}
+  \label{fig:janelas}
+  \includegraphics[width=\textwidth]{segmentacao_janelas.png}
+  \fonte{Elaborado pelos autores.}
+\end{figure}
 
 As janelas se sobrepõem em \SI{50}{\percent} (passo de 2048 amostras), e a sobra
 no fim de cada gravação é descartada. A sobreposição aumenta o número de janelas

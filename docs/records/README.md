@@ -23,6 +23,7 @@ conferência no original (ver o aviso no topo de cada um).
 | [`cwru`](cwru.md) | CWRU Bearing Data Center — documentação oficial do dataset |
 | [`demaesschalck2000`](demaesschalck2000.md) | De Maesschalck et al. (2000) — The Mahalanobis distance |
 | [`efron1993`](efron1993.md) | Efron & Tibshirani (1993) — An Introduction to the Bootstrap |
+| [`fawcett2006`](fawcett2006.md) | Fawcett (2006) — An introduction to ROC analysis |
 | [`enunciado2026`](enunciado2026.md) | Enunciado do Projeto Desafio — ECM514 |
 | [`field2007`](field2007.md) | Field & Welsh (2007) — Bootstrapping clustered data |
 | [`gustafsson1996`](gustafsson1996.md) | Gustafsson (1996) — Filtragem forward-backward |

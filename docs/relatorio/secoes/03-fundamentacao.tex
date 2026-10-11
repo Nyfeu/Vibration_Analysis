@@ -162,6 +162,37 @@ de todo modo não seria representável à nova taxa. Como nenhum filtro real tem
 transição abrupta, o corte é posto um pouco abaixo de $f_s/(2M)$, e a faixa entre
 o corte e a nova frequência de Nyquist fica atenuada.
 
+O filtro ideal teria ganho unitário até o corte e ganho nulo acima dele, com
+transição instantânea. Ele não é realizável: sua resposta ao impulso é infinita
+nos dois sentidos do tempo, e portanto não causal~\cite[cap.~7]{oppenheim2010}.
+Os filtros práticos aproximam o ideal com compromissos diferentes. O
+\emph{Butterworth} tem a banda de passagem mais plana possível, mas transição
+lenta; o \emph{Chebyshev do tipo~I} aceita uma pequena ondulação na banda de
+passagem em troca de uma transição mais rápida, com a mesma
+ordem~\cites[cap.~7]{oppenheim2010}[cap.~4]{crochiere1983}. A
+\autoref{fig:filtros}a compara os dois, de ordem 8 e com corte em
+\SI{4.8}{\kilo\hertz}, ao filtro ideal. O Chebyshev, que é o filtro padrão da
+função de decimação do SciPy~\cite{virtanen2020}, atenua \SI{25}{\decibel} na
+nova frequência de Nyquist, contra \SI{17}{\decibel} do Butterworth. Mesmo
+assim, a atenuação é finita: a \autoref{fig:filtros}b mostra que a gravação
+normal 97, a \SI{48}{\kilo\hertz}, tem energia até cerca de
+\SI{20}{\kilo\hertz}, e o que resta dela depois do filtro é rebatido para dentro
+da nova banda. Esse resíduo motiva a banda comum descrita na
+\autoref{sec:banda-comum}.
+
+\begin{figure}[htb]
+  \centering
+  \caption{(a) Resposta em magnitude do passa-baixas ideal, de um Butterworth e do
+  Chebyshev do tipo~I usado na decimação, todos com corte em \SI{4.8}{\kilo\hertz}
+  e taxa de \SI{48}{\kilo\hertz}; a faixa sombreada vai do corte à nova
+  frequência de Nyquist. (b) Densidade espectral de potência do registro normal
+  97 como gravado e depois do filtro Chebyshev; acima de \SI{6}{\kilo\hertz}
+  (sombreado), o conteúdo seria rebatido pela subamostragem.}
+  \label{fig:filtros}
+  \includegraphics[width=\textwidth]{filtro_antialiasing.png}
+  \fonte{Elaborado pelos autores.}
+\end{figure}
+
 Resta a fase do filtro. Um filtro causal atrasa o sinal e, se não tiver fase
 linear, atrasa cada frequência de forma diferente, o que deforma impulsos como os
 gerados por um defeito de rolamento. Aplicar o mesmo filtro duas vezes, uma em
@@ -175,23 +206,103 @@ não se trata de processamento em tempo real.
 A análise de envelope é a técnica de referência no diagnóstico de
 rolamentos~\cite{randall2011tutorial}. Ela tem três passos: filtrar o sinal em
 uma banda em torno de uma ressonância excitada pelos impactos; obter o envelope
-dessa banda; e calcular o espectro do envelope. O envelope é o módulo do sinal
-analítico $x_a(t) = x(t) + j\,\mathcal{H}\{x(t)\}$, em que $\mathcal{H}$ é a
-transformada de Hilbert. Na prática usa-se o envelope ao quadrado,
-$|x_a(t)|^2$, cujo espectro (\emph{squared envelope spectrum}, SES) mostra a taxa
-de repetição dos impactos e as modulações descritas na
+dessa banda; e calcular o espectro do envelope.
+
+O envelope é obtido pela \emph{transformada de Hilbert}\footnote{O nome homenageia
+o matemático David Hilbert. A transformada não depende do conceito de
+\emph{espaço de Hilbert}, que também leva o seu nome: é apenas uma operação linear
+sobre o sinal.}. Ela desloca a fase de cada componente de frequência do sinal
+em $-\SI{90}{\degree}$, sem alterar a sua amplitude; no domínio da frequência,
+equivale a multiplicar o espectro por $-j\,\mathrm{sgn}(f)$, e no domínio do
+tempo, à convolução
+\begin{equation}
+  \mathcal{H}\{x\}(t) = \frac{1}{\pi}\,\mathrm{v.p.}\!\int_{-\infty}^{\infty}
+  \frac{x(\tau)}{t - \tau}\,d\tau,
+\end{equation}
+em que v.p. indica o valor principal de Cauchy~\cites[cap.~12]{oppenheim2010}{randall2011livro}.
+Com ela forma-se o \emph{sinal analítico} $x_a(t) = x(t) + j\,\mathcal{H}\{x(t)\}$,
+que tem só frequências positivas. Seu módulo $|x_a(t)|$ é a amplitude
+instantânea do sinal --- o envelope --- e seu argumento é a fase instantânea.
+Para um sinal $a(t)\cos(2\pi f_c t)$, em que a modulação $a(t)$ varia devagar em
+relação à portadora $f_c$, o envelope recupera $a(t)$. É a situação de um
+defeito: a portadora é a ressonância excitada pelos impactos, e a modulação é a
+repetição dos impactos na frequência do defeito. Na prática usa-se o envelope ao
+quadrado, $|x_a(t)|^2$, cujo espectro (\emph{squared envelope spectrum}, SES)
+mostra a taxa de repetição dos impactos e as modulações descritas na
 \autoref{tab:assinaturas}~\cites{randall2011tutorial}[p.~104]{smith2015}.
+
+A \autoref{fig:envelope-etapas} mostra o procedimento em duas gravações reais, a
+\SI{1}{\hp}. Na falha de pista interna, o sinal é uma sequência de impactos, e o
+envelope acompanha cada um deles; na normal, o envelope só segue o ruído. O
+espectro do sinal bruto da falha é dominado por componentes que não têm relação
+com o defeito, e a BPFI não se destaca. No espectro do envelope, o maior pico cai
+exatamente na BPFI, com o segundo harmônico também visível, enquanto o espectro
+do envelope da gravação normal não tem pico nessas frequências --- seus maiores
+picos, perto de \SI{60}{\hertz} e \SI{120}{\hertz}, não pertencem a nenhuma
+família de defeito.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Análise de envelope em uma gravação normal (98) e uma de pista interna
+  (210), ambas a \SI{1}{\hp}: (a) \SI{0.1}{\second} do sinal (cinza) e seu
+  envelope $|x_a(t)|$ (preto); (b) espectro do sinal; (c) espectro do envelope ao
+  quadrado. As linhas tracejadas marcam a BPFI e o seu segundo harmônico,
+  calculados com a rotação de cada gravação. Amplitudes divididas pela mediana
+  de cada espectro.}
+  \label{fig:envelope-etapas}
+  \includegraphics[width=\textwidth]{envelope_sinal_vs_ses.png}
+  \fonte{Elaborado pelos autores.}
+\end{figure}
 
 A escolha da banda de demodulação é o ponto crítico. Sem filtro algum, o envelope
 é calculado sobre toda a banda, e componentes fortes não relacionados ao defeito
 podem mascará-lo. Esse é o ``método 1'' de \textcite[p.~104]{smith2015}, que
 mesmo assim diagnosticou boa parte do CWRU. A curtose espectral e o kurtograma
 escolhem automaticamente a banda mais impulsiva, que tende a ser a que carrega os
-impactos~\cite{antoni2006sk,antoni2006aplicacao,antoni2007}. A curtose espectral
-de uma faixa de frequência vale aproximadamente zero para ruído estacionário e
-cresce quando a faixa contém transitórios, como os impactos de um defeito; o
-kurtograma a calcula para várias larguras de banda e escolhe a combinação de
-maior valor~\cite{antoni2007}. Com uma etapa prévia de separação de componentes
+impactos~\cite{antoni2006sk,antoni2006aplicacao,antoni2007}.
+
+Ambos partem da \emph{transformada de Fourier de tempo curto} (STFT). Em vez de um
+único espectro para o sinal inteiro, a STFT divide o sinal em trechos curtos,
+multiplicados por uma janela $w$ de $N_w$ amostras, e calcula o espectro de cada
+trecho~\cites[cap.~10]{oppenheim2010}{randall2011livro}:
+\begin{equation}
+  X(m, f) = \sum_{n} x[n]\, w[n - m]\, e^{-j 2 \pi f n / f_s}.
+\end{equation}
+O resultado é uma representação tempo-frequência, que mostra \emph{quando} cada
+frequência está presente. Com janela curta, cada impacto de um defeito aparece
+como uma faixa vertical, concentrada nas frequências de ressonância
+(\autoref{fig:stft-sk}a). O comprimento da janela define um compromisso: janela
+curta dá boa resolução no tempo e pouca na frequência (a largura de cada faixa é
+de cerca de $f_s/N_w$); janela longa, o contrário.
+
+A curtose espectral mede, em cada frequência, o quanto a amplitude da STFT
+varia ao longo do tempo~\cite{antoni2006sk}:
+\begin{equation}
+  \text{SK}(f) = \frac{\langle |X(m, f)|^4 \rangle_m}{\langle |X(m, f)|^2 \rangle_m^2} - 2,
+\end{equation}
+em que $\langle\cdot\rangle_m$ é a média sobre os trechos. Para ruído gaussiano
+estacionário, a amplitude de $X$ tem distribuição de Rayleigh e a SK é próxima de
+zero; quando a faixa contém transitórios, como os impactos de um defeito, a
+amplitude alterna entre valores muito altos e muito baixos, e a SK cresce. A
+\autoref{fig:stft-sk}b mostra esse contraste entre a falha de pista interna e a
+gravação normal. O kurtograma calcula a SK para várias resoluções --- isto é,
+várias larguras de banda --- e escolhe como banda de demodulação a combinação de
+frequência e largura de maior valor~\cite{antoni2007}; o kurtograma de uma
+gravação do conjunto está na \autoref{fig:kurtograma}.
+
+\begin{figure}[htb]
+  \centering
+  \caption{(a) STFT de \SI{0.1}{\second} da gravação de pista interna 210
+  (\SI{1}{\hp}), com janela de Hann de 32 amostras: cada impacto aparece como uma
+  faixa vertical, concentrada entre cerca de 2,5 e \SI{3.5}{\kilo\hertz}.
+  (b) Curtose espectral da mesma gravação (linhas contínuas) e da gravação
+  normal 98 (pontilhadas), com as três resoluções usadas no kurtograma.}
+  \label{fig:stft-sk}
+  \includegraphics[width=\textwidth]{stft_curtose_espectral.png}
+  \fonte{Elaborado pelos autores.}
+\end{figure}
+
+Com uma etapa prévia de separação de componentes
 determinísticos (DRS), essa escolha compõe o ``método de referência'' de
 \textcite[p.~104--105]{smith2015}. Uma alternativa mais simples é o
 pré-branqueamento cepstral, que iguala a magnitude de todo o espectro e mantém a
@@ -211,29 +322,114 @@ Na detecção de anomalia, o modelo aprende só como é o comportamento normal e
 sinaliza o que se afasta dele. É a formulação adequada à manutenção preditiva:
 antes da primeira falha, não existem exemplos rotulados de falha para
 treinar~\cite{chandola2009}. Os detectores deste trabalho são treinados
-\emph{somente} com janelas normais e produzem um \emph{score} de anomalia; um limiar
-sobre esse \emph{score} define o que é alarme. A avaliação usa a curva ROC, que mostra
-o compromisso entre a taxa de verdadeiros positivos (TPR) e a de falsos positivos
-(FPR) para todos os limiares possíveis.
+\emph{somente} com janelas normais e produzem um \emph{score} de anomalia, maior quanto
+mais a janela se afasta do comportamento normal; um limiar sobre esse
+\emph{score} define o que é alarme.
 
-Quatro detectores são comparados, do mais simples ao mais flexível:
-\begin{itemize}
-  \item \textbf{Distância de Mahalanobis}~\cite{mahalanobis1936,demaesschalck2000}: distância de
-  cada janela à média dos normais, ponderada pela covariância das features.
-  Supõe que os dados normais formam uma nuvem aproximadamente elíptica; é o
-  baseline estatístico.
-  \item \textbf{Isolation Forest}~\cite{liu2008,liu2012}: constrói árvores que isolam
-  pontos por cortes aleatórios. Pontos anômalos são isolados com menos cortes,
-  e o comprimento médio do caminho até o isolamento vira o \emph{score}. Não supõe
-  forma para a distribuição.
-  \item \textbf{One-Class SVM}~\cite{scholkopf2001,tax2004}: estima, num espaço de
-  \emph{kernel}, a fronteira de uma região que contém a maior parte dos dados
-  normais; o que fica fora é anômalo.
-  \item \textbf{Autoencoder}~\cite{hinton2006,sakurada2014}: rede neural treinada para
-  reconstruir as próprias entradas a partir de uma representação comprimida.
-  Treinada só com normais, reconstrói mal o que é diferente, e o erro de
-  reconstrução vira o \emph{score}.
-\end{itemize}
+\textbf{Curva ROC e AUC.} Para um dado limiar, a taxa de verdadeiros positivos
+(TPR) é a fração das janelas de falha que disparam alarme, e a taxa de falsos
+positivos (FPR) é a fração das janelas normais que também disparam. Baixar o
+limiar aumenta as duas; subir, diminui as duas. A curva ROC (\emph{receiver
+operating characteristic}) traça a TPR em função da FPR para todos os limiares
+possíveis, de $(0, 0)$, quando nada dispara, a $(1, 1)$, quando tudo dispara. Um
+detector perfeito passa pelo canto $(0, 1)$, e um detector que sorteia o alarme
+fica sobre a diagonal. A área sob a curva (AUC) resume a separação num único
+número: é a probabilidade de que uma janela de falha sorteada receba
+\emph{score} maior que uma janela normal sorteada, e vai de \num{0.5} (acaso) a 1
+(separação perfeita)~\cites{fawcett2006}[seç.~9.2]{hastie2009}. A AUC não depende
+do limiar nem da proporção de falhas, e por isso compara detectores de forma
+justa; mas não diz como o detector se comporta no limiar efetivamente adotado,
+que é por isso reportado à parte, pela TPR e pela FPR nesse ponto.
+
+Quatro detectores são comparados, do mais simples ao mais flexível.
+
+\subsubsection{Distância de Mahalanobis}
+
+A distância de Mahalanobis de uma janela $\mathbf{x}$ à média $\boldsymbol{\mu}$
+das janelas normais, com matriz de covariância $\boldsymbol{\Sigma}$,
+é~\cites{mahalanobis1936}{demaesschalck2000}
+\begin{equation}
+  d_M(\mathbf{x}) = \sqrt{(\mathbf{x} - \boldsymbol{\mu})^{\mathsf{T}}\,
+  \boldsymbol{\Sigma}^{-1}\,(\mathbf{x} - \boldsymbol{\mu})}.
+\end{equation}
+Ela equivale à distância euclidiana depois de rotacionar os dados para os eixos
+principais da nuvem de normais e dividir cada eixo pelo seu desvio padrão. Assim,
+um afastamento na direção em que os normais variam muito pesa pouco, e um
+afastamento na direção em que variam pouco pesa muito. As curvas de distância
+constante são elipses alinhadas à covariância, e não círculos. A
+\autoref{fig:mahalanobis} mostra isso com duas features das janelas normais de
+treino: os dois pontos de referência estão à mesma distância euclidiana do
+centro, mas um está na direção de maior variação dos normais ($d_M = \num{2.3}$)
+e o outro na de menor variação ($d_M = \num{4.9}$). Se os dados normais seguirem
+uma distribuição normal multivariada com $k$ features, $d_M^2$ segue uma
+distribuição qui-quadrado com $k$ graus de liberdade, o que dá um limiar
+teórico~\cite{demaesschalck2000}; esse pressuposto é testado na
+\autoref{sec:res-pressupostos}.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Geometria da distância de Mahalanobis com duas features das janelas
+  normais de treino, padronizadas. Elipses azuis: distância de Mahalanobis
+  constante; círculo tracejado: distância euclidiana constante. Os dois pontos
+  coloridos são de referência, e não janelas. Os três agrupamentos de janelas são
+  as três gravações normais de treino, uma por carga.}
+  \label{fig:mahalanobis}
+  \includegraphics[width=0.62\textwidth]{mahalanobis_geometria.png}
+  \fonte{Elaborado pelos autores.}
+\end{figure}
+
+A distância de Mahalanobis é o baseline da detecção por quatro razões. É o modelo
+mais simples que leva em conta a escala e a correlação das features --- e as
+features são correlacionadas: nas janelas normais de treino, RMS e pico têm
+correlação de Pearson de \num{0.62}. Tem poucos parâmetros (a média e a covariância, 44 valores para
+8 features), estimáveis com as 144 janelas normais de treino, enquanto os outros
+detectores têm hiperparâmetros que, sem exemplos de falha, não há como ajustar
+por validação. É interpretável: o \emph{score} é uma distância em desvios padrão.
+E é o método clássico de detecção de \emph{outliers} multivariados, o que faz dela
+a referência contra a qual os métodos mais flexíveis precisam mostrar
+ganho~\cites{demaesschalck2000}{chandola2009}.
+
+\subsubsection{Isolation Forest}
+
+O Isolation Forest parte de uma ideia diferente: em vez de modelar como são os
+dados normais, mede quão fácil é \emph{isolar} cada ponto~\cites{liu2008}{liu2012}.
+Cada árvore é construída sobre uma subamostra do treino, escolhendo em cada nó
+uma feature ao acaso e um limiar ao acaso entre o mínimo e o máximo dessa
+feature no nó, até que cada ponto fique sozinho numa folha. Um ponto anômalo,
+afastado da massa dos dados, tende a ser separado com poucos cortes; um ponto
+normal, no meio da nuvem, exige muitos. A profundidade média $\mathrm{E}[h(x)]$ em
+que o ponto é isolado, sobre todas as árvores, define o \emph{score}
+$s(x) = 2^{-\mathrm{E}[h(x)]/c(n)}$, em que $c(n)$ é a profundidade média esperada
+para $n$ pontos: $s$ próximo de 1 indica anomalia. O método não supõe forma para
+a distribuição dos normais.
+
+\subsubsection{One-Class SVM}
+
+O One-Class SVM leva os dados, por meio de um \emph{kernel}, a um espaço de
+dimensão maior, e nele procura o hiperplano que separa os dados de treino da
+origem com a maior margem possível~\cite{scholkopf2001}. De volta ao espaço
+original, esse hiperplano vira uma fronteira fechada e flexível em torno dos
+normais; o que fica fora é anômalo. Com o \emph{kernel} gaussiano (RBF),
+$k(\mathbf{x}, \mathbf{x}') = \exp(-\gamma \lVert \mathbf{x} - \mathbf{x}' \rVert^2)$,
+o problema equivale a encontrar a menor hiperesfera que contém os
+normais~\cite{tax2004}. O hiperparâmetro $\nu \in (0, 1]$ é um limite superior
+para a fração de pontos de treino deixados fora da fronteira; com
+$\nu = \num{0.05}$, admite-se que até \SI{5}{\percent} dos normais de treino
+fiquem do lado de fora.
+
+\subsubsection{Autoencoder}
+
+Um autoencoder é uma rede neural treinada para reproduzir a própria entrada,
+passando por uma camada intermediária menor que ela, o
+\emph{gargalo}~\cite{hinton2006}. A primeira metade (codificador) comprime as
+features numa representação de dimensão menor; a segunda (decodificador)
+reconstrói as features a partir dela. O gargalo impede que a rede aprenda a
+simplesmente copiar a entrada: ela precisa aprender as relações que os dados de
+treino satisfazem. Treinada só com normais, reconstrói bem o que se parece com
+eles e mal o que é diferente, e o erro quadrático médio de reconstrução vira o
+\emph{score} de anomalia~\cite{sakurada2014}. Neste trabalho, as 8 features passam
+por camadas de 6, 3 e 6 neurônios: o gargalo de 3 neurônios força a rede a
+resumir os normais em três combinações das features.
 
 \subsection{Classificação supervisionada}
 \label{sec:tec-classificacao}
@@ -245,12 +441,50 @@ e o problema é de classificação supervisionada.
 Na seleção de modelos, cinco classificadores clássicos são comparados:
 Regressão Logística~\cite{hosmer2013,hastie2009}, $k$ vizinhos mais próximos
 (KNN)~\cite{cover1967,hastie2009}, Random Forest e SVM~\cite{hastie2009}. O classificador principal é o \textbf{Random
-Forest}~\cite{breiman2001,hastie2009}, um
-conjunto de árvores de decisão treinadas em amostras \emph{bootstrap} dos dados
-e em subconjuntos aleatórios das features, cuja previsão é o voto da maioria.
-Ele lida bem com features de escalas diferentes, tem poucos hiperparâmetros
-sensíveis e informa a importância de cada feature, o que ajuda a verificar se a
-decisão se apoia em grandezas com sentido físico. Como contraponto, usa-se a
+Forest}~\cite{breiman2001,hastie2009}, um conjunto de árvores de decisão
+(\autoref{sec:tec-arvores}) cuja previsão é o voto da maioria
+(\autoref{fig:random-forest}). Cada árvore é treinada numa \emph{amostra
+bootstrap} do treino --- um sorteio, com reposição, do mesmo número de exemplos
+(\autoref{sec:tec-estatistica}) --- e, em cada nó, escolhe o melhor corte entre
+um subconjunto aleatório das features. As duas fontes de aleatoriedade fazem as
+árvores errarem de formas diferentes, e o voto reduz a variância que uma árvore
+isolada teria. O Random Forest lida bem com features de escalas diferentes, tem
+poucos hiperparâmetros sensíveis e informa a importância de cada feature, o que
+ajuda a verificar se a decisão se apoia em grandezas com sentido físico.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Esquema do Random Forest: $B$ árvores, cada uma treinada numa amostra
+  bootstrap do treino e com um subconjunto aleatório de features em cada nó;
+  a classe prevista é a mais votada entre as árvores.}
+  \label{fig:random-forest}
+  \begin{tikzpicture}[
+      font=\footnotesize, >={Stealth[length=2mm]},
+      caixa/.style={draw, rounded corners=2pt, align=center, inner sep=3pt, minimum height=7mm},
+      no/.style={circle, draw, fill=white, inner sep=0pt, minimum size=3mm},
+      folha/.style={rectangle, draw, fill=black!15, inner sep=0pt, minimum size=2.6mm},
+      arvore/.pic={
+        \draw (0,0) -- (-0.55,-0.55) (0,0) -- (0.55,-0.55) (-0.55,-0.55) -- (-0.9,-1.1) (-0.55,-0.55) -- (-0.2,-1.1);
+        \node[no] at (0,0) {}; \node[no] at (-0.55,-0.55) {}; \node[folha] at (0.55,-0.55) {};
+        \node[folha] at (-0.9,-1.1) {}; \node[folha] at (-0.2,-1.1) {};
+      }]
+    \node[caixa] (dados) at (0,0) {Janelas de treino (features e classes)};
+    \foreach \x/\n/\c in {-5/1/IR, -1.7/2/IR, 5/B/OR} {
+      \node[caixa] (amostra\n) at (\x,-1.4) {Amostra bootstrap \n};
+      \draw[->] (dados.south) -- (amostra\n.north);
+      \pic at (\x,-2.35) {arvore};
+      \node at (\x,-3.95) {Árvore \n};
+      \node[caixa] (voto\n) at (\x,-4.75) {prevê \c};
+      \draw[->] (amostra\n.south) -- ++(0,-0.3);
+    }
+    \node at (1.65,-1.4) {$\cdots$};
+    \node at (1.65,-3.0) {$\cdots$};
+    \node at (1.65,-4.75) {$\cdots$};
+    \node[caixa, fill=black!5] (final) at (0,-6.2) {Voto da maioria: \textbf{IR}};
+    \foreach \n in {1,2,B} \draw[->] (voto\n.south) -- (final.north);
+  \end{tikzpicture}
+  \fonte{Elaborado pelos autores, a partir de \textcite{breiman2001}.}
+\end{figure} Como contraponto, usa-se a
 \textbf{máquina de vetores de suporte} (SVM)~\cite{cortes1995,hastie2009}, que procura a
 fronteira de margem máxima entre as classes, com \emph{kernel} para fronteiras
 não lineares. As implementações são as do
@@ -267,8 +501,12 @@ impureza, $H(Y) = -\sum_c p_c \log_2 p_c$, a redução obtida por um corte é o
   \text{GI}(Y; x \le t) = H(Y) - \frac{n_{\le}}{n} H(Y \mid x \le t) - \frac{n_{>}}{n} H(Y \mid x > t),
 \end{equation}
 em que $n_{\le}$ e $n_{>}$ são os números de amostras de cada lado do limiar $t$.
-O índice de Gini, $1 - \sum_c p_c^2$, é a alternativa usada pelo CART e o padrão
-do \texttt{scikit-learn}~\cite{breiman1984}. A importância de uma feature no Random
+Outra medida de impureza é o índice de Gini, $G(Y) = 1 - \sum_c p_c^2$: a
+probabilidade de errar a classe de uma amostra do nó ao rotulá-la por sorteio,
+segundo as proporções do próprio nó. É a medida do CART (\emph{Classification and
+Regression Trees}), o algoritmo de árvores de decisão proposto por
+\textcite{breiman1984}, e o critério padrão do \texttt{scikit-learn}; na prática,
+Gini e entropia levam a árvores muito parecidas~\cite[seç.~9.2]{hastie2009}. A importância de uma feature no Random
 Forest é a redução de impureza que ela proporciona, somada em todos os nós e
 árvores~\cite{breiman2001}. O ganho de informação tem, portanto, uma leitura
 direta: diz quanto da incerteza sobre a classe uma feature remove sozinha --- e,
@@ -305,12 +543,17 @@ camadas pequenas em seguida~\cite{zhang2017}.
 Os dados deste trabalho têm uma estrutura que condiciona toda a inferência: cada
 gravação gera dezenas de janelas, sobrepostas e da mesma montagem, que não são
 observações independentes. Tratar as janelas como amostras independentes
-subestima a variância e produz intervalos estreitos demais e valores-$p$ pequenos
-demais. As técnicas abaixo foram escolhidas para respeitar essa estrutura.
+subestima a variância e produz intervalos excessivamente estreitos e valores-$p$
+artificialmente pequenos. As técnicas abaixo foram escolhidas para respeitar essa estrutura.
 
-Na análise exploratória, as features têm distribuições assimétricas e com
-caudas pesadas (o RMS mediano da pista externa é cerca de dez vezes o das
-gravações normais), o que desaconselha a ANOVA. O teste de
+A comparação de uma feature entre as classes não pode, aqui, usar a ANOVA,
+cujos pressupostos são a normalidade dentro de cada grupo e a igualdade das
+variâncias. Os dois são violados: dentro de cada classe, as distribuições são
+multimodais, porque cada classe reúne gravações de níveis diferentes, e a
+dispersão muda muito de uma classe para outra --- o desvio padrão do RMS das
+janelas de pista externa é cerca de 40 vezes o das janelas normais
+(\autoref{fig:eda-rms}). Com 3 a 9 gravações por classe, esses pressupostos
+tampouco poderiam ser verificados com segurança. O teste de
 Kruskal--Wallis compara a distribuição de uma variável entre $k$ grupos usando só
 os postos das observações, sem supor normalidade~\cite{kruskal1952,hollander2014}.
 O tamanho do efeito é medido por $\varepsilon^2 = H/(n-1)$, entre 0 e
@@ -323,11 +566,51 @@ normalidade usuais~\cite{shapiro1965,razali2011}. Para comparar uma proporção 
 acertos com o esperado ao acaso, usa-se o teste binomial exato, que não depende
 de aproximação normal e é adequado a amostras pequenas~\cite{conover1999,hollander2014}.
 
-Para a inferência, usa-se o bootstrap, que estima a distribuição amostral de
-uma estatística reamostrando os próprios dados com reposição, e dá intervalos de
-confiança sem fórmula fechada~\cite{efron1993}. Quando os dados são agrupados, a
-reamostragem deve ser feita no nível do grupo --- gravações inteiras, e não
-janelas ---, para preservar a dependência interna e não subestimar a
-variância~\cite{field2007}. Para uma proporção estimada sobre um único grupo, em
+Para a inferência, usa-se o \emph{bootstrap}~\cite{efron1993}. Uma estatística
+calculada sobre uma amostra --- por exemplo, a acurácia no teste --- teria outro
+valor com outra amostra, e o intervalo de confiança quantifica essa variação. Sem
+acesso a outras amostras, o bootstrap as simula a partir da própria: sorteia,
+com reposição, tantas unidades quantas a amostra tem --- algumas aparecem mais de
+uma vez, outras nenhuma --- e recalcula a estatística nessa reamostra. Repetido
+$B$ vezes (aqui, \num{2000}), o procedimento produz $B$ valores cuja distribuição
+aproxima a distribuição amostral da estatística, e o intervalo de 95\% por
+percentis vai do percentil 2,5 ao 97,5 desses valores
+(\autoref{fig:bootstrap-esquema}). A vantagem é dispensar fórmula fechada e
+suposição de normalidade. Quando os dados são agrupados, a reamostragem deve ser
+feita no nível do grupo --- gravações inteiras, e não janelas ---, para preservar
+a dependência interna e não subestimar a variância~\cite{field2007}. A
+\autoref{fig:bootstrap-acuracia}, nos resultados, mostra a distribuição obtida
+para a acurácia de dois classificadores.
+
+\begin{figure}[htb]
+  \centering
+  \caption{Esquema do bootstrap por gravação: as gravações da amostra são
+  sorteadas com reposição, a estatística $\hat\theta$ é recalculada em cada
+  reamostra, e o intervalo de 95\% vai do percentil 2,5 ao 97,5 dos $B$ valores
+  obtidos.}
+  \label{fig:bootstrap-esquema}
+  \begin{tikzpicture}[font=\footnotesize, >={Stealth[length=2mm]},
+      g/.style={draw, minimum size=6mm, inner sep=0pt}]
+    \node[anchor=east] at (-0.3,0) {Amostra};
+    \foreach \v [count=\i] in {1,2,3,4,5} \node[g, fill=black!10] at (\i*0.75,0) {$g_\v$};
+    \node[anchor=west] at (4.3,0) {$\hat\theta$};
+    \foreach \linha/\y/\nome in {{2,2,5,1,4}/-1.3/1, {3,1,1,5,5}/-2.2/2, {4,2,3,3,1}/-3.6/B} {
+      \node[anchor=east] at (-0.3,\y) {Reamostra \nome};
+      \foreach \v [count=\i] in \linha \node[g] at (\i*0.75,\y) {$g_\v$};
+      \node[anchor=west] (t\nome) at (4.3,\y) {$\hat\theta^{*}_{\nome}$};
+    }
+    \node at (2.25,-2.9) {$\vdots$};
+    \node at (4.6,-2.9) {$\vdots$};
+    \draw[->] (2.25,-0.4) -- (2.25,-0.9);
+    \node[anchor=west, font=\scriptsize, align=left] at (2.4,-0.65) {sorteio com reposição};
+    \foreach \h [count=\i] in {0.2,0.5,1.0,1.6,2.0,1.7,1.1,0.6,0.25} \fill[black!25] (6.6+\i*0.3,-3.6) rectangle ++(0.26,\h);
+    \draw (6.75,-3.6) -- (9.75,-3.6);
+    \draw[dashed] (7.45,-3.75) -- (7.45,-1.3) node[above, font=\scriptsize] {2,5\%};
+    \draw[dashed] (9.25,-3.75) -- (9.25,-1.3) node[above, font=\scriptsize] {97,5\%};
+    \node[font=\scriptsize] at (8.35,-4.0) {distribuição dos $\hat\theta^{*}$};
+    \draw[->] (5.3,-2.4) -- (6.6,-2.4);
+  \end{tikzpicture}
+  \fonte{Elaborado pelos autores, a partir de \textcite{efron1993}.}
+\end{figure} Para uma proporção estimada sobre um único grupo, em
 que esse bootstrap não se aplica, o intervalo de Wilson tem cobertura melhor que o
 intervalo normal clássico~\cite{wilson1927,agresti1998}.

@@ -12,6 +12,7 @@ FROM mcr.microsoft.com/devcontainers/python:3.11-bookworm
 #   texlive-lang-portuguese           hifenização pt-BR (babel brazil)
 #   texlive-fonts-recommended/lmodern Latin Modern
 #   texlive-science                   siunitx
+#   texlive-pictures                  TikZ (esquemas do relatório; base do beamer)
 #   latexmk + biber                   cadeia de compilação usada pelo Makefile
 # Se faltar algum pacote LaTeX no futuro, acrescente aqui — nunca via tlmgr
 # dentro do container, senão o ambiente deixa de ser reprodutível.
@@ -23,6 +24,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
         texlive-lang-portuguese \
         texlive-fonts-recommended \
         texlive-science \
+        texlive-pictures \
         lmodern \
         latexmk \
         biber \
