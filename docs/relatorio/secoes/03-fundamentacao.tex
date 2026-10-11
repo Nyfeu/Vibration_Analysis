@@ -208,10 +208,7 @@ rolamentos~\cite{randall2011tutorial}. Ela tem três passos: filtrar o sinal em
 uma banda em torno de uma ressonância excitada pelos impactos; obter o envelope
 dessa banda; e calcular o espectro do envelope.
 
-O envelope é obtido pela \emph{transformada de Hilbert}\footnote{O nome homenageia
-o matemático David Hilbert. A transformada não depende do conceito de
-\emph{espaço de Hilbert}, que também leva o seu nome: é apenas uma operação linear
-sobre o sinal.}. Ela desloca a fase de cada componente de frequência do sinal
+O envelope é obtido pela \emph{transformada de Hilbert}. Ela desloca a fase de cada componente de frequência do sinal
 em $-\SI{90}{\degree}$, sem alterar a sua amplitude; no domínio da frequência,
 equivale a multiplicar o espectro por $-j\,\mathrm{sgn}(f)$, e no domínio do
 tempo, à convolução
@@ -326,7 +323,7 @@ treinar~\cite{chandola2009}. Os detectores deste trabalho são treinados
 mais a janela se afasta do comportamento normal; um limiar sobre esse
 \emph{score} define o que é alarme.
 
-\textbf{Curva ROC e AUC.} Para um dado limiar, a taxa de verdadeiros positivos
+O desempenho de um detector depende do limiar. Para um dado limiar, a taxa de verdadeiros positivos
 (TPR) é a fração das janelas de falha que disparam alarme, e a taxa de falsos
 positivos (FPR) é a fração das janelas normais que também disparam. Baixar o
 limiar aumenta as duas; subir, diminui as duas. A curva ROC (\emph{receiver

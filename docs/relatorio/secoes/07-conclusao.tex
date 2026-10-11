@@ -6,7 +6,7 @@ O trabalho avaliou separadamente as duas tarefas do enunciado --- detectar que
 algo mudou e identificar o que mudou ---, sobre os dados de rolamentos do CWRU,
 sempre com treino em \SIlist{0;1;2}{\hp} e teste em \SI{3}{\hp}.
 
-\textbf{Detecção sem exemplos de falha.} Os detectores one-class treinados só com
+Na detecção, feita sem nenhum exemplo de falha, os detectores one-class treinados só com
 sinais normais separaram normal de falha com AUC de até \num{1.000} e TPR de
 \num{1.000}, com FPR de \num{0.12} (IC de Wilson de \numrange{0.06}{0.23}, sobre
 uma única gravação normal) e precisão de \num{0.99} no baseline de
@@ -22,7 +22,7 @@ os candidatos (estimativa otimista, porque a escolha foi feita olhando o teste),
 e alarmes mais frequentes onde o defeito é fisicamente visível, ao custo de um
 TPR de \num{0.54}.
 
-\textbf{Diagnóstico do tipo de falha.} O Random Forest com features de tempo e de
+No diagnóstico do tipo de falha, o Random Forest com features de tempo e de
 envelope, escolhido por validação cruzada por carga e ajustado por busca em grade,
 atingiu \SI{95.7}{\percent} de acurácia (IC de 95\% de \numrange{0.89}{1.00}) e
 $F_1$ macro de \num{0.964}. Esse número vem de 10 gravações de teste --- uma por
@@ -38,7 +38,7 @@ para \SI{76.0}{\percent}. A CNN 1D chega a \SI{99.7}{\percent}, mas acerta
 inclusive as gravações sem assinatura e generaliza pior que o modelo de
 envelope.
 
-\textbf{Generalização entre montagens.} Com um diâmetro --- e, portanto, uma
+No teste de generalização entre montagens, com um diâmetro --- e, portanto, uma
 montagem --- inteiro fora do treino, todos os modelos treinados caem para perto
 do acaso (de \num{0.26} a \num{0.55}) e nenhum acerta significativamente mais
 montagens que o acaso, enquanto uma regra física sem treino, que atribui a

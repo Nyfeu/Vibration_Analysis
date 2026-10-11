@@ -121,13 +121,29 @@ trabalho é, portanto, de \SIrange{0}{4.8}{\kilo\hertz}.
 Cada gravação é cortada em trechos consecutivos de tamanho fixo, as
 \emph{janelas}, que são as unidades de análise dos modelos: cada janela gera um
 vetor de features, ou, na CNN, uma entrada, e recebe o rótulo da gravação de
-origem (\autoref{fig:janelas}a). Há três motivos para não analisar a gravação
-inteira de uma vez. Os modelos precisam de muitos exemplos de entrada com o mesmo
-tamanho, e o conjunto tem só 40 gravações; cortadas em janelas, elas dão
-\num{2291}. Em monitoramento, a decisão é tomada sobre trechos curtos do sinal, à
-medida que ele chega. E as features --- RMS, curtose, espectro de envelope --- são
-estimativas que supõem um trecho de sinal com estatística estável, o que vale
-melhor para trechos curtos. Cortar o sinal em janelas de tamanho fixo, com ou sem
+origem (\autoref{fig:janelas}a).
+
+A alternativa seria descrever cada gravação inteira, de cerca de \SI{10}{\second},
+por um único vetor de features. É o que se faz na validação física
+(\autoref{sec:res-fisica}), cujo objetivo é verificar, com a maior resolução
+espectral possível, se a frequência do defeito está presente numa gravação. Para
+treinar e avaliar modelos, porém, ela deixaria um exemplo por gravação: 30 no
+treino, dos quais só 3 normais, e 10 no teste. Com 3 exemplos normais não é
+possível estimar a matriz de covariância das oito features que a distância de
+Mahalanobis exige, nem o percentil 99 que define o limiar de alarme dos
+detectores, e nenhum classificador poderia ser ajustado e comparado por
+validação cruzada com 30 exemplos de quatro classes. Com janelas de
+\SI{0.341}{\second}, as 40 gravações dão \num{2291} exemplos, e o modelo vê
+também como as features variam de um trecho para outro na mesma condição de
+operação, o que delimita a região de cada classe melhor que um único ponto por
+gravação. Há ainda uma razão de uso: em monitoramento, o sinal é contínuo e não
+existe uma ``gravação inteira''; a decisão é tomada sobre trechos curtos, à medida
+que chegam, e pode ser confirmada por trechos sucessivos.
+
+O custo é que as janelas de uma mesma gravação não são observações
+independentes. Por isso a divisão entre treino e teste nunca separa janelas da
+mesma gravação (\autoref{sec:split}), e a análise estatística usa a gravação como
+unidade (\autoref{sec:met-estatistica}). Cortar o sinal em janelas de tamanho fixo, com ou sem
 sobreposição, é o procedimento usual quando sinais longos de vibração ou de
 corrente de motores alimentam classificadores, inclusive no próprio
 CWRU~\cites{zhang2017}{ince2016}; no
