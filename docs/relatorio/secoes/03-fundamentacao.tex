@@ -130,12 +130,15 @@ frequência prevista é o argumento físico mais forte disponível neste trabalh
 
 As técnicas deste trabalho vêm de cinco áreas, cada uma com referências de base
 próprias: o diagnóstico de rolamentos por análise de
-vibração~\cite{randall2011tutorial,smith2015}, o processamento
-digital de sinais~\cite{oppenheim2010,randall2011livro}, a detecção de
-anomalias~\cite{chandola2009,liu2008}, o aprendizado de máquina
-supervisionado~\cite{hastie2009,breiman2001} e a estatística
-aplicada~\cite{efron1993,hollander2014}. As subseções a seguir apresentam cada
-técnica dentro dessas áreas.
+vibração~\cite{randall2011livro,randall2011tutorial}, o processamento digital de
+sinais~\cite{oppenheim2010,proakis2007}, a detecção de
+anomalias~\cite{chandola2009,aggarwal2017}, o aprendizado de
+máquina~\cite{hastie2009,goodfellow2016} e a estatística
+aplicada~\cite{wasserman2004,hollander2014}. Além delas, são citados como fonte,
+e não como fundamentação de técnica, a documentação do conjunto de
+dados~\cite{cwru}, a auditoria das suas gravações~\cite{smith2015} e a
+arquitetura de rede neural reproduzida no trabalho~\cite{zhang2017}. As subseções
+a seguir apresentam cada técnica dentro dessas áreas.
 
 \subsection{Decimação (redução da taxa de amostragem)}
 \label{sec:decimacao}
@@ -385,7 +388,7 @@ ganho~\cite{chandola2009}.
 \subsubsection{Isolation Forest}
 
 O Isolation Forest parte de uma ideia diferente: em vez de modelar como são os
-dados normais, mede quão fácil é \emph{isolar} cada ponto~\cite{liu2008}.
+dados normais, mede quão fácil é \emph{isolar} cada ponto~\cite{aggarwal2017}.
 Cada árvore é construída sobre uma subamostra do treino, escolhendo em cada nó
 uma feature ao acaso e um limiar ao acaso entre o mínimo e o máximo dessa
 feature no nó, até que cada ponto fique sozinho numa folha. Um ponto anômalo,
@@ -414,7 +417,7 @@ fiquem do lado de fora.
 
 Um autoencoder é uma rede neural treinada para reproduzir a própria entrada,
 passando por uma camada intermediária menor que ela, o
-\emph{gargalo}~\cite{chandola2009}. A primeira metade (codificador) comprime as
+\emph{gargalo}~\cite[cap.~14]{goodfellow2016}. A primeira metade (codificador) comprime as
 features numa representação de dimensão menor; a segunda (decodificador)
 reconstrói as features a partir dela. O gargalo impede que a rede aprenda a
 simplesmente copiar a entrada: ela precisa aprender as relações que os dados de
@@ -433,7 +436,7 @@ e o problema é de classificação supervisionada.
 
 Na seleção de modelos, cinco classificadores clássicos são comparados:
 Regressão Logística, $k$ vizinhos mais próximos (KNN), Random Forest e SVM~\cite{hastie2009}. O classificador principal é o \textbf{Random
-Forest}~\cite{breiman2001,hastie2009}, um conjunto de árvores de decisão
+Forest}~\cite[cap.~15]{hastie2009}, um conjunto de árvores de decisão
 (\autoref{sec:tec-arvores}) cuja previsão é o voto da maioria
 (\autoref{fig:random-forest}). Cada árvore é treinada numa \emph{amostra
 bootstrap} do treino --- um sorteio, com reposição, do mesmo número de exemplos
@@ -475,7 +478,7 @@ ajuda a verificar se a decisão se apoia em grandezas com sentido físico.
     \node[caixa, fill=black!5] (final) at (0,-6.2) {Voto da maioria: \textbf{IR}};
     \foreach \n in {1,2,B} \draw[->] (voto\n.south) -- (final.north);
   \end{tikzpicture}
-  \fonte{Elaborado pelos autores, a partir de \textcite{breiman2001}.}
+  \fonte{Elaborado pelos autores, a partir de \textcite[cap.~15]{hastie2009}.}
 \end{figure}
 
 Como contraponto, usa-se a máquina de vetores de suporte (SVM), que procura a
@@ -501,7 +504,7 @@ segundo as proporções do próprio nó. É a medida do algoritmo CART
 \texttt{scikit-learn}; na prática,
 Gini e entropia levam a árvores muito parecidas~\cite[seç.~9.2]{hastie2009}. A importância de uma feature no Random
 Forest é a redução de impureza que ela proporciona, somada em todos os nós e
-árvores~\cite{breiman2001}. O ganho de informação tem, portanto, uma leitura
+árvores~\cite[cap.~15]{hastie2009}. O ganho de informação tem, portanto, uma leitura
 direta: diz quanto da incerteza sobre a classe uma feature remove sozinha --- e,
 neste trabalho, serve para ver \emph{em que} o classificador se apoia.
 
@@ -524,7 +527,7 @@ inteiros de fora em cada partição.
 
 Como contraponto às features
 calculadas à mão, uma rede convolucional unidimensional aprende os filtros
-diretamente do sinal bruto, sem extração manual de features. A arquitetura
+diretamente do sinal bruto, sem extração manual de features~\cite[cap.~9]{goodfellow2016}. A arquitetura
 WDCNN, proposta para o diagnóstico de rolamentos, usa na primeira camada um
 \emph{kernel} largo, que funciona como um banco de filtros aprendido, e
 camadas pequenas em seguida~\cite{zhang2017}.
@@ -557,7 +560,7 @@ verificada pelo teste de Shapiro--Wilk. Para comparar uma proporção de
 acertos com o esperado ao acaso, usa-se o teste binomial exato, que não depende
 de aproximação normal e é adequado a amostras pequenas~\cite{hollander2014}.
 
-Para a inferência, usa-se o \emph{bootstrap}~\cite{efron1993}. Uma estatística
+Para a inferência, usa-se o \emph{bootstrap}~\cite[cap.~8]{wasserman2004}. Uma estatística
 calculada sobre uma amostra --- por exemplo, a acurácia no teste --- teria outro
 valor com outra amostra, e o intervalo de confiança quantifica essa variação. Sem
 acesso a outras amostras, o bootstrap as simula a partir da própria: sorteia,
@@ -606,5 +609,5 @@ e 1 e continua informativo quando a proporção observada é 0 ou 1.
     \node[font=\scriptsize] at (8.35,-4.0) {distribuição dos $\hat\theta^{*}$};
     \draw[->] (5.3,-2.4) -- (6.6,-2.4);
   \end{tikzpicture}
-  \fonte{Elaborado pelos autores, a partir de \textcite{efron1993}.}
+  \fonte{Elaborado pelos autores, a partir de \textcite[cap.~8]{wasserman2004}.}
 \end{figure}
