@@ -142,4 +142,5 @@ scripts/       download e verificação dos dados
   *Mechanical Systems and Signal Processing*, v. 25, n. 2, p. 485–520, 2011.
 - RANDALL, R. B. *Vibration-based Condition Monitoring*. Wiley, 2011.
 
-As referências de cada técnica (no mínimo duas por técnica) estão no relatório.
+A bibliografia completa, organizada por área (diagnóstico de rolamentos, processamento de sinais,
+detecção de anomalias, aprendizado supervisionado e estatística), está no relatório.

@@ -521,12 +521,12 @@ As métricas seguem a separação entre as duas tarefas.
 
 Na detecção, a classe positiva é ``falha''. Com VP, FP, VN e FN as
 contagens de verdadeiros e falsos positivos e negativos, no limiar de alarme:
-\begin{equation}
-  \text{TPR} = \text{recall} = \frac{\text{VP}}{\text{VP}+\text{FN}}, \qquad
-  \text{FPR} = \frac{\text{FP}}{\text{FP}+\text{VN}}, \qquad
-  \text{precisão} = \frac{\text{VP}}{\text{VP}+\text{FP}}, \qquad
-  F_1 = \frac{2\,\text{precisão}\cdot\text{recall}}{\text{precisão}+\text{recall}}.
-\end{equation}
+\begin{align}
+  \text{TPR} = \text{recall} &= \frac{\text{VP}}{\text{VP}+\text{FN}}, &
+  \text{FPR} &= \frac{\text{FP}}{\text{FP}+\text{VN}}, \\
+  \text{precisão} &= \frac{\text{VP}}{\text{VP}+\text{FP}}, &
+  F_1 &= \frac{2\,\text{precisão}\cdot\text{recall}}{\text{precisão}+\text{recall}}.
+\end{align}
 A AUC resume a curva ROC (TPR em função da FPR) para todos os limiares. TPR e FPR
 não dependem da proporção de falhas no conjunto; precisão e $F_1$ dependem. No
 teste, \SI{90}{\percent} das janelas são de falha (523 de 581), e um detector que

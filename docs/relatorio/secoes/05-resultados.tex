@@ -387,16 +387,39 @@ features, e a \autoref{fig:roc} mostra as curvas ROC correspondentes.
 \end{figure}
 
 Cada painel da \autoref{fig:roc} corresponde a um conjunto de features, e cada
-curva, a um detector. A curva é traçada variando o limiar de alarme do mais alto,
-em que nenhuma janela dispara (canto inferior esquerdo), ao mais baixo, em que
-todas disparam (canto superior direito); cada ponto intermediário dá a fração de
-janelas de falha detectadas (TPR) e a fração de janelas normais com alarme falso
-(FPR) para um limiar (\autoref{sec:tec-one-class}). Uma curva que sobe colada ao
-eixo vertical até TPR = 1 separa perfeitamente as duas condições; uma curva
-próxima da diagonal não as separa. O ponto marcado em cada curva é o limiar
-efetivamente usado. Como ele foi fixado só com os normais de treino, pode cair em
-qualquer lugar da curva: com as mesmas features e AUC próxima de 1, o
-Mahalanobis opera com FPR de \num{0.12} e o One-Class SVM, de \num{0.81}.
+curva, a um detector. Para traçar uma curva, as 581 janelas de teste são
+ordenadas pelo \emph{score} do detector, e o limiar de alarme percorre essa lista
+do valor mais alto ao mais baixo. Com o limiar acima de todos os \emph{scores},
+nenhuma janela dispara, e a curva começa em $(0, 0)$; a cada janela que passa a
+disparar, a curva sobe $1/523$ se a janela for de falha e anda $1/58$ para a
+direita se for normal, até $(1, 1)$, quando todas disparam. Por isso as curvas
+são escadas, com degraus horizontais largos: há só 58 janelas normais no teste.
+O eixo horizontal é a FPR, a fração das janelas normais com alarme falso, e o
+vertical é a TPR, a fração das janelas de falha detectadas. Uma curva que sobe
+colada ao eixo vertical até o topo significa que todas as janelas de falha têm
+\emph{score} maior que todas as normais; uma curva sobre a diagonal pontilhada,
+que o \emph{score} não ordena as duas condições melhor que um sorteio. A AUC é a
+área sob a curva.
+
+O ponto marcado em cada curva é o limiar efetivamente adotado, o percentil 99 dos
+normais de treino, e sua posição se lê diretamente. O autoencoder com envelope,
+por exemplo, opera em $(\num{0.034}; \num{0.545})$: dispara em 2 das 58 janelas
+normais e detecta 285 das 523 janelas de falha. A mesma curva mostra o que
+custaria mudar o limiar: ela sobe na vertical até TPR de \num{0.51} sem nenhum
+alarme falso, mas, para detectar \SI{80}{\percent} das janelas de falha, seria
+preciso aceitar FPR de \num{0.34}, isto é, alarme falso em uma de cada três
+janelas normais. A forma da curva acima do ponto de operação mostra, assim, que
+uma parte das janelas de falha tem assinatura de envelope clara, e outra parte se
+confunde com o normal. Essa divisão acompanha, em parte, a física: os alarmes são
+mais frequentes nas gravações em que o defeito é visível no envelope que nas
+gravações sem evidência física dele (\autoref{sec:res-detector-recomendado}).
+
+A curva e o ponto respondem a perguntas diferentes. A curva mede se o
+\emph{score} ordena bem as janelas, independentemente do limiar; o ponto mede o
+que acontece com o limiar escolhido. Com tempo+envelope, o One-Class SVM tem uma
+curva perfeita --- existe um limiar com TPR de 1 e FPR de 0 ---, mas o limiar
+adotado cai no outro extremo, com FPR de \num{0.81}. O problema, nesse caso, não
+é o modelo, e sim a calibração do limiar, explicada abaixo.
 
 Três padrões aparecem. Primeiro, com as features de tempo, os quatro detectores
 separam normal de falha quase perfeitamente (AUC de \num{0.995} a \num{1.000}).
