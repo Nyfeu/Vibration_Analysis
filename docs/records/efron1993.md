@@ -35,7 +35,7 @@
 
 ## Cuidados ao citar
 
-- O bootstrap supõe unidades independentes; com dados agrupados, reamostrar os grupos (ver Field e Welsh, 2007).
+- O bootstrap supõe unidades independentes; com dados agrupados, reamostrar os grupos inteiros.
 
 ## Pendências
 

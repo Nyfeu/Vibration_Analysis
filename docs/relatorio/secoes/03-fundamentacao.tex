@@ -13,13 +13,13 @@ lascamento ou, no caso do CWRU, um furo feito por eletroerosão --- é atingido
 pelos demais componentes a cada passagem. Cada contato produz um impacto curto,
 que excita as ressonâncias da estrutura entre o rolamento e o sensor. O sinal
 medido é então uma série de respostas impulsivas de banda larga, que se repetem
-na taxa de passagem pelo defeito~\cites{mcfadden1984}[p.~101]{smith2015}.
+na taxa de passagem pelo defeito~\cites{randall2011tutorial}[p.~101]{smith2015}.
 
-\textcite{mcfadden1984} modelaram esse sinal como a resposta da estrutura a uma
+Esse sinal é modelado como a resposta da estrutura a uma
 sequência de impulsos, modulada em amplitude por dois efeitos: a distribuição
 de carga no rolamento, que faz o impacto ser mais forte na zona de carga, e a
 variação do caminho de transmissão até o sensor, quando o defeito gira. Dessa
-modulação vêm as bandas laterais da \autoref{tab:assinaturas}.
+modulação vêm as bandas laterais da \autoref{tab:assinaturas}~\cite{randall2011tutorial}.
 
 Esse mecanismo explica por que o espectro do sinal bruto costuma não revelar a
 falha. A energia dos impactos aparece espalhada em torno das frequências de
@@ -130,10 +130,10 @@ frequência prevista é o argumento físico mais forte disponível neste trabalh
 
 As técnicas deste trabalho vêm de cinco áreas, cada uma com referências de base
 próprias: o diagnóstico de rolamentos por análise de
-vibração~\cite{randall2011livro,randall2011tutorial,smith2015}, o processamento
-digital de sinais~\cite{oppenheim2010,virtanen2020}, a detecção de
-anomalias~\cite{chandola2009,liu2008,scholkopf2001}, o aprendizado de máquina
-supervisionado~\cite{hastie2009,breiman2001,pedregosa2011} e a estatística
+vibração~\cite{randall2011tutorial,smith2015}, o processamento
+digital de sinais~\cite{oppenheim2010,randall2011livro}, a detecção de
+anomalias~\cite{chandola2009,liu2008}, o aprendizado de máquina
+supervisionado~\cite{hastie2009,breiman2001} e a estatística
 aplicada~\cite{efron1993,hollander2014}. As subseções a seguir apresentam cada
 técnica dentro dessas áreas.
 
@@ -181,7 +181,7 @@ passagem em troca de uma transição mais rápida, com a mesma
 ordem~\cite[cap.~7]{oppenheim2010}. A
 \autoref{fig:filtros}a compara os dois, de ordem 8 e com corte em
 \SI{4.8}{\kilo\hertz}, ao filtro ideal. O Chebyshev, que é o filtro padrão da
-função de decimação do SciPy~\cite{virtanen2020}, atenua \SI{25}{\decibel} na
+função de decimação do SciPy, atenua \SI{25}{\decibel} na
 nova frequência de Nyquist, contra \SI{17}{\decibel} do Butterworth. Mesmo
 assim, a atenuação é finita: a \autoref{fig:filtros}b mostra que a gravação
 normal 97, a \SI{48}{\kilo\hertz}, tem energia até cerca de
@@ -206,7 +206,7 @@ Resta a fase do filtro. Um filtro causal atrasa o sinal e, se não tiver fase
 linear, atrasa cada frequência de forma diferente, o que deforma impulsos como os
 gerados por um defeito de rolamento. Aplicar o mesmo filtro duas vezes, uma em
 cada sentido do tempo, cancela a fase e produz resposta de fase
-zero~\cite{gustafsson1996}. Isso só é possível porque o sinal está todo gravado:
+zero~\cite{oppenheim2010}. Isso só é possível porque o sinal está todo gravado:
 não se trata de processamento em tempo real.
 
 \subsection{Análise de envelope (demodulação por Hilbert)}
@@ -265,7 +265,7 @@ A escolha da banda de demodulação é o ponto crítico. Sem filtro algum, o env
 podem mascará-lo. Esse é o ``método 1'' de \textcite[p.~104]{smith2015}, que
 mesmo assim diagnosticou boa parte do CWRU. A curtose espectral e o kurtograma
 escolhem automaticamente a banda mais impulsiva, que tende a ser a que carrega os
-impactos~\cite{antoni2006sk,antoni2007}.
+impactos~\cites{randall2011tutorial}[p.~104--105]{smith2015}.
 
 Ambos partem da \emph{transformada de Fourier de tempo curto} (STFT). Em vez de um
 único espectro para o sinal inteiro, a STFT divide o sinal em trechos curtos,
@@ -282,7 +282,7 @@ curta dá boa resolução no tempo e pouca na frequência (a largura de cada fai
 de cerca de $f_s/N_w$); janela longa, o contrário.
 
 A curtose espectral mede, em cada frequência, o quanto a amplitude da STFT
-varia ao longo do tempo~\cite{antoni2006sk}:
+varia ao longo do tempo~\cite{randall2011tutorial}:
 \begin{equation}
   \text{SK}(f) = \frac{\langle |X(m, f)|^4 \rangle_m}{\langle |X(m, f)|^2 \rangle_m^2} - 2,
 \end{equation}
@@ -293,7 +293,7 @@ amplitude alterna entre valores muito altos e muito baixos, e a SK cresce. A
 \autoref{fig:stft-sk}b mostra esse contraste entre a falha de pista interna e a
 gravação normal. O kurtograma calcula a SK para várias resoluções --- isto é,
 várias larguras de banda --- e escolhe como banda de demodulação a combinação de
-frequência e largura de maior valor~\cite{antoni2007}; o kurtograma de uma
+frequência e largura de maior valor~\cite{randall2011tutorial}; o kurtograma de uma
 gravação do conjunto está na \autoref{fig:kurtograma}.
 
 \begin{figure}[htb]
@@ -313,7 +313,7 @@ determinísticos (DRS), essa escolha compõe o ``método de referência'' de
 \textcite[p.~104--105]{smith2015}. Uma alternativa mais simples é o
 pré-branqueamento cepstral, que iguala a magnitude de todo o espectro e mantém a
 fase: as faixas impulsivas passam a dominar o sinal sem que seja preciso
-escolher uma banda~\cites{sawalhi2011}[p.~104]{smith2015}.
+escolher uma banda~\cite[p.~104]{smith2015}.
 
 Neste trabalho, o espectro de envelope tem dois usos: como fonte de features para
 os modelos e como validação física, verificando se o pico observado cai na
@@ -353,7 +353,7 @@ Quatro detectores são comparados, do mais simples ao mais flexível.
 
 A distância de Mahalanobis de uma janela $\mathbf{x}$ à média $\boldsymbol{\mu}$
 das janelas normais, com matriz de covariância $\boldsymbol{\Sigma}$,
-é~\cites{mahalanobis1936}{demaesschalck2000}
+é~\cite{chandola2009}
 \begin{equation}
   d_M(\mathbf{x}) = \sqrt{(\mathbf{x} - \boldsymbol{\mu})^{\mathsf{T}}\,
   \boldsymbol{\Sigma}^{-1}\,(\mathbf{x} - \boldsymbol{\mu})}.
@@ -368,7 +368,7 @@ diferentes, conforme estejam na direção em que os normais variam muito ou pouc
 Se os dados normais seguirem
 uma distribuição normal multivariada com $k$ features, $d_M^2$ segue uma
 distribuição qui-quadrado com $k$ graus de liberdade, o que dá um limiar
-teórico~\cite{demaesschalck2000}; esse pressuposto é testado na
+teórico; esse pressuposto é testado na
 \autoref{sec:res-pressupostos}.
 
 A distância de Mahalanobis é o baseline da detecção por quatro razões. É o modelo
@@ -380,7 +380,7 @@ detectores têm hiperparâmetros que, sem exemplos de falha, não há como ajust
 por validação. É interpretável: o \emph{score} é uma distância em desvios padrão.
 E é o método clássico de detecção de \emph{outliers} multivariados, o que faz dela
 a referência contra a qual os métodos mais flexíveis precisam mostrar
-ganho~\cites{demaesschalck2000}{chandola2009}.
+ganho~\cite{chandola2009}.
 
 \subsubsection{Isolation Forest}
 
@@ -400,7 +400,7 @@ a distribuição dos normais.
 
 O One-Class SVM leva os dados, por meio de um \emph{kernel}, a um espaço de
 dimensão maior, e nele procura o hiperplano que separa os dados de treino da
-origem com a maior margem possível~\cite{scholkopf2001}. De volta ao espaço
+origem com a maior margem possível~\cite{chandola2009}. De volta ao espaço
 original, esse hiperplano vira uma fronteira fechada e flexível em torno dos
 normais; o que fica fora é anômalo. Neste trabalho usa-se o \emph{kernel}
 gaussiano (RBF),
@@ -414,7 +414,7 @@ fiquem do lado de fora.
 
 Um autoencoder é uma rede neural treinada para reproduzir a própria entrada,
 passando por uma camada intermediária menor que ela, o
-\emph{gargalo}~\cite{hinton2006}. A primeira metade (codificador) comprime as
+\emph{gargalo}~\cite{chandola2009}. A primeira metade (codificador) comprime as
 features numa representação de dimensão menor; a segunda (decodificador)
 reconstrói as features a partir dela. O gargalo impede que a rede aprenda a
 simplesmente copiar a entrada: ela precisa aprender as relações que os dados de
@@ -476,11 +476,12 @@ ajuda a verificar se a decisão se apoia em grandezas com sentido físico.
     \foreach \n in {1,2,B} \draw[->] (voto\n.south) -- (final.north);
   \end{tikzpicture}
   \fonte{Elaborado pelos autores, a partir de \textcite{breiman2001}.}
-\end{figure} Como contraponto, usa-se a
-\textbf{máquina de vetores de suporte} (SVM)~\cite{cortes1995,hastie2009}, que procura a
+\end{figure}
+
+Como contraponto, usa-se a máquina de vetores de suporte (SVM), que procura a
 fronteira de margem máxima entre as classes, com \emph{kernel} para fronteiras
-não lineares. As implementações são as do
-\texttt{scikit-learn}~\cite{pedregosa2011}.
+não lineares~\cite[cap.~12]{hastie2009}. As implementações são as da biblioteca
+\texttt{scikit-learn}.
 
 \subsection{Árvores de decisão e ganho de informação}
 \label{sec:tec-arvores}
@@ -488,16 +489,16 @@ não lineares. As implementações são as do
 Cada árvore do Random Forest divide os dados recursivamente, escolhendo em cada nó a feature e o limiar
 que mais reduzem a impureza das classes. Com a entropia de Shannon como medida de
 impureza, $H(Y) = -\sum_c p_c \log_2 p_c$, a redução obtida por um corte é o
-\emph{ganho de informação}~\cite{quinlan1986}:
+\emph{ganho de informação}~\cite[seç.~9.2]{hastie2009}:
 \begin{equation}
   \text{GI}(Y; x \le t) = H(Y) - \frac{n_{\le}}{n} H(Y \mid x \le t) - \frac{n_{>}}{n} H(Y \mid x > t),
 \end{equation}
 em que $n_{\le}$ e $n_{>}$ são os números de amostras de cada lado do limiar $t$.
 Outra medida de impureza é o índice de Gini, $G(Y) = 1 - \sum_c p_c^2$: a
 probabilidade de errar a classe de uma amostra do nó ao rotulá-la por sorteio,
-segundo as proporções do próprio nó. É a medida do CART (\emph{Classification and
-Regression Trees}), o algoritmo de árvores de decisão proposto por
-\textcite{breiman1984}, e o critério padrão do \texttt{scikit-learn}; na prática,
+segundo as proporções do próprio nó. É a medida do algoritmo CART
+(\emph{Classification and Regression Trees}) e o critério padrão do
+\texttt{scikit-learn}; na prática,
 Gini e entropia levam a árvores muito parecidas~\cite[seç.~9.2]{hastie2009}. A importância de uma feature no Random
 Forest é a redução de impureza que ela proporciona, somada em todos os nós e
 árvores~\cite{breiman2001}. O ganho de informação tem, portanto, uma leitura
@@ -516,16 +517,15 @@ hiperparâmetros. A estimativa só é válida se as partes forem independentes.
 Quando os dados têm estrutura --- aqui, várias janelas da mesma gravação ---, a
 divisão aleatória coloca observações quase idênticas dos dois lados e
 superestima o desempenho; a divisão deve respeitar os grupos, deixando grupos
-inteiros de fora em cada partição~\cite{roberts2017}.
+inteiros de fora em cada partição.
 
 \subsection{Rede neural convolucional 1D}
 \label{sec:tec-cnn}
 
 Como contraponto às features
 calculadas à mão, uma rede convolucional unidimensional aprende os filtros
-diretamente do sinal bruto. Em diagnóstico de motores e rolamentos, CNNs 1D
-compactas atingem alto desempenho sem extração manual de
-features~\cite{ince2016}; a arquitetura WDCNN usa na primeira camada um
+diretamente do sinal bruto, sem extração manual de features. A arquitetura
+WDCNN, proposta para o diagnóstico de rolamentos, usa na primeira camada um
 \emph{kernel} largo, que funciona como um banco de filtros aprendido, e
 camadas pequenas em seguida~\cite{zhang2017}.
 
@@ -547,13 +547,13 @@ janelas de pista externa é cerca de 40 vezes o das janelas normais
 (\autoref{fig:eda-rms}). Com 3 a 9 gravações por classe, esses pressupostos
 tampouco poderiam ser verificados com segurança. O teste de
 Kruskal--Wallis compara a distribuição de uma variável entre $k$ grupos usando só
-os postos das observações, sem supor normalidade~\cite{kruskal1952,hollander2014}.
+os postos das observações, sem supor normalidade~\cite{hollander2014}.
 O tamanho do efeito é medido por $\varepsilon^2 = H/(n-1)$, entre 0 e
 1~\cite{hollander2014}. A associação entre features é medida pela correlação de
 postos de Spearman, robusta a relações monotônicas não
 lineares~\cite{hollander2014}. A normalidade, quando é pressuposto de
 um método --- como a distribuição qui-quadrado da distância de Mahalanobis ---, é
-verificada pelo teste de Shapiro--Wilk~\cite{shapiro1965}. Para comparar uma proporção de
+verificada pelo teste de Shapiro--Wilk. Para comparar uma proporção de
 acertos com o esperado ao acaso, usa-se o teste binomial exato, que não depende
 de aproximação normal e é adequado a amostras pequenas~\cite{hollander2014}.
 
@@ -569,12 +569,12 @@ percentis vai do percentil 2,5 ao 97,5 desses valores
 (\autoref{fig:bootstrap-esquema}). A vantagem é dispensar fórmula fechada e
 suposição de normalidade. Quando os dados são agrupados, a reamostragem deve ser
 feita no nível do grupo --- gravações inteiras, e não janelas ---, para preservar
-a dependência interna e não subestimar a variância~\cite{field2007}. A
+a dependência interna e não subestimar a variância. A
 \autoref{fig:bootstrap-acuracia}, nos resultados, mostra a distribuição obtida
 para a acurácia de dois classificadores.
 
 Para uma proporção estimada sobre um único grupo, em
-que esse bootstrap não se aplica, usa-se o intervalo de Wilson~\cite{wilson1927},
+que esse bootstrap não se aplica, usa-se o intervalo de Wilson,
 que, ao contrário do intervalo normal clássico, nunca ultrapassa os limites de 0
 e 1 e continua informativo quando a proporção observada é 0 ou 1.
 

@@ -42,7 +42,7 @@ deslocado por um fator 4. Um detector separaria normal de falha por essa
 diferença de taxa de amostragem, e não pelo defeito, e a métrica resultante não
 teria significado físico.
 
-A decimação usa a função \texttt{scipy.signal.decimate}~\cite{virtanen2020} com
+A decimação usa a função \texttt{scipy.signal.decimate} com
 sua configuração padrão: filtro anti-\emph{aliasing} IIR Chebyshev do tipo~I, de
 ordem 8 e ondulação de \SI{0.05}{\decibel} na banda de passagem, com corte em
 $0{,}8$ vezes a nova frequência de Nyquist, isto é, \SI{4.8}{\kilo\hertz}. O
@@ -146,7 +146,7 @@ mesma gravação (\autoref{sec:split}), e a análise estatística usa a gravaç�
 unidade (\autoref{sec:met-estatistica}). Cortar o sinal em janelas de tamanho fixo, com ou sem
 sobreposição, é o procedimento usual quando sinais longos de vibração ou de
 corrente de motores alimentam classificadores, inclusive no próprio
-CWRU~\cites{zhang2017}{ince2016}; no
+CWRU~\cite{zhang2017}; no
 trabalho de \textcite{zhang2017}, a sobreposição é usada justamente para
 multiplicar as amostras de treino.
 
@@ -255,7 +255,7 @@ está no notebook \texttt{notebooks/projeto.ipynb}.
 
 São os indicadores clássicos de condição de máquinas: o RMS mede o nível global de
 vibração, que é a grandeza de avaliação de severidade das normas de
-vibração~\cite{iso20816}, e curtose e fator de crista medem a impulsividade, que
+vibração~\cite{randall2011livro}, e curtose e fator de crista medem a impulsividade, que
 cresce com os impactos de um defeito localizado~\cite{randall2011livro}. Para cada
 janela $x$, com média $\mu$ e desvio padrão $\sigma$, são calculados cinco
 indicadores:
@@ -386,7 +386,7 @@ O conjunto ``forma'' exclui as duas features que dependem da amplitude
 absoluta do sinal. A amplitude muda com o defeito, mas também com a montagem, o
 sensor e o dia do ensaio; comparar ``forma'' com ``tempo+envelope'' mostra quanto
 do desempenho vem só do nível de vibração. Todos os modelos, exceto a CNN, são da biblioteca
-\texttt{scikit-learn}~\cite{pedregosa2011}, com a semente do projeto.
+\texttt{scikit-learn}, com a semente do projeto.
 
 \subsection{Detecção}
 \label{sec:met-deteccao}
@@ -444,7 +444,7 @@ classes, e segue o roteiro usual de seleção de modelos:
   \item \textbf{Validação cruzada por carga.} A validação é
   \texttt{LeaveOneGroupOut} com o grupo igual à carga: são três partições, e cada
   uma deixa uma carga inteira (0, 1 ou \SI{2}{\hp}) de fora, a mesma lógica do
-  teste em \SI{3}{\hp}~\cite{roberts2017}. Para quantificar o vazamento, a mesma
+  teste em \SI{3}{\hp}. Para quantificar o vazamento, a mesma
   conta é feita com um \texttt{StratifiedKFold} de cinco partições embaralhadas,
   que espalha janelas de uma mesma gravação entre treino e validação.
   \item \textbf{Busca em grade.} Random Forest e SVM têm os hiperparâmetros
@@ -572,12 +572,12 @@ A inferência combina quatro procedimentos:
 \begin{itemize}
   \item \textbf{Intervalos de confiança de 95\%} para acurácia, recall por classe e
   TPR, por bootstrap de percentis com 2000 reamostragens de gravações inteiras,
-  estratificadas por classe~\cite{efron1993,field2007}. A diferença de acurácia
+  estratificadas por classe~\cite{efron1993}. A diferença de acurácia
   entre dois modelos usa as mesmas reamostragens para os dois (bootstrap
   pareado).
   \item \textbf{FPR}: com uma única gravação normal no teste, a variabilidade
   entre gravações normais não pode ser estimada; usa-se o intervalo de Wilson
-  sobre as 58 janelas~\cite{wilson1927}, que é otimista por tratar janelas
+  sobre as 58 janelas, que é otimista por tratar janelas
   correlacionadas como independentes.
   \item \textbf{Montagem nova}: cada combinação de classe e diâmetro é uma montagem
   (9, com 4 gravações cada), considerada acertada quando a maioria de suas

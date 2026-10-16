@@ -202,8 +202,8 @@ Parâmetros da DRS, ajustados por tentativa e erro: **N = 16384 e Δ = 500 amost
 os dados de 12 kHz**; N = 8192 e Δ = 500 para os de 48 kHz (p. 6).
 
 **→ Projeto:** se quisermos ir além do envelope simples, o **CPW é o melhor custo-benefício**
-(ver seção 6.6). É simples de implementar e teve o melhor desempenho geral. Já temos as
-duas referências mínimas para ele: Sawalhi e Randall (2011) e Borghesani *et al.* (2013).
+(ver seção 6.6). É simples de implementar e teve o melhor desempenho geral. As referências
+originais do método são Sawalhi e Randall (2011) e Borghesani *et al.* (2013), citadas pelo artigo.
 
 ## 6. Resultados e discussão
 
