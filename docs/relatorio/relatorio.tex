@@ -58,7 +58,9 @@
 % ---- Bibliografia no padrão ABNT ----------------------------------------
 % biblatex + biber (e não bibtex) por causa do UTF-8: nomes acentuados
 % ordenam corretamente sem precisar de escape na .bib.
-\usepackage[backend=biber, style=abnt, justify]{biblatex}
+% repeatfields=true: repete o nome do autor em obras seguidas do mesmo autor,
+% em vez do traço "______." que a NBR 6023 permite (pedido do grupo).
+\usepackage[backend=biber, style=abnt, justify, repeatfields=true]{biblatex}
 \addbibresource{referencias.bib}
 
 % ---- Metadados ----------------------------------------------------------
