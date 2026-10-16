@@ -269,8 +269,10 @@ resultado deste trabalho:
   conjunto principal.
 \end{itemize}
 
-\section{O que faríamos com mais tempo ou mais dados}
+\section{Direções futuras}
 \label{sec:trabalhos-futuros}
+
+Os resultados apontam cinco direções para continuar o trabalho.
 
 \begin{itemize}
   \item \textbf{Diagnóstico em duas etapas.} A análise exploratória da
@@ -281,20 +283,21 @@ resultado deste trabalho:
   visíveis --- testaria essa ideia sem retirar a esfera do problema. Razões
   entre famílias e normalização da amplitude por gravação já foram testadas e,
   sozinhas, não resolveram (\autoref{tab:causas-atalho}).
-  \item \textbf{Assinatura da esfera antes do treino.} Usar o
-  pré-branqueamento, que recuperou o BSF em duas gravações, na extração dos
-  \emph{scores} de envelope, e verificar se a esfera passa a generalizar como as
+  \item \textbf{Assinatura da esfera antes do treino.} O pré-branqueamento
+  recuperou o BSF em duas gravações. Usá-lo na extração dos \emph{scores} de
+  envelope permitiria verificar se a esfera passa a generalizar como as
   pistas.
   \item \textbf{Separação de componentes discretos antes do kurtograma.} O
-  kurtograma sozinho não encontrou banda impulsiva na gravação 197 e não
-  recuperou a 121 (\autoref{tab:preprocessamentos}); o método de referência de
-  \textcite{smith2015} aplica antes a separação discreto/aleatório (DRS), que
-  remove as componentes determinísticas que mascaram os impactos.
-  \item \textbf{Mais dados normais.} Com uma gravação normal por carga, a FPR e o
-  limiar são estimados sobre uma única gravação. Gravações normais de outras
-  montagens, ou de outro conjunto de dados como o MFPT, testariam se o detector
-  aprende ``normal'' ou ``esta montagem''.
+  método de referência de \textcite{smith2015} aplica, antes do kurtograma, a
+  separação discreto/aleatório (DRS), que remove as componentes determinísticas
+  que mascaram os impactos. Incluí-la é o próximo passo natural para as
+  gravações que o kurtograma isolado não recuperou, como a 121 e a 197
+  (\autoref{tab:preprocessamentos}).
+  \item \textbf{Validação com mais dados normais.} Gravações normais de outras
+  montagens, ou de outro conjunto de dados como o MFPT, permitiriam estimar a
+  FPR e o limiar sobre várias gravações independentes, e verificar se o detector
+  aprende o comportamento normal em geral ou o de uma montagem específica.
   \item \textbf{Generalização entre bancadas.} Treinar no CWRU e testar em outro
-  conjunto mediria a transferência para outra máquina, que nenhum teste deste
-  trabalho cobre.
+  conjunto mediria a transferência dos modelos para outra máquina, o passo
+  seguinte depois da generalização entre montagens avaliada aqui.
 \end{itemize}

@@ -617,6 +617,61 @@ mesmo assim, a maioria dos alarmes seria falsa com falhas raras. Nenhum detector
 deste trabalho está pronto para operar sozinho; o recomendado é o que erra pelos
 motivos certos.
 
+\subsection{Sensibilidade aos hiperparâmetros dos detectores}
+\label{sec:res-sensibilidade-det}
+
+Os hiperparâmetros dos detectores foram fixados \emph{a priori}
+(\autoref{sec:met-deteccao}). A \autoref{tab:sens-det} mostra o que acontece
+quando cada um varia em torno do valor adotado, com o mesmo protocolo de treino,
+limiar e teste. Não se trata de uma seleção: os valores adotados não mudam, e a
+tabela só mede quanto as conclusões dependem deles.
+
+\begin{table}[htb]
+  \centering
+  \caption{Sensibilidade dos detectores aos hiperparâmetros no teste
+  (\SI{3}{\hp}): AUC, e TPR e FPR no limiar adotado.}
+  \label{tab:sens-det}
+  \footnotesize
+  \begin{tabular}{llcccccc}
+    \toprule
+    & & \multicolumn{3}{c}{\textbf{Envelope}} & \multicolumn{3}{c}{\textbf{Tempo+envelope}} \\
+    \cmidrule(lr){3-5}\cmidrule(lr){6-8}
+    \textbf{Detector} & \textbf{Variante} & \textbf{AUC} & \textbf{TPR} & \textbf{FPR} & \textbf{AUC} & \textbf{TPR} & \textbf{FPR} \\
+    \midrule
+    Isolation Forest & 100 árvores          & 0,690 & 0,396 & 0,103 & 0,986 & 0,891 & 0,034 \\
+                     & 300 árvores (adotado) & 0,688 & 0,434 & 0,086 & 0,985 & 0,902 & 0,069 \\
+                     & 1000 árvores         & 0,692 & 0,421 & 0,069 & 0,989 & 0,893 & 0,034 \\
+    \midrule
+    One-Class SVM    & $\nu = \num{0.01}$          & 0,771 & 0,759 & 0,500 & 1,000 & 1,000 & 0,810 \\
+                     & $\nu = \num{0.05}$ (adotado) & 0,771 & 0,759 & 0,500 & 1,000 & 1,000 & 0,810 \\
+                     & $\nu = \num{0.10}$          & 0,769 & 0,748 & 0,466 & 1,000 & 1,000 & 0,810 \\
+                     & $\gamma = 0{,}5/k$          & 0,721 & 0,688 & 0,414 & 1,000 & 1,000 & 0,534 \\
+                     & $\gamma = 2/k$              & 0,784 & 0,839 & 0,621 & 1,000 & 1,000 & 0,897 \\
+    \midrule
+    Autoencoder      & gargalo 1          & 0,774 & 0,530 & 0,052 & 0,999 & 0,990 & 0,052 \\
+                     & gargalo 2          & 0,736 & 0,568 & 0,138 & 0,999 & 0,998 & 0,103 \\
+                     & gargalo 3 (adotado) & 0,828 & 0,545 & 0,034 & 1,000 & 1,000 & 0,172 \\
+                     & gargalo 4          & ---   & ---   & ---   & 1,000 & 1,000 & 0,190 \\
+                     & gargalo 5          & ---   & ---   & ---   & 1,000 & 1,000 & 0,138 \\
+    \bottomrule
+  \end{tabular}
+  \fonte{Elaborado pelos autores a partir de
+  \texttt{results/metrics/deteccao\_sensibilidade\_hiperparametros.csv}. Gargalos
+  maiores que 3 não se aplicam ao conjunto envelope, de 3 features.}
+\end{table}
+
+As conclusões da detecção não dependem dos hiperparâmetros: com amplitude, a AUC
+fica entre \num{0.985} e 1 em todas as variantes, e só com envelope, entre
+\num{0.69} e \num{0.83}. O Isolation Forest praticamente não muda com o número de
+árvores. No One-Class SVM, a AUC é estável, mas a FPR no limiar varia muito com
+$\gamma$ --- de \num{0.53} a \num{0.90} com tempo+envelope --- e é alta em todas
+as variantes: o problema de calibração descrito acima não vem de um valor
+particular dos hiperparâmetros. O resultado que mais depende da escolha é o do
+detector recomendado. Com envelope, o gargalo adotado, de 3 neurônios, é
+justamente o que dá a menor FPR; com 1 e 2 neurônios, ela sobe para \num{0.052} e
+\num{0.138}. A FPR de \num{0.034} depende, portanto, também dessa escolha, o que
+reforça a leitura de que é uma estimativa otimista.
+
 \section{Classificação}
 \label{sec:res-classificacao}
 

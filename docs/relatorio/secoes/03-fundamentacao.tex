@@ -128,24 +128,21 @@ frequência prevista é o argumento físico mais forte disponível neste trabalh
 \section{Técnicas selecionadas}
 \label{sec:tecnicas}
 
-As técnicas deste trabalho vêm de cinco áreas, cada uma com referências de base
-próprias: o diagnóstico de rolamentos por análise de
-vibração~\cite{randall2011livro,randall2011tutorial}, o processamento digital de
-sinais~\cite{oppenheim2010,proakis2007}, a detecção de
-anomalias~\cite{chandola2009,aggarwal2017}, o aprendizado de
-máquina~\cite{hastie2009,goodfellow2016} e a estatística
-aplicada~\cite{wasserman2004,hollander2014}. Além delas, são citados como fonte,
-e não como fundamentação de técnica, a documentação do conjunto de
-dados~\cite{cwru}, a auditoria das suas gravações~\cite{smith2015} e a
-arquitetura de rede neural reproduzida no trabalho~\cite{zhang2017}. As subseções
-a seguir apresentam cada técnica dentro dessas áreas.
+As técnicas usadas neste trabalho pertencem a cinco áreas: o processamento
+digital de sinais, com a decimação, a filtragem, a transformada de Hilbert e a
+STFT; o diagnóstico de rolamentos por análise de vibração, com a análise de
+envelope e a curtose espectral; a detecção de anomalias, com a distância de
+Mahalanobis, o Isolation Forest, o One-Class SVM e o autoencoder; o aprendizado
+de máquina supervisionado, com o Random Forest, o SVM, as árvores de decisão e a
+CNN; e a estatística aplicada, com os testes não paramétricos e o bootstrap. As
+subseções a seguir apresentam cada técnica, com as referências da sua área.
 
 \subsection{Decimação (redução da taxa de amostragem)}
 \label{sec:decimacao}
 
 Decimar um sinal discreto por um fator inteiro $M$ é reduzir sua taxa de
 amostragem de $f_s$ para $f_s/M$, mantendo uma a cada $M$
-amostras~\cite[cap.~4]{oppenheim2010}. A operação é necessária quando sinais
+amostras~\cites[cap.~4]{oppenheim2010}{proakis2007}. A operação é necessária quando sinais
 gravados a taxas diferentes precisam ser comparados na mesma base, que é o caso
 das gravações normais do CWRU (\autoref{sec:fs-normais}).
 
@@ -330,7 +327,7 @@ A análise fica restrita à banda comum de \SIrange{0}{4.8}{\kilo\hertz}
 Na detecção de anomalia, o modelo aprende só como é o comportamento normal e
 sinaliza o que se afasta dele. É a formulação adequada à manutenção preditiva:
 antes da primeira falha, não existem exemplos rotulados de falha para
-treinar~\cite{chandola2009}. Os detectores deste trabalho são treinados
+treinar~\cite{chandola2009,aggarwal2017}. Os detectores deste trabalho são treinados
 \emph{somente} com janelas normais e produzem um \emph{score} de anomalia, maior quanto
 mais a janela se afasta do comportamento normal; um limiar sobre esse
 \emph{score} define o que é alarme.
@@ -423,9 +420,12 @@ reconstrói as features a partir dela. O gargalo impede que a rede aprenda a
 simplesmente copiar a entrada: ela precisa aprender as relações que os dados de
 treino satisfazem. Treinada só com normais, reconstrói bem o que se parece com
 eles e mal o que é diferente, e o erro quadrático médio de reconstrução vira o
-\emph{score} de anomalia~\cite{chandola2009}. Neste trabalho, as 8 features passam
-por camadas de 6, 3 e 6 neurônios: o gargalo de 3 neurônios força a rede a
-resumir os normais em três combinações das features.
+\emph{score} de anomalia~\cite{chandola2009}. Neste trabalho, as features passam
+por camadas de 6, 3 e 6 neurônios. Com as 8 features de tempo e envelope, o
+gargalo de 3 neurônios força a rede a resumir os normais em três combinações das
+features; com os 3 \emph{scores} de envelope, o gargalo tem a dimensão da entrada e
+não impõe compressão, e o efeito dessa escolha é medido na
+\autoref{sec:res-sensibilidade-det}.
 
 \subsection{Classificação supervisionada}
 \label{sec:tec-classificacao}

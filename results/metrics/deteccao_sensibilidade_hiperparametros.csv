@@ -1,0 +1,25 @@
+features,detector,parametro,valor,auc,tpr,fpr
+envelope,isolation_forest,n_estimators,100.0000,0.6901,0.3958,0.1034
+envelope,isolation_forest,n_estimators,300.0000,0.6881,0.4340,0.0862
+envelope,isolation_forest,n_estimators,1000.0000,0.6920,0.4207,0.0690
+envelope,ocsvm,nu,0.0100,0.7707,0.7591,0.5000
+envelope,ocsvm,nu,0.0500,0.7708,0.7591,0.5000
+envelope,ocsvm,nu,0.1000,0.7692,0.7476,0.4655
+envelope,ocsvm,gamma (× scale),0.5000,0.7207,0.6883,0.4138
+envelope,ocsvm,gamma (× scale),2.0000,0.7841,0.8394,0.6207
+envelope,autoencoder,gargalo,1.0000,0.7743,0.5296,0.0517
+envelope,autoencoder,gargalo,2.0000,0.7363,0.5679,0.1379
+envelope,autoencoder,gargalo,3.0000,0.8278,0.5449,0.0345
+tempo+envelope,isolation_forest,n_estimators,100.0000,0.9861,0.8910,0.0345
+tempo+envelope,isolation_forest,n_estimators,300.0000,0.9849,0.9025,0.0690
+tempo+envelope,isolation_forest,n_estimators,1000.0000,0.9887,0.8929,0.0345
+tempo+envelope,ocsvm,nu,0.0100,1.0000,1.0000,0.8103
+tempo+envelope,ocsvm,nu,0.0500,1.0000,1.0000,0.8103
+tempo+envelope,ocsvm,nu,0.1000,1.0000,1.0000,0.8103
+tempo+envelope,ocsvm,gamma (× scale),0.5000,1.0000,1.0000,0.5345
+tempo+envelope,ocsvm,gamma (× scale),2.0000,1.0000,1.0000,0.8966
+tempo+envelope,autoencoder,gargalo,1.0000,0.9988,0.9904,0.0517
+tempo+envelope,autoencoder,gargalo,2.0000,0.9994,0.9981,0.1034
+tempo+envelope,autoencoder,gargalo,3.0000,0.9998,1.0000,0.1724
+tempo+envelope,autoencoder,gargalo,4.0000,0.9999,1.0000,0.1897
+tempo+envelope,autoencoder,gargalo,5.0000,1.0000,1.0000,0.1379

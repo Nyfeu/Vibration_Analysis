@@ -400,13 +400,36 @@ mais anomalia:
 \begin{itemize}
   \item \textbf{Mahalanobis}: distância à média dos normais, com a covariância
   empírica deles;
-  \item \textbf{Isolation Forest}: 300 árvores; \emph{score} igual ao simétrico do
-  \emph{score} de normalidade;
-  \item \textbf{One-Class SVM}: \emph{kernel} RBF, $\nu = \num{0.05}$;
+  \item \textbf{Isolation Forest}: 300 árvores, cada uma sobre as 144 janelas;
+  \emph{score} igual ao simétrico do \emph{score} de normalidade;
+  \item \textbf{One-Class SVM}: \emph{kernel} RBF, $\gamma = 1/k$ para $k$ features
+  padronizadas e $\nu = \num{0.05}$;
   \item \textbf{Autoencoder}: rede com camadas de 6, 3 e 6 neurônios
   (tangente hiperbólica), treinada para reproduzir a entrada; o \emph{score} é o erro
   quadrático médio de reconstrução.
 \end{itemize}
+
+Esses hiperparâmetros foram fixados \emph{a priori}, e não ajustados. Na
+detecção one-class não há exemplos de falha no treino, e portanto não há com o
+que validar uma escolha; ajustá-los olhando o teste seria vazamento. Os valores
+seguem critérios simples. A distância de Mahalanobis não tem hiperparâmetros: a
+média e a covariância são estimadas diretamente dos 144 normais, número folgado
+para as 44 quantidades a estimar com 8 features. No Isolation Forest, o número de
+árvores não muda o que o modelo aprende, só a variância do \emph{score}, que é a
+média sobre as árvores; usaram-se 300, o triplo do padrão da biblioteca, para
+reduzir essa variância. No One-Class SVM, o \emph{kernel} gaussiano é a escolha
+usual quando a forma da região normal é desconhecida; $\gamma = 1/k$ é o padrão
+do \texttt{scikit-learn} para dados padronizados e dá ao \emph{kernel} uma
+largura da ordem da dispersão das features; e $\nu = \num{0.05}$ admite que até
+\SI{5}{\percent} dos normais de treino fiquem fora da fronteira. No autoencoder,
+o gargalo precisa ser menor que a entrada para impedir que a rede aprenda a
+copiá-la; com as 8 features de tempo e envelope, adotou-se um gargalo de 3 e uma
+camada intermediária de 6, entre a entrada e o gargalo. A mesma arquitetura foi
+usada nos quatro conjuntos de features, para que a comparação entre eles não
+misture o efeito das features com o da arquitetura; com os 3 \emph{scores} de
+envelope, porém, o gargalo deixa de comprimir. Como a escolha não pôde ser
+validada, a \autoref{sec:res-sensibilidade-det} mede quanto os resultados
+dependem dela, variando um hiperparâmetro de cada vez em torno do valor adotado.
 
 O limiar de alarme é o percentil 99 dos \emph{scores} das próprias janelas normais de
 treino. É a única calibração possível sem exemplos de falha, e corresponde a uma
